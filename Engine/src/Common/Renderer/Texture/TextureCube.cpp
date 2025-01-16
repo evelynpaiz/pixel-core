@@ -125,7 +125,8 @@ void TextureCube::CreateTexture(const std::vector<const void *>& data)
     for (unsigned int i = 0; i < data.size(); ++i)
     {
         // Verify size of the 2D texture
-        CORE_ASSERT(m_CubeSpecs[i].Width > 0 && m_CubeSpecs[i].Height > 0, "2D texture size not properly defined!");
+        CORE_ASSERT(m_CubeSpecs[i].Width > 0 && m_CubeSpecs[i].Height > 0,
+                    "2D texture size not properly defined!");
         // Create the texture with the data
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, utils::OpenGL::TextureFormatToOpenGLInternalType(m_CubeSpecs[i].Format),
                      m_CubeSpecs[i].Width, m_CubeSpecs[i].Height, 0, utils::OpenGL::TextureFormatToOpenGLBaseType(m_CubeSpecs[i].Format),
@@ -197,7 +198,8 @@ void TextureCubeResource::LoadFromFile(const std::filesystem::path& directory,
         
         // Save the corresponding image information
         utils::Texturing::UpdateSpecsTextureResource(m_CubeSpecs[i], width, height, channels);
-        CORE_ASSERT((unsigned int)m_CubeSpecs[i].Format, "Data format of " + filePath.filename().string() + " not supported!");
+        CORE_ASSERT((unsigned int)m_CubeSpecs[i].Format,
+                    "Data format of " + filePath.filename().string() + " not supported!");
     }
     // Get the general image information
     utils::Texturing::UpdateSpecsTextureResource(m_Spec, 0, 0, 0);

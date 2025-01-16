@@ -246,7 +246,9 @@ void Window::Init()
     if (g_WindowCount == 0)
     {
         CORE_TRACE("Initializing GLFW");
-        CORE_ASSERT(glfwInit(), "Failed to initialize GLFW!");
+        
+        int success = glfwInit();
+        CORE_ASSERT(success, "Failed to initialize GLFW!");
         
         glfwSetErrorCallback(ErrorCallback);
     }

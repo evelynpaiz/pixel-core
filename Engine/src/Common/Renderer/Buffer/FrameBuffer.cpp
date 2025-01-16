@@ -349,7 +349,8 @@ void FrameBuffer::Invalidate()
     // Draw the color attachments
     if (m_ColorAttachments.size() > 1)
     {
-        CORE_ASSERT(m_ColorAttachments.size() <= 4, "Using more than 4 color attachments in the Framebuffer!");
+        CORE_ASSERT(m_ColorAttachments.size() <= 4,
+                    "Using more than 4 color attachments in the Framebuffer!");
         GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
         glDrawBuffers((int)m_ColorAttachments.size(), buffers);
     }
@@ -392,8 +393,8 @@ void FrameBuffer::SaveAttachment(const unsigned int index, const std::filesystem
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
     
     // Ensure the number of channel is in a valid range
-    if (channels < 1 || channels > 4)
-        CORE_ASSERT(false, "Invalid number of channels in the color attachment!");
+    CORE_ASSERT((channels > 0 && channels <= 4),
+                "Invalid number of channels in the color attachment!");
     
     // Define the buffer to allocate the attachment data
     int stride = channels * m_Spec.Width;

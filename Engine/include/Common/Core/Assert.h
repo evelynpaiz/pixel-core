@@ -38,5 +38,4 @@
                 CORE_ERROR("{0}", __VA_ARGS__);                                 \
             }                                                                   \
         } while (false)
-
 #endif

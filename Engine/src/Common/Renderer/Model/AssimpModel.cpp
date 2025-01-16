@@ -17,11 +17,10 @@ void AssimpModel::LoadModel(const std::filesystem::path &filePath)
     const aiScene *scene = importer.ReadFile(filePath.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals);
 
     // Check for error(s) during loading
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-    {
-        CORE_ASSERT(false, "Error loading model with Assimp: {0}", importer.GetErrorString());
-        return;
-    }
+    bool success = scene && scene->mRootNode &&
+                    !(scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE);
+    CORE_ASSERT(success, "Error loading model with Assimp: " +
+                std::string(importer.GetErrorString()));
 
     // Save the file path
     this->m_FilePath = filePath;

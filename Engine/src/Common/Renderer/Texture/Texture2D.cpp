@@ -69,7 +69,8 @@ GLenum Texture2D::TextureTarget() const
 void Texture2D::CreateTexture(const void *data)
 {
     // Verify size of the 2D texture
-    CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
+    CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0,
+                "2D texture size not properly defined!");
     
     // Bind the texture
     Bind();

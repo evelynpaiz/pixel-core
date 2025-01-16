@@ -18,7 +18,6 @@ std::shared_ptr<Shader> Shader::Create(const std::string &name, const std::files
             CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
             
-            
         case RendererAPI::API::OpenGL:
             return std::make_shared<OpenGLShader>(name, filePath);
              
@@ -39,7 +38,6 @@ std::shared_ptr<Shader> Shader::Create(const std::filesystem::path &filePath)
         case RendererAPI::API::None:
             CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
-            
             
         case RendererAPI::API::OpenGL:
             return std::make_shared<OpenGLShader>(filePath);
