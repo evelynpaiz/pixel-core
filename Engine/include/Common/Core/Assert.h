@@ -30,5 +30,13 @@
             }                                                                   \
         } while (false)
 #else
-    #define CORE_ASSERT(x, ...)
+    #define CORE_ASSERT(x, ...)                                                 \
+        do                                                                      \
+        {                                                                       \
+            if (!(x))                                                           \
+            {                                                                   \
+                CORE_ERROR("{0}", __VA_ARGS__);                                 \
+            }                                                                   \
+        } while (false)
+
 #endif
