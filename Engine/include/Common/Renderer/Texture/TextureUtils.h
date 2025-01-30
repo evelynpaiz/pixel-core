@@ -34,12 +34,15 @@ enum class TextureFormat
     RGB8,               ///< 8-bit per channel, 24-bit total (no alpha).
     RGBA8,              ///< 8-bit per channel, 32-bit total (standard color texture).
     
-    R16F,               ///< 16-bit half-float single channel (HDR, red only).
-    RGB16F,             ///< 16-bit half-float per channel, 48-bit total (HDR, no alpha).
-    RGBA16F,            ///< 16-bit half-float per channel, 64-bit total (HDR color texture).
+    R16F,               ///< 16-bit half-float single channel (HDR, red channel only)
+    RG16F,              ///< 16-bit half-float per channel, 32-bit total (HDR, red and blue channels only)
+    RGB16F,             ///< 16-bit half-float per channel, 48-bit total (HDR, no alpha)
+    RGBA16F,            ///< 16-bit half-float per channel, 64-bit total (HDR color texture)
     
-    RGB32F,             ///< 32-bit float per channel, 96-bit total (HDR, no alpha).
-    RGBA32F,            ///< 32-bit float per channel, 128-bit total (HDR color texture).
+    R32F,               ///< 32-bit float single channel (HDR, red channel only)
+    RG32F,              ///< 32-bit half-float per channel, 64-bit total (HDR, red and blue channels only)
+    RGB32F,             ///< 32-bit float per channel, 96-bit total (HDR, no alpha)
+    RGBA32F,            ///< 32-bit float per channel, 128-bit total (HDR color texture)
     
     // Integer formats
     R8UI,               ///< 8-bit unsigned integer (usually used for IDs).
@@ -104,11 +107,14 @@ inline unsigned int GetChannelCount(TextureFormat format)
 {
     switch (format)
     {
-        case TextureFormat::R16F:
         case TextureFormat::R8:
+        case TextureFormat::R16F:
+        case TextureFormat::R32F:
         case TextureFormat::R8UI: return 1;
             
         case TextureFormat::RG8:
+        case TextureFormat::RG16F:
+        case TextureFormat::RG32F:
         case TextureFormat::RG8UI: return 2;
             
         case TextureFormat::RGB32F:
@@ -161,10 +167,13 @@ inline unsigned int GetBytesPerChannel(TextureFormat format)
             return 1;  // Each channel (R, G, B) is 1 byte
 
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
             return 2; // Each channel (R, G, B) is 2 bytes
             
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
             return 4; // Each channel (R, G, B) is 4 bytes
@@ -209,9 +218,12 @@ inline bool IsDepthFormat(TextureFormat format)
         case TextureFormat::RGBA8:
             
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
             
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
             
@@ -250,8 +262,12 @@ inline bool IsRGBFormat(TextureFormat format)
         case TextureFormat::RGBA8:
             
         case TextureFormat::R16F:
-        
+        case TextureFormat::RG16F:
+            
         case TextureFormat::RGBA16F:
+            
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
             
         case TextureFormat::RGBA32F:
             
@@ -300,9 +316,12 @@ inline void* AllocateTextureData(TextureFormat format, unsigned int size)
         case TextureFormat::DEPTH24STENCIL8: return static_cast<void*>(new int[size]);
             
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
         
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
         case TextureFormat::DEPTH32F: return static_cast<void*>(new float[size]);
@@ -347,8 +366,11 @@ inline void FreeTextureData(TextureFormat format, void* buffer)
             break;
 
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
         case TextureFormat::DEPTH32F:
@@ -361,5 +383,5 @@ inline void FreeTextureData(TextureFormat format, void* buffer)
     }
 }
 
-} // namespace texturing
+} // namespace textures
 } // namespace utils

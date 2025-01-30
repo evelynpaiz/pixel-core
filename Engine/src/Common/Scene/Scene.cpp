@@ -125,8 +125,14 @@ void Scene::Draw()
     for (auto& name : m_RenderPasses.m_Order)
     {
         auto& pass = m_RenderPasses.Get(name);
-        if (pass.Active);
+        if (pass.Active)
             Draw(pass);
+        else
+        {
+            if (pass.Framebuffer)
+                pass.Framebuffer->Bind();
+            RendererCommand::SetRenderTarget(glm::vec4(0.0f));
+        }
     }
 }
 

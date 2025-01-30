@@ -26,6 +26,12 @@
 #include "Resources/shaders/phong/chunks/PhongSpecular.glsl"
 #include "Resources/shaders/phong/chunks/Phong.glsl"
 
+#include "Resources/shaders/environment/chunks/SHIrradiance.glsl"
+
+///< Mathematical constants.
+const float PI = 3.14159265359f;
+const float INV_PI = 1.0f / PI;
+
 // Entry point of the fragment shader
 void main()
 {
@@ -41,7 +47,7 @@ void main()
     }
     
     // Calculate the ambient light
-    vec3 irradiance = texture(u_Environment.IrradianceMap, normalize(v_Normal)).rgb;
+    vec3 irradiance = calculateIrradiance(u_Environment.IrradianceMatrix, normal, INV_PI);
     vec3 ambient = irradiance * u_Environment.La * u_Material.Ka;
     
     // Set the fragment color with the calculated result and material's alpha

@@ -23,6 +23,8 @@ struct LightFlags
     
     bool DiffuseLighting = true;            ///< Indicates whether diffuse lighting is enabled.
     bool SpecularLighting = true;           ///< Indicates whether specular lighting is enabled.
+    
+    bool IsotropicShading = true;           ///< Indicates whether to use normal-based isotropic shading or tangent-based anisotropic shading.
 };
 
 /**

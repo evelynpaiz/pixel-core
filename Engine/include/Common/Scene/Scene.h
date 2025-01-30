@@ -21,7 +21,7 @@ struct RenderPassSpecification
     ///< The camera used for rendering in this pass.
     std::shared_ptr<Camera> Camera;
     ///< The models to render in this pass, along with their associated materials.
-    std::unordered_map<std::string, std::string> Models;
+    std::unordered_multimap<std::string, std::string> Models;
     ///< The framebuffer to render to in this pass.
     std::shared_ptr<FrameBuffer> Framebuffer;
     
@@ -29,6 +29,8 @@ struct RenderPassSpecification
     std::optional<glm::vec4> Color;
     ///< The viewport size to render into, if specified.
     std::optional<glm::vec2> Size;
+    ///< Disable the clearing of the framebuffer (or screenbuffer), if specified.
+    std::optional<bool> SkipClear;
     
     ///< Optional piece of code to be executed after rendering the pass.
     std::function<void()> PreRenderCode;

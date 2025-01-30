@@ -50,9 +50,12 @@ inline MTLPixelFormat ToMetalPixelFormat(TextureFormat format)
         case TextureFormat::RGBA8:            return MTLPixelFormatRGBA8Unorm;
             
         case TextureFormat::R16F:             return MTLPixelFormatR16Float;
+        case TextureFormat::RG16F:            return MTLPixelFormatRG16Float;
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:          return MTLPixelFormatRGBA16Float;
             
+        case TextureFormat::R32F:             return MTLPixelFormatR32Float;
+        case TextureFormat::RG32F:            return MTLPixelFormatRG32Float;
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:          return MTLPixelFormatRGBA32Float;
             
@@ -162,6 +165,7 @@ inline unsigned int GetMetalChannelCount(TextureFormat format)
 {
     switch (format)
     {
+        case TextureFormat::R32F:
         case TextureFormat::R16F:
         case TextureFormat::R8:
         case TextureFormat::R8UI:               return 1;
@@ -171,7 +175,9 @@ inline unsigned int GetMetalChannelCount(TextureFormat format)
         case TextureFormat::DEPTH32:
         case TextureFormat::DEPTH32F:
         case TextureFormat::DEPTH24STENCIL8:    return 1;
-            
+        
+        case TextureFormat::RG32F:
+        case TextureFormat::RG16F:
         case TextureFormat::RG8:
         case TextureFormat::RG8UI:              return 2;
             

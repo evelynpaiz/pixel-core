@@ -44,8 +44,11 @@ inline GLenum ToOpenGLBaseFormat(TextureFormat format)
     {
         case TextureFormat::None:               return 0;
         case TextureFormat::R8:
-        case TextureFormat::R16F:               return GL_RED;
-        case TextureFormat::RG8:                return GL_RG;
+        case TextureFormat::R16F:
+        case TextureFormat::R32F:               return GL_RED;
+        case TextureFormat::RG8:
+        case TextureFormat::RG16F:
+        case TextureFormat::RG32F:              return GL_RG;
         case TextureFormat::RGB8:
         case TextureFormat::RGB16F:
         case TextureFormat::RGB32F:             return GL_RGB;
@@ -89,9 +92,12 @@ inline GLenum ToOpenGLInternalFormat(TextureFormat format)
         case TextureFormat::RGBA8:              return GL_RGBA16;
             
         case TextureFormat::R16F:               return GL_R16F;
+        case TextureFormat::RG16F:              return GL_RG16F;
         case TextureFormat::RGB16F:             return GL_RGB16F;
         case TextureFormat::RGBA16F:            return GL_RGBA16F;
-            
+        
+        case TextureFormat::R32F:               return GL_R32F;
+        case TextureFormat::RG32F:              return GL_RG32F;
         case TextureFormat::RGB32F:             return GL_RGB32F;
         case TextureFormat::RGBA32F:            return GL_RGBA32F;
             
@@ -140,9 +146,12 @@ inline GLenum ToOpenGLDataFormat(TextureFormat format)
         case TextureFormat::DEPTH24STENCIL8:    return GL_UNSIGNED_INT;
             
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
             
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
         case TextureFormat::DEPTH32F:           return GL_FLOAT;
@@ -178,9 +187,12 @@ inline GLenum ToOpenGLDepthAttachment(TextureFormat format)
         case TextureFormat::RGBA8:
             
         case TextureFormat::R16F:
+        case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
             
+        case TextureFormat::R32F:
+        case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
         case TextureFormat::RGBA32F:
             

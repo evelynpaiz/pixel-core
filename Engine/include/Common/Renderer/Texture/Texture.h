@@ -24,6 +24,13 @@ struct TextureSpecification
         Type(type), Format(format)
     {}
     
+    /// @brief Define a texture with a specific format.
+    /// @param format The texture format.
+    /// @param filter The texture sampling filter.
+    TextureSpecification(const TextureFormat& format, const TextureFilter& filter) :
+        Format(format), Filter(filter)
+    { }
+    
     /// @brief Define the size of the texture (in pixels).
     /// @param width The texture size (width).
     /// @param height The texture size (height)

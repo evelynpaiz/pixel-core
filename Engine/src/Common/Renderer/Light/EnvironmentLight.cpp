@@ -38,6 +38,15 @@ EnvironmentLight::EnvironmentLight(const unsigned int width, const unsigned int 
 void EnvironmentLight::InitEnvironmentFramebuffers(const unsigned int cubeSize)
 {
     FrameBufferSpecification spec;
+    
+    spec.SetFrameBufferSize(3, 3);
+    TextureSpecification sh(TextureType::TEXTURE2D, TextureFormat::RGB16F);
+    sh.Filter = TextureFilter::Nearest;
+    spec.AttachmentsSpec = { { sh } };
+    m_Framebuffers.Create("SphericalHarmonics", spec);
+    
+    // -------
+    
     spec.SetFrameBufferSize(cubeSize, cubeSize);
     spec.AttachmentsSpec = {
         { TextureType::TEXTURE2D, TextureFormat::DEPTH24 },
@@ -66,6 +75,11 @@ void EnvironmentLight::InitEnvironmentMaterials()
     // Equirectangular mapping
     m_Materials.Create<SimpleTextureMaterial>("Equirectangular",
         "Resources/shaders/environment/EquirectangularMap.glsl");
+    
+    // Spherical harmonics
+    auto sphericalHarmonics = m_Materials.Create<SimpleTextureMaterial>("SphericalHarmonics",
+       "Resources/shaders/environment/SphericalHarmonicsSampling.glsl");
+    sphericalHarmonics->SetTextureMap(environment);
     
     // Irradiance mapping
     auto irradiance = m_Materials.Create<SimpleTextureMaterial>("Irradiance",
@@ -99,7 +113,7 @@ void EnvironmentLight::SetEnvironmentMap(const std::shared_ptr<Texture>& texture
     
     // Update the environment information
     UpdateEnvironment();
-    UpdateLight();
+    UpdateSphericalHarmonics();
 }
 
 /**
@@ -133,36 +147,61 @@ void EnvironmentLight::DefineLightProperties(const std::shared_ptr<Shader> &shad
                                              const LightFlags &flags,
                                              unsigned int& slot)
 {
-    // Define the environment map strength
+    // Define the strenght of the ambient light
     shader->SetFloat("u_Environment.La", m_AmbientStrength);
     
-    // Check if an environment map is available
-    if (GetEnvironmentMap())
-    {
-        // Set the irradiance map uniform to the environment's irradiance map
-        shader->SetTexture("u_Environment.IrradianceMap", GetIrradianceMap(), slot++);
-    }
-    else
-    {
-        // Set the irradiance map uniform to a white texture cube
-        shader->SetTexture("u_Environment.IrradianceMap",
-                           utils::textures::WhiteTextureCube(), slot++);
-    }
+    // Define the irradiance information using spherical harmonics
+    auto matrix = flags.IsotropicShading ? m_Coefficients.Isotropic : m_Coefficients.Anisotropic;
+    shader->SetMat4("u_Environment.IrradianceMatrix[0]", matrix.Red);
+    shader->SetMat4("u_Environment.IrradianceMatrix[1]", matrix.Green);
+    shader->SetMat4("u_Environment.IrradianceMatrix[2]", matrix.Blue);
 }
 
 /**
- * Detects light sources from the environment map.
- *
- * This function is intended to implement the logic for detecting light sources
- * from the currently loaded environment map. The detected light sources can be
- * used for various lighting calculations in the scene.
- *
- * @note This function needs to be implemented.
- *
- * @todo Implement the logic for detecting light sources from the environment map.
+ * Updates the spherical harmonic coefficients for the environment light.
  */
-void EnvironmentLight::UpdateLight()
-{}
+void EnvironmentLight::UpdateSphericalHarmonics()
+{
+    // Retrieve the spherical harmonics material
+    auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(m_Materials.Get("SphericalHarmonics"));
+    if (!material)
+        return;
+    
+    // Create a plane geometry (to render to) using the material
+    using VertexData = GeoVertexData<glm::vec4>;
+    auto geometry = utils::Geometry::ModelPlane<VertexData>(material);
+    geometry->SetScale(glm::vec3(2.0f));
+    
+    // Get the spherical harmonics framebuffer
+    auto& framebuffer = m_Framebuffers.Get("SphericalHarmonics");
+    if (!framebuffer)
+        return;
+    
+    // Bind the framebuffer and render the scene to compute the coefficients
+    framebuffer->Bind();
+    
+    Renderer::BeginScene();
+    RendererCommand::SetRenderTarget(framebuffer);
+    geometry->SetMaterial(material);
+    geometry->DrawModel();
+    Renderer::EndScene();
+    
+    framebuffer->Unbind();
+    
+    // Retrieve the information of the coefficients
+    std::vector<char> rawData = framebuffer->GetAttachmentData(0);
+    // Ensure the raw data size is compatible with float conversion
+    CORE_ASSERT(rawData.size() % sizeof(float) == 0, "Data size is not a multiple of float size!");
+    
+    // Get the float representation of the data
+    const float* dataPointer = reinterpret_cast<const float*>(rawData.data());
+    size_t count = rawData.size() / sizeof(float);
+    std::vector<float> data(dataPointer, dataPointer + count);
+    
+    // Compute the coefficients
+    m_Coefficients.UpdateIsotropicMatrix(data);
+    m_Coefficients.UpdateAnisotropicMatrix(data);
+}
 
 /**
  * Updates the environment lighting information.
@@ -216,6 +255,8 @@ void EnvironmentLight::UpdateEnvironment()
     RenderCubeMap(sceneViewMatrix, projectionMatrix, m_Materials.Get("Equirectangular"),
                   m_Framebuffers.Get("Environment"));
     
+    // TODO: remove this and set it into another function. Make the static variables an enumeration.
+    /*
     // Render the irradiance map
     RenderCubeMap(viewMatrix, projectionMatrix, m_Materials.Get("Irradiance"),
                   m_Framebuffers.Get("Irradiance"));
@@ -237,10 +278,9 @@ void EnvironmentLight::UpdateEnvironment()
                       m_Framebuffers.Get("PreFilter"),
                       mipWidth, mipHeight, mip, false);
     }
+    */
     
     m_Framebuffers.Get("PreFilter")->Unbind(false);
-    
-    // Update the 3D model of the light source with the rendered environment map
     m_Model->SetMaterial(m_Materials.Get("Environment"));
     m_Model->SetScale(glm::vec3(70.0f));
 }
@@ -287,4 +327,128 @@ void EnvironmentLight::RenderCubeMap(const std::array<glm::mat4, 6>& views, cons
 
     // Unbind the framebuffer and optionally generate mipmaps
     framebuffer->Unbind(genMipMaps);
+}
+
+/**
+ * Updates the isotropic SH matrices for all color channels.
+ * 
+ * @param shCoeffs A vector containing the 9 spherical harmonic coefficients (L00, L1-1, L10, ..., L22),
+ *                 stored as floats with interleaved RGB values (e.g., R00, G00, B00, R1-1, G1-1, B1-1, ...).
+ */
+void SHCoefficients::UpdateIsotropicMatrix(const std::vector<float> &shCoeffs)
+{
+    Isotropic.Red = GenerateIsotropicMatrix(0, shCoeffs);
+    Isotropic.Green = GenerateIsotropicMatrix(1, shCoeffs);
+    Isotropic.Blue = GenerateIsotropicMatrix(2, shCoeffs);
+}
+
+/**
+ * Updates the anisotropic SH matrices for all color channels.
+ *
+ * @param shCoeffs A vector containing the 9 spherical harmonic coefficients (L00, L1-1, L10, ..., L22),
+ *                 stored as floats with interleaved RGB values (e.g., R00, G00, B00, R1-1, G1-1, B1-1, ...).
+ */
+void SHCoefficients::UpdateAnisotropicMatrix(const std::vector<float> &shCoeffs)
+{
+    Anisotropic.Red = GenerateAnisotropicMatrix(0, shCoeffs);
+    Anisotropic.Green = GenerateAnisotropicMatrix(1, shCoeffs);
+    Anisotropic.Blue = GenerateAnisotropicMatrix(2, shCoeffs);
+}
+
+/**
+ * Generates the M matrix for isotropic irradiance calculation for a specific color channel.
+ *
+ * This function constructs the 4x4 matrix M, which is used for efficient irradiance
+ * calculations for isotropic (Lambertian) surfaces using spherical harmonics. The matrix is constructed
+ * based on the formulas presented in the paper "An Efficient Representation for Irradiance Environment Maps."
+ *
+ * @param colorIndex The index of the color channel (0 = red, 1 = green, 2 = blue).
+ * @param shCoeffs A vector containing the 9 spherical harmonic coefficients (L00, L1-1, L10, ..., L22),
+ *                 stored as floats with interleaved RGB values (e.g., R00, G00, B00, R1-1, G1-1, B1-1, ...).
+ *
+ * @return The 4x4 matrix M for the specified color channel.
+ */
+glm::mat4 SHCoefficients::GenerateIsotropicMatrix(int colorIndex,
+                                                  const std::vector<float> &shCoeffs)
+{
+    float c1 = 0.429043f;
+    float c2 = 0.511664f;
+    float c3 = 0.743125f;
+    float c4 = 0.886227f;
+    float c5 = 0.247708f;
+
+    glm::mat4 M(0.0f); // Initialize M to zero
+
+    // Construct M using the precomputed L coefficients
+    M[0][0] = c1 * shCoeffs[8 * 3 + colorIndex];    // L22
+    M[0][1] = c1 * shCoeffs[4 * 3 + colorIndex];    // L2-2
+    M[0][2] = c1 * shCoeffs[7 * 3 + colorIndex];    // L21
+    M[0][3] = c2 * shCoeffs[3 * 3 + colorIndex];    // L11
+
+    M[1][0] = M[0][1];                              // Symmetry
+    M[1][1] = -M[0][0];                             // Symmetry
+    M[1][2] = c1 * shCoeffs[5 * 3 + colorIndex];    // L2-1
+    M[1][3] = c2 * shCoeffs[1 * 3 + colorIndex];    // L1-1
+
+    M[2][0] = M[0][2];                              // Symmetry
+    M[2][1] = M[1][2];                              // Symmetry
+    M[2][2] = c3 * shCoeffs[6 * 3 + colorIndex];    // L20
+    M[2][3] = c2 * shCoeffs[2 * 3 + colorIndex];    // L10
+
+    M[3][0] = M[0][3];                              // Symmetry
+    M[3][1] = M[1][3];                              // Symmetry
+    M[3][2] = M[2][3];                              // Symmetry
+    M[3][3] = c4 * shCoeffs[0 * 3 + colorIndex]
+            - c5 * shCoeffs[6 * 3 + colorIndex];    // L00 and L20
+    
+    return M;
+}
+
+/**
+ * Generates the M matrix for anisotropic irradiance calculation for a specific color channel.
+ *
+ * This function constructs the 4x4 matrix M, which is used for efficient irradiance
+ * calculations for anisotropic surfaces (using surface tangents) using spherical harmonics.
+ * The matrix is constructed based on the formulas presented in the paper
+ * "Analytic Tangent Irradiance Environment Maps for Anisotropic Surfaces".
+ *
+ * @param colorIndex The index of the color channel (0 = red, 1 = green, 2 = blue).
+ * @param shCoeffs A vector containing the 9 spherical harmonic coefficients (L00, L1-1, L10, ..., L22),
+ *                 stored as floats with interleaved RGB values (e.g., R00, G00, B00, R1-1, G1-1, B1-1, ...).
+ *
+ * @return The 4x4 matrix M for the specified color channel.
+ */
+glm::mat4 SHCoefficients::GenerateAnisotropicMatrix(int colorIndex,
+                                                    const std::vector<float> &shCoeffs)
+{
+    float b0 =  0.282095f;
+    float b1 = -0.0682843f;
+    float b2 = -0.118272f;
+    float b3 =  0.0394239f;
+
+    glm::mat4 M(0.0f); // Initialize M to zero
+
+    // Construct M using the precomputed L coefficients
+    M[0][0] = b1 * shCoeffs[8 * 3 + colorIndex];    // L22
+    M[0][1] = b1 * shCoeffs[4 * 3 + colorIndex];    // L2-2
+    M[0][2] = b1 * shCoeffs[7 * 3 + colorIndex];    // L21
+    M[0][3] = 0.0f;                                 // L11
+
+    M[1][0] = M[0][1];                              // Symmetry
+    M[1][1] = -M[0][0];                             // Symmetry
+    M[1][2] = b1 * shCoeffs[5 * 3 + colorIndex];    // L2-1
+    M[1][3] = 0.0f;                                 // L1-1
+
+    M[2][0] = M[0][2];                              // Symmetry
+    M[2][1] = M[1][2];                              // Symmetry
+    M[2][2] = b2 * shCoeffs[6 * 3 + colorIndex];    // L20
+    M[2][3] = 0.0f;                                 // L10
+
+    M[3][0] = M[0][3];                              // Symmetry
+    M[3][1] = M[1][3];                              // Symmetry
+    M[3][2] = M[2][3];                              // Symmetry
+    M[3][3] = b0 * shCoeffs[0 * 3 + colorIndex]
+            + b3 * shCoeffs[6 * 3 + colorIndex];    // L00 and L20
+    
+    return M;
 }

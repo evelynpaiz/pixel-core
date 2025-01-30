@@ -1,18 +1,19 @@
-# Basic Renderer
-This is a lightweight rendering pipeline using OpenGL.
+# Pixel Core
+This repository contains Pixel Core, a lightweight rendering engine built using OpenGL.
 
 ## Requirements
-* [Git](https://git-scm.com): used as the version control system.
-* [CMake](https://cmake.org): used to generate the project solution. 
-* [OpenGL](https://www.opengl.org/): used as a low level rendering library.
+* [Git](https://git-scm.com): Required for version control.
+* [CMake](https://cmake.org): Used for generating platform-specific build files.
+* [OpenGL](https://www.opengl.org/): The underlying graphics API.
+* C++ Compiler: A modern C++ compiler compatible with C++20 or later.
     
 ## Getting started
 <ins>**1. Downloading the repository:**</ins>
-Start by cloning the project from the git repository:
+Clone the repository recursively to ensure all submodules are downloaded:
 ```
-git clone --recursive https://github.com/epaizreyes/basic-renderer.git
+git clone --recursive [Repository URL]
 ```
-and access the directory of the cloned repository `basic-renderer/`.
+and access the directory of the cloned repository.
 
 To clone the necessary submodules, if the repository was cloned non-recursively, use:
 ```
@@ -26,25 +27,26 @@ The project solution can be generated using CMake:
 	```
 	cmake -B VisualStudio
 	```
-	The Visual Studio solution `basic-renderer.sln` can be found in the `VisualStudio/` directory.
+	The Visual Studio solution `pixel-core.sln` can be found in the `VisualStudio/` directory.
 
 * **For XCode**:
 	```
 	cmake -G Xcode -B XCode
 	```
-	The XCode project solution `basic-renderer.xcodeproj` can be found in `XCode/` directory.
+	The XCode project solution `pixel-core.xcodeproj` can be found in `XCode/` directory.
 
 ## Third party libraries
 The external libraries needed in this project have been added as git submodules. These can be found in the `3rdparty/` directory.
-* [spdlog](https://github.com/gabime/spdlog): C++ logging library to display console messages.
-* [glfw](https://github.com/glfw/glfw): Creation of windows, contexts and surfaces. It also receives inputs and events.
-* [glew](https://github.com/nigels-com/glew): Loading library for Modern OpenGL.
-* [glm](https://github.com/g-truc/glm): OpenGL mathematic library.
-* [stb](https://github.com/nothings/stb): Utility library. Specifically, we use stb-image for handling images.
+* [Assimp](https://github.com/assimp/assimp): Asset loading library.
+* [glew](https://github.com/nigels-com/glew): OpenGL extension wrangler library.
+* [glfw](https://github.com/glfw/glfw): Window management and input handling.
+* [glm](https://github.com/g-truc/glm): OpenGL mathematics.
+* [ImGui](https://github.com/ocornut/imgui): Dear ImGui, a bloat-free graphical user interface library.
+* [spdlog](https://github.com/gabime/spdlog): Fast C++ logging library.
+* [stb](https://github.com/nothings/stb): Image loading library from the stb single-file public domain libraries.
 
 ## References
-The four main references for this rendering engine are:
-* [OpenGL Tutorial](https://github.com/TheCherno/OpenGL) from Yan Chernokov.
+This project draws inspiration and utilizes code from the following resources:
 * [Hazel Engine](https://github.com/TheCherno/Hazel) from Yan Chernokov.
 * [Learn OpenGL](https://github.com/JoeyDeVries/LearnOpenGL) from Joey de Vries.
 * [OpenGL Tutorial](https://github.com/VictorGordan/opengl-tutorials) from Victor Gordan.

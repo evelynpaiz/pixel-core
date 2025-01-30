@@ -110,12 +110,12 @@ void Simple::OnUpdate(Timestep ts)
     */
     
     // Clear buffer
-    //RendererCommand::SetRenderTarget(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f),
-    //                                 {true, true, false});
-    
-    m_Viewport.GetFramebuffer()->Bind();
     RendererCommand::SetRenderTarget(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f),
-                                     m_Viewport.GetFramebuffer());
+                                     {true, true, false});
+    
+    //m_Viewport.GetFramebuffer()->Bind();
+    //RendererCommand::SetRenderTarget(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f),
+    //                                 m_Viewport.GetFramebuffer());
     // Render
     Renderer::BeginScene(m_Camera);
     
@@ -130,7 +130,7 @@ void Simple::OnUpdate(Timestep ts)
     cube->DrawModel();
     
     Renderer::EndScene();
-    m_Viewport.GetFramebuffer()->Unbind();
+    //m_Viewport.GetFramebuffer()->Unbind();
     
     //m_Viewport.Render();
 

@@ -26,8 +26,8 @@ vec3 calculateColor(vec3 position, vec3 normal, vec3 viewPosition, vec4 lightVec
     
     // Calculate the direction vectors
     vec3 lightDirection = lightVector.w == 1.0f ?
-                          normalize(lightVector.xyz - position)      // positional light (.w = 1)
-                          : normalize(-lightVector.xyz);               // directional light (.w = 0)
+                          normalize(lightVector.xyz - position)         // positional light (.w = 1)
+                          : normalize(-lightVector.xyz);                // directional light (.w = 0)
     vec3 viewDirection = normalize(viewPosition - position);
     vec3 reflectionDirection = normalize(2.0 * dot(lightDirection, normal) * normal - lightDirection);
     

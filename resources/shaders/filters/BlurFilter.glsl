@@ -14,7 +14,7 @@
 #include "Resources/shaders/common/material/TextureMaterial.glsl"
 
 // Include fragment inputs
-layout (location = 0) out float occlusion;
+layout (location = 0) out float outColor;
 
 uniform Material u_Material;
 
@@ -26,7 +26,7 @@ void main()
     vec2 texelSize = 1.0f / vec2(textureSize(u_Material.TextureMap, 0));
     float result = 0.0f;
 
-    const int kernelSize = 5; // Larger kernel size
+    const int kernelSize = 5;
     const int halfKernel = kernelSize / 2;
 
     for (int x = -halfKernel; x <= halfKernel; ++x)
@@ -39,6 +39,6 @@ void main()
     }
     
     // Divide by the number of samples (kernelSize * kernelSize)
-    occlusion = result / float(kernelSize * kernelSize);
+    outColor = result / float(kernelSize * kernelSize);
 }
 

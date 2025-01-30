@@ -12,6 +12,37 @@
 #include <glm/glm.hpp>
 
 /**
+ * Represents spherical harmonic (SH) coefficients for isotropic and anisotropic irradiance.
+ */
+struct SHCoefficients
+{
+    /**
+     * A structure representing a 4x4 matrix for each color channel (red, green, blue).
+     */
+    struct SHMatrix 
+    {
+        glm::mat4 Red = glm::mat4(0.0f);    ///< 4x4 matrix for the red channel.
+        glm::mat4 Green = glm::mat4(0.0f);  ///< 4x4 matrix for the green channel.
+        glm::mat4 Blue = glm::mat4(0.0f);   ///< 4x4 matrix for the blue channel.
+    };
+    
+    // Matrix Computation
+    // ----------------------------------------
+    void UpdateIsotropicMatrix(const std::vector<float>& shCoeffs);
+    void UpdateAnisotropicMatrix(const std::vector<float>& shCoeffs);
+    
+    static glm::mat4 GenerateIsotropicMatrix(int colorIndex,
+                                             const std::vector<float>& shCoeffs);
+    static glm::mat4 GenerateAnisotropicMatrix(int colorIndex,
+                                               const std::vector<float>& shCoeffs);
+    
+    // Spherical Harmonics
+    // ----------------------------------------
+    SHMatrix Isotropic;         ///< SH coefficients for isotropic irradiance (using normals).
+    SHMatrix Anisotropic;       ///< SH coefficients for anisotropic irradiance (using tangents).
+};
+
+/**
  * Represents an environment light source in 3D rendering.
  *
  * The `EnvironmentLight` class extends the `Light` base class to define an environment light source.
@@ -81,7 +112,7 @@ private:
     // Update
     // ----------------------------------------
     void UpdateEnvironment();
-    void UpdateLight();
+    void UpdateSphericalHarmonics();
     
     // Render
     // ----------------------------------------
@@ -98,6 +129,8 @@ private:
     float m_AmbientStrength = 0.4f;
     ///< The environment map.
     std::shared_ptr<Texture> m_EnvironmentMap;
+    ///< Spherical harmonics coefficients.
+    SHCoefficients m_Coefficients;
     
     ///< Framebuffer(s) for pre-processing.
     FrameBufferLibrary m_Framebuffers;

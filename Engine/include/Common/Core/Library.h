@@ -72,10 +72,11 @@ public:
     virtual void Add(const std::string& name,
                      const ObjectType& object)
     {
-        std::string message = GetTypeName() + " '" + name + "' already exists!";
-        CORE_ASSERT(!Exists(name), message);
-        
-        m_Objects[name] = object;
+        bool exists = Exists(name);
+        if (exists)
+            CORE_WARN("{0} already exists!", GetTypeName());
+        else
+            m_Objects[name] = object;
     }
     
     // Getter(s)
@@ -87,8 +88,9 @@ public:
     /// failure will occur.
     const ObjectType& Get(const std::string& name) const
     {
-        std::string message = GetTypeName() + " '" + name + "' not found!";
-        CORE_ASSERT(Exists(name), message);
+        bool exists = Exists(name);
+        if (!exists)
+            CORE_WARN("{0} not found!", GetTypeName());
         
         return m_Objects.at(name);
     }
@@ -99,8 +101,9 @@ public:
     /// failure will occur.
     ObjectType& Get(const std::string& name)
     {
-        std::string message = GetTypeName() + " '" + name + "' not found!";
-        CORE_ASSERT(Exists(name), message);
+        bool exists = Exists(name);
+        if (!exists)
+            CORE_WARN("{0} not found!", GetTypeName());
         
         return m_Objects[name];
     }
@@ -112,10 +115,11 @@ public:
     void Update(const std::string& name,
                 const ObjectType& object)
     {
-        std::string message = GetTypeName() + " '" + name + "' not found!";
-        CORE_ASSERT(Exists(name), message);
-        
-        m_Objects[name] = object;
+        bool exists = Exists(name);
+        if (exists)
+            m_Objects[name] = object;
+        else
+            CORE_WARN("{0} not found!", GetTypeName());
     }
     /// @brief Checks if an object with a given name exists in the library.
     /// @param name The name of the object to check for existence.

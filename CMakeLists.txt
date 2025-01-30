@@ -5,7 +5,7 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_CXX_STANDARD 20)
 
 # Definition of the solution
-project(basic-renderer)
+project(pixel-core)
 
 # Target directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)

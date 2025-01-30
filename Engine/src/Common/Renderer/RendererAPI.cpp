@@ -7,7 +7,7 @@
 #include "Platform/Metal/MetalRendererAPI.h"
 
 // Define static variables
-RendererAPI::API RendererAPI::s_API = RendererAPI::API::Metal;
+RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
 /**
  * Creates a new Renderer API instance based on the selected API.
