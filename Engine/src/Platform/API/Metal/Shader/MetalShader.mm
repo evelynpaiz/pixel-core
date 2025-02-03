@@ -365,7 +365,7 @@ void MetalShader::ProcessBufferArgument(void *arg, const char *name,
     }
     
     // Get the information of the argument
-    MTLArgument* argument = reinterpret_cast<MTLArgument*>(arg);
+    id<MTLBufferBinding> argument = reinterpret_cast<id<MTLBufferBinding>>(arg);
     
     // Check if the argument represents a struct (group of uniforms)
     if (argument.bufferDataType == MTLDataTypeStruct)
@@ -402,11 +402,10 @@ void MetalShader::ProcessBufferArgument(void *arg, const char *name,
 void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
 {
     // Get the Metal argument definition
-    // TODO: use MTLBinding instead
-    MTLArgument* argument = reinterpret_cast<MTLArgument*>(arg);
+    id<MTLBinding> argument = reinterpret_cast<id<MTLBinding>>(arg);
     
     // Ignore inactive arguments
-    if (!argument.active)
+    if (!argument.isUsed)
         return;
     
     // Get the uniform group name (assuming the "u_" prefix convention)
@@ -420,19 +419,19 @@ void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
     switch (argument.type)
     {
         // Uniform is a texture
-        case MTLArgumentTypeTexture:
+        case MTLBindingTypeTexture:
         {
             ProcessTextureArgument(name, index, type);
             return;
         }
         // Uniform is a buffer
-        case MTLArgumentTypeBuffer: 
+        case MTLBindingTypeBuffer:
         {
             ProcessBufferArgument(arg, name, index, type);
             break;
         }
         default:
-            CORE_ASSERT(true, "Argument type not supported!");
+            CORE_ASSERT(true, "Metal argument type not supported!");
     }
 }
 
@@ -460,17 +459,19 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     // Obtain shader reflection information
     NSError *error = nil;
     MTLRenderPipelineReflection *reflection = nil;
+    MTLPipelineOption option = MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo;
+    
     [device
         newRenderPipelineStateWithDescriptor:pipelineDescriptor
-        options:MTLPipelineOptionArgumentInfo
+        options:option
         reflection:&reflection
         error:&error];
     CORE_ASSERT(!error, "Error creating a reflection of the shader program!");
     
     // Process vertex and fragment uniforms
-    for (MTLArgument *argument in reflection.vertexArguments)
+    for (id<MTLBinding> argument in reflection.vertexBindings)
         ProcessShaderArgument(reinterpret_cast<void*>(argument), ShaderType::VERTEX);
-    for (MTLArgument *argument in reflection.fragmentArguments)
+    for (id<MTLBinding> argument in reflection.fragmentBindings)
         ProcessShaderArgument(reinterpret_cast<void*>(argument), ShaderType::FRAGMENT);
 }
 

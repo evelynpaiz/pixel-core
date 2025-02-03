@@ -10,22 +10,11 @@
  * Define a layer for a 3D viewer.
  */
 Simple::Simple(int width, int height)
-    : Layer("Test Layer"), m_Viewport(width, height)
+    : Layer("Metal Testing Layer")
 {
     // Define the rendering camera
     m_Camera = std::make_shared<PerspectiveCamera>(width, height);
     m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
-    
-    // Define light sources
-    auto directional = std::make_shared<DirectionalLight>(width, height,
-                                                          glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-    directional->SetDiffuseStrength(0.6f);
-    directional->SetSpecularStrength(0.4f);
-    m_Lights.Add("Directional", directional);
-
-    /*
-     m_Lights.Create<EnvironmentLight>("Environment", width, height);
-     */
 }
 
 /**
@@ -33,12 +22,12 @@ Simple::Simple(int width, int height)
  */
 void Simple::OnAttach()
 {
-    // Define the models
+    // Define the material(s)
     auto& materialLibrary = Renderer::GetMaterialLibrary();
     auto simple = materialLibrary.Create<SimpleMaterial>("Simple");
-    //auto phong = materialLibrary.Create<PhongColorMaterial>("Phong");
     
-    auto cube = utils::Geometry::ModelCube<GeoVertexData<glm::vec4, glm::vec2>>();
+    // Define the model(s)
+    auto cube = utils::Geometry::ModelCube<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
     cube->SetScale(glm::vec3(2.0f));
     cube->SetMaterial(simple);
     m_Models.Add("Cube", cube);
@@ -49,26 +38,6 @@ void Simple::OnAttach()
     plane->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
     plane->SetMaterial(simple);
     m_Models.Add("Plane", plane);
-    
-    //phong->DefineLightProperties(m_Lights);
-    
-    /*
-    TextureSpecification spec;
-    spec.Type = TextureType::TEXTURE2D;
-    spec.Format = TextureFormat::RGB8;
-    spec.SetTextureSize(800, 400);
-    
-    TextureSpecification depth;
-    depth.Type = TextureType::TEXTURE2D;
-    depth.Format = TextureFormat::DEPTH16;
-    depth.SetTextureSize(800, 400);
-    
-    FrameBufferSpecification fbSpec;
-    fbSpec.SetFrameBufferSize(800, 400);
-    fbSpec.AttachmentsSpec = { spec, depth };
-    
-    m_Framebuffer = FrameBuffer::Create(fbSpec);
-     */
 }
 
 /**
@@ -78,62 +47,38 @@ void Simple::OnAttach()
  */
 void Simple::OnUpdate(Timestep ts)
 {
-    auto& material = Renderer::GetMaterialLibrary().Get("Simple");
-    std::shared_ptr<SimpleMaterial> simpleMaterial =
-        std::dynamic_pointer_cast<SimpleMaterial>(material);
-    auto& depth = Renderer::GetMaterialLibrary().Get("Depth");
+    // Define rendering texture(s)
+    static auto &white = utils::textures::WhiteTexture2D();
+    static auto container = Texture2D::CreateFromFile("Resources/textures/container.jpg");
     
-    auto light = std::dynamic_pointer_cast<Light>(m_Lights.Get("Directional"));
+    // Get the material(s)
+    auto material = std::dynamic_pointer_cast<SimpleMaterial>(
+                      Renderer::GetMaterialLibrary().Get("Simple"));
     
-    auto& plane = m_Models.Get("Plane");
+    // Get the model(s)
     auto& cube = m_Models.Get("Cube");
-    
-    static auto texture1 = Texture2D::CreateFromFile("Resources/textures/diffuse.jpeg");
-    auto texture2 = utils::textures::WhiteTexture2D();
+    auto& plane = m_Models.Get("Plane");
     
     // Reset rendering statistics
-    /*
     Renderer::ResetStats();
     
-    RendererCommand::SetRenderTarget(light->GetFramebuffer());
-    light->GetFramebuffer()->Bind();
-    Renderer::BeginScene(light->GetShadowCamera());
-    
-    cube->SetMaterial(depth);
-    cube->DrawModel();
-    
-    plane->SetMaterial(depth);
-    plane->DrawModel();
-    
-    Renderer::EndScene();
-    light->GetFramebuffer()->Unbind();
-    */
-    
-    // Clear buffer
-    RendererCommand::SetRenderTarget(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f),
+    // Set the target to render into
+    RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
+    RendererCommand::SetRenderTarget(glm::vec4(0.93f, 0.93f, 0.93f, 1.0f),
                                      {true, true, false});
-    
-    //m_Viewport.GetFramebuffer()->Bind();
-    //RendererCommand::SetRenderTarget(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f),
-    //                                 m_Viewport.GetFramebuffer());
-    // Render
+    // Render the scene
     Renderer::BeginScene(m_Camera);
     
-    simpleMaterial->SetColor(glm::vec4(1.0f));
-    simpleMaterial->SetTextureMap(texture1);
-    plane->SetMaterial(material);
-    plane->DrawModel();
-    
-    simpleMaterial->SetColor(glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
-    simpleMaterial->SetTextureMap(texture2);
-    cube->SetMaterial(material);
+    material->SetColor(glm::vec4(0.3f, 0.0f, 0.7f, 1.0f));
+    material->SetTextureMap(white);
     cube->DrawModel();
     
-    Renderer::EndScene();
-    //m_Viewport.GetFramebuffer()->Unbind();
+    material->SetColor(glm::vec4(1.0f));
+    material->SetTextureMap(container);
+    plane->DrawModel();
     
-    //m_Viewport.Render();
-
+    Renderer::EndScene();
+    
     // Update camera
     m_Camera->OnUpdate(ts);
 }
@@ -163,5 +108,8 @@ void Simple::OnEvent(Event &e)
  */
 bool Simple::OnWindowResize(WindowResizeEvent &e)
 {
+    // Update the camera
+    m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
+    
     return true;
 }
