@@ -100,6 +100,7 @@ void MetalContext::Init()
     CreateDepthStencilState();
     // Clear the buffer for the next frame
     SetRenderTarget(glm::vec4(0.0f), RenderTargetBuffers());
+    SwapBuffers();
 }
 
 /**
@@ -243,10 +244,26 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
         descriptor.depthAttachment.texture = attachment;
     }
     
-    // Create the command buffer and encoder
-    m_State->RenderState.CommandBuffer = [m_State->DeviceResources.RenderQueue commandBuffer];
+    // Create a new command buffer if necessary
+    if (!m_State->RenderState.CommandBuffer)
+        m_State->RenderState.CommandBuffer = [m_State->DeviceResources.RenderQueue commandBuffer];
+    // Define a new command encoder
     m_State->RenderState.Encoder = [m_State->RenderState.CommandBuffer
                                         renderCommandEncoderWithDescriptor:descriptor];
+}
+
+/**
+ * Finalizes the current rendering pass by ending encoding.
+ */
+void MetalContext::EndEncoding()
+{
+    // Verify that the data has not been rendered yet
+    if (!m_State->RenderState.Encoder)
+        return;
+    
+    // End encoding in the command encoder
+    [m_State->RenderState.Encoder endEncoding];
+    m_State->RenderState.Encoder = nil;
 }
 
 /**
@@ -254,13 +271,12 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
  */
 void MetalContext::SwapBuffers()
 {
-    // End encoding in the command encoder
-    [m_State->RenderState.Encoder endEncoding];
+    // finalize the encoding if necessary
+    EndEncoding();
     
     // Present the drawable to the screen. This schedules the presentation
     // of the current framebuffer to the display
     [m_State->RenderState.CommandBuffer presentDrawable:m_State->ScreenTarget.Drawable];
-    
     // Commit the command buffer. This submits all the commands in the buffer
     // for execution by the GPU
     [m_State->RenderState.CommandBuffer commit];
@@ -269,6 +285,7 @@ void MetalContext::SwapBuffers()
     m_State->ScreenTarget.Drawable = [m_State->ScreenTarget.SwapChain nextDrawable];
     m_State->ScreenTarget.ColorAttachment = m_State->ScreenTarget.Drawable.texture;
     
+    m_State->RenderState.CommandBuffer = nil;
 }
 
 /**

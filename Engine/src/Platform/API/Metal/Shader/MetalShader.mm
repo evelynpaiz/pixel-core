@@ -459,7 +459,7 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     // Obtain shader reflection information
     NSError *error = nil;
     MTLRenderPipelineReflection *reflection = nil;
-    MTLPipelineOption option = MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo;
+    MTLPipelineOption option = MTLPipelineOptionBindingInfo | MTLPipelineOptionBufferTypeInfo;
     
     [device
         newRenderPipelineStateWithDescriptor:pipelineDescriptor

@@ -40,12 +40,16 @@ public:
     void SetVerticalSync(bool enabled) override;
     void SetDepthStencilState();
     
-    // Draw
+    // Render
     // ----------------------------------------
     void SetRenderTarget(const glm::vec4& color,
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
     
+    void EndEncoding();
+    
+    // Draw
+    // ----------------------------------------
     void SwapBuffers() override;
     
 private:

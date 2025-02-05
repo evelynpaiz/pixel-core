@@ -31,6 +31,11 @@ public:
                                 const std::shared_ptr<FrameBuffer>& framebuffer,
                                 const std::optional<RenderTargetBuffers>& targets = std::nullopt);
     
+    static void EndRenderPass();
+    
+    // Draw
+    // ----------------------------------------
+    
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const PrimitiveType &primitive = PrimitiveType::Triangle);
     

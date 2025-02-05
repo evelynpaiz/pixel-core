@@ -28,6 +28,8 @@ private:
     ///< Set of objects in the scene.
     ModelLibrary m_Models;
     
+    std::shared_ptr<FrameBuffer> m_Framebuffer;
+    
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:

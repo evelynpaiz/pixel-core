@@ -72,6 +72,14 @@ void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
 }
 
 /**
+ * Finalize the current rendering pass.
+ */
+void RendererCommand::EndRenderPass()
+{
+    s_API->EndRenderPass();
+}
+
+/**
  * Set the viewport for rendering.
  *
  * @param x The x-coordinate of the lower-left corner of the viewport.

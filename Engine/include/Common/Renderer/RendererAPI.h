@@ -55,6 +55,8 @@ public:
                                  const RenderTargetBuffers& targets,
                                  const std::shared_ptr<FrameBuffer>& framebuffer) = 0;
     
+    virtual void EndRenderPass() = 0;
+    
     // Draw
     // ----------------------------------------
     virtual void Draw(const std::shared_ptr<Drawable>& drawable,

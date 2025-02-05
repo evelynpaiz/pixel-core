@@ -48,13 +48,6 @@ private:
     // Reset
     // ----------------------------------------
     void Invalidate() override;
-
-    // Framebuffer variables
-    // ----------------------------------------
-private:
-    ///< Holds the core Metal objects required for the framebuffer.
-    struct FrameState;
-    std::shared_ptr<FrameState> m_State;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

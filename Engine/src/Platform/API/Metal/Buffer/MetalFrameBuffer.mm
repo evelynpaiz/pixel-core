@@ -8,17 +8,6 @@
 #include <Metal/Metal.h>
 
 /**
- * Holds the core Metal objects required for the framebuffer usage.
- */
-struct MetalFrameBuffer::FrameState
-{
-    ///< The command buffer holding the rendering commands.
-    id<MTLCommandBuffer> CommandBuffer;
-    ///< The render command encoder to encode rendering commands into the buffer.
-    id<MTLRenderCommandEncoder> Encoder;
-};
-
-/**
  * Generate a framebuffer.
  *
  * @param spec Framebuffer specifications.

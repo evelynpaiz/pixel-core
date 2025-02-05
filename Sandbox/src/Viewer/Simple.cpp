@@ -33,11 +33,18 @@ void Simple::OnAttach()
     m_Models.Add("Cube", cube);
     
     auto plane = utils::Geometry::ModelPlane<GeoVertexData<glm::vec4, glm::vec2>>();
-    plane->SetPosition(glm::vec3(0.0f, -1.5f, 0.0f));
-    plane->SetScale(glm::vec3(10.0f));
-    plane->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+    plane->SetScale(glm::vec3(2.0f));
     plane->SetMaterial(simple);
     m_Models.Add("Plane", plane);
+    
+    // Define the framebuffer(s)
+    FrameBufferSpecification spec;
+    spec.SetFrameBufferSize(m_Camera->GetWidth(), m_Camera->GetHeight());
+    spec.AttachmentsSpec = {
+        { TextureType::TEXTURE2D, TextureFormat::RGB8 },
+        { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
+    };
+    m_Framebuffer = FrameBuffer::Create(spec);
 }
 
 /**
@@ -62,23 +69,33 @@ void Simple::OnUpdate(Timestep ts)
     // Reset rendering statistics
     Renderer::ResetStats();
     
+    // -----------------------
     // Set the target to render into
-    RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
-    RendererCommand::SetRenderTarget(glm::vec4(0.93f, 0.93f, 0.93f, 1.0f),
-                                     {true, true, false});
+    m_Framebuffer->Bind();
+    RendererCommand::SetRenderTarget(glm::vec4(0.93f, 0.93f, 0.93f, 1.0f), m_Framebuffer);
+    
     // Render the scene
     Renderer::BeginScene(m_Camera);
-    
-    material->SetColor(glm::vec4(0.3f, 0.0f, 0.7f, 1.0f));
-    material->SetTextureMap(white);
-    cube->DrawModel();
-    
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(container);
-    plane->DrawModel();
+    cube->DrawModel();
+    Renderer::EndScene();
+
+    m_Framebuffer->Unbind();
     
+    // -----------------------
+    RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
+    // Set the target to render into
+    RendererCommand::SetRenderTarget({true, false, false});
+    
+    // Render the scene
+    Renderer::BeginScene();
+    material->SetColor(glm::vec4(1.0f));
+    material->SetTextureMap(m_Framebuffer->GetColorAttachment(0));
+    plane->DrawModel();
     Renderer::EndScene();
     
+    // -----------------------
     // Update camera
     m_Camera->OnUpdate(ts);
 }
@@ -110,6 +127,6 @@ bool Simple::OnWindowResize(WindowResizeEvent &e)
 {
     // Update the camera
     m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
-    
+    m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
     return true;
 }

@@ -153,7 +153,8 @@ void MetalTexture::MTLDefineTexture(const TextureSpecification& spec,
         : 1;
     
     // Set the texture's storage and usage modes
-    descriptor.storageMode = MTLStorageModeShared;
+    descriptor.storageMode = utils::textures::IsDepthFormat(spec.Format) ?
+                             MTLStorageModePrivate : MTLStorageModeShared;
     descriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite |
                        MTLTextureUsageRenderTarget;
     

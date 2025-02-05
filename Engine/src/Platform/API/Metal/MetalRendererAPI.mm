@@ -73,6 +73,14 @@ void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
 }
 
 /**
+ * Finalize the current rendering pass.
+ */
+void MetalRendererAPI::EndRenderPass()
+{
+    m_Context->EndEncoding();
+}
+
+/**
  * Renders primitives from a drawable object using indexed drawing.
  *
  * @param drawable The drawable object containing the vertex and index buffers for rendering.

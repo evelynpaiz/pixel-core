@@ -27,6 +27,10 @@ public:
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
+    void EndRenderPass() override {};
+    
+    // Draw
+    // ----------------------------------------
     void Draw(const std::shared_ptr<Drawable>& drawable,
               const PrimitiveType &primitive = PrimitiveType::Triangle) override;
     
