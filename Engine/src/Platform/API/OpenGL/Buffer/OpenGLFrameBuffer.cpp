@@ -85,7 +85,7 @@ std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index)
 void OpenGLFrameBuffer::Bind() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-    glViewport(0, 0, m_Spec.Width, m_Spec.Height > 0 ? m_Spec.Height : 1);
+    FrameBuffer::Bind();
 }
 
 /**
@@ -98,7 +98,7 @@ void OpenGLFrameBuffer::BindForDrawAttachment(const unsigned int index) const
     CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
-    glViewport(0, 0, m_Spec.Width, m_Spec.Height > 0 ? m_Spec.Height : 1);
+    FrameBuffer::Bind();
     glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
 }
 
@@ -131,7 +131,7 @@ void OpenGLFrameBuffer::BindForDrawAttachmentCube(const unsigned int index,
     }
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
-    glViewport(0, 0, m_Spec.Width, m_Spec.Height > 0 ? m_Spec.Height : 1);
+    FrameBuffer::Bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
                            OpenGLTexture::GLGetTextureID(m_ColorAttachments[index]),
                            level);

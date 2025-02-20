@@ -34,6 +34,9 @@ public:
     static void SetWindowHints();
     virtual void SetVerticalSync(bool enabled) = 0;
     
+    virtual void UpdateScreenbufferSize(unsigned int width, unsigned int height)
+    {}
+    
     // Buffers
     // ----------------------------------------
     /// @brief Pure virtual function for swapping front and back buffers.

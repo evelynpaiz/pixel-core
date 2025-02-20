@@ -10,6 +10,7 @@
 #include "Platform/Metal/Buffer/MetalFrameBuffer.h"
 
 #include "Common/Renderer/Renderer.h"
+#include "Common/Renderer/RendererCommand.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -25,19 +26,14 @@
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
 {
     CREATE_RENDERER_OBJECT(FrameBuffer, spec)
-    
-    /*
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            return nullptr;
-        case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLFrameBuffer>(spec);
-    }
-    CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
-     */
+}
+
+/**
+ * Bind the framebuffer.
+ */
+void FrameBuffer::Bind() const
+{
+    RendererCommand::SetViewport(0, 0, m_Spec.Width, m_Spec.Height > 0 ? m_Spec.Height : 1);
 }
 
 /**
@@ -238,11 +234,6 @@ void FrameBuffer::DefineAttachments()
  */
 void FrameBuffer::ReleaseFramebuffer()
 {
-    if (m_DepthAttachment)
-        m_DepthAttachment->ReleaseTexture();
-    for (auto& attachment : m_ColorAttachments)
-        attachment->ReleaseTexture();
-    
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;
 }

@@ -115,8 +115,11 @@ void MetalRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
  * @param width The width of the viewport.
  * @param height The height of the viewport.
  */
-void MetalRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
-{}
+void MetalRendererAPI::SetViewport(unsigned int x, unsigned int y,
+                                   unsigned int width, unsigned int height)
+{
+    m_Context->UpdateViewport(x, y, width, height);
+}
 
 /**
  * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
@@ -129,5 +132,5 @@ void MetalRendererAPI::SetDepthTesting(bool enabled)
         return;
     
     // Defines a depth stencil state into the current command encoder
-    m_Context->SetDepthStencilState();
+    m_Context->EnableDepthStencilState();
 }

@@ -226,6 +226,14 @@ void Window::OnUpdate() const
 }
 
 /**
+ * Update the size information when the window is resized.
+ */
+void Window::OnResize(unsigned int width, unsigned int height) const
+{
+    m_Context->UpdateScreenbufferSize(width, height);
+}
+
+/**
  * Define if the window's buffer swap will be synchronized with the vertical
  * refresh rate of the monitor.
  *
@@ -282,7 +290,9 @@ void Window::Init()
     glfwSetScrollCallback(m_Window, MouseScrolledCallback);
     glfwSetCursorPosCallback(m_Window, MouseMovedCallback);
     
+    // Retrieve the size of the window in pixel size and save the information
     glfwGetFramebufferSize(m_Window, &m_Data.Width, &m_Data.Height);
+    m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
     
     // Show window created message
     CORE_INFO("Creating '{0}' window ({1} x {2})", m_Data.Title,

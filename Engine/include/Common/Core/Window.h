@@ -53,9 +53,10 @@ public:
     Window(const std::string& title, const int width, const int height);
     ~Window();
     
-    // Update
+    // Handler(s)
     // ----------------------------------------
     void OnUpdate() const;
+    void OnResize(unsigned int width, unsigned int height) const;
     
     // Getter(s)
     // ----------------------------------------

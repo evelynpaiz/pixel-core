@@ -40,6 +40,9 @@ struct MetalRenderState
     id<MTLRenderPipelineState> RenderPipelineState;
     ///< The current depth-stencil state.
     id<MTLDepthStencilState> DepthStencilState;
+    
+    ///< Viewport desccriptor.
+    MTLViewport Viewport;
 };
 
 /**
@@ -165,14 +168,51 @@ void MetalContext::SetVerticalSync(bool enabled)
 }
 
 /**
+ * Update metal layer size.
+ */
+void MetalContext::UpdateScreenbufferSize(unsigned int width, unsigned int height)
+{
+    // Ensure the swap chain is valid
+    if (!m_State->ScreenTarget.SwapChain)
+        return;
+    
+    // Update the Metal layer size to match the new window size
+    m_State->ScreenTarget.SwapChain.drawableSize = CGSizeMake(width, height);
+}
+
+/**
+ * Set the viewport for rendering.
+ *
+ * @param x The x-coordinate of the lower-left corner of the viewport.
+ * @param y The y-coordinate of the lower-left corner of the viewport.
+ * @param width The width of the viewport.
+ * @param height The height of the viewport.
+ */
+void MetalContext::UpdateViewport(unsigned int x, unsigned int y,
+                                  unsigned int width, unsigned int height)
+{
+    auto drawableSize = m_State->ScreenTarget.SwapChain.drawableSize;
+    
+    m_State->RenderState.Viewport.originX = static_cast<double>(x);
+    m_State->RenderState.Viewport.originY = static_cast<double>(drawableSize.height - (y + height));
+    m_State->RenderState.Viewport.width = static_cast<double>(width);
+    m_State->RenderState.Viewport.height = static_cast<double>(height);
+    
+    m_State->RenderState.Viewport.znear = 0.0f;
+    m_State->RenderState.Viewport.zfar = 1.0f;
+    
+    if (m_State->RenderState.Encoder)
+        [m_State->RenderState.Encoder setViewport:m_State->RenderState.Viewport];
+}
+
+/**
  * Sets the active depth-stencil state for rendering.
  */
-void MetalContext::SetDepthStencilState()
+void MetalContext::EnableDepthStencilState()
 {
     [m_State->RenderState.Encoder
         setDepthStencilState:m_State->RenderState.DepthStencilState];
 }
-
 /**
  * Sets the render target and configures the render pass descriptor.
  *
@@ -187,6 +227,12 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
 {
     // Determine the render target (screen or framebuffer)
     bool isScreenTarget = !framebuffer;
+    // If rendering into the screen buffer, get the next drawable
+    if (isScreenTarget)
+    {
+        m_State->ScreenTarget.Drawable = [m_State->ScreenTarget.SwapChain nextDrawable];
+        m_State->ScreenTarget.ColorAttachment = m_State->ScreenTarget.Drawable.texture;
+    }
     
     // Set the clear color
     MTLClearColor clearColor = MTLClearColorMake(color.r, color.g, color.b, color.a);
@@ -220,9 +266,8 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
     // Configure depth attachment (if depth buffer is active)
     if (targets.depthBufferActive)
     {
-        // Create the depth texture for the screen target if it doesn't exist
-        if (isScreenTarget && !m_State->ScreenTarget.DepthAttachment)
-            CreateScreenDepthTexture();
+        // Create the depth texture for the screen target if it doesn't exist or needs to be updated
+        CreateScreenDepthTexture();
         
         // Define the depth attachment to be used
         id<MTLTexture> attachment;
@@ -247,9 +292,12 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
     // Create a new command buffer if necessary
     if (!m_State->RenderState.CommandBuffer)
         m_State->RenderState.CommandBuffer = [m_State->DeviceResources.RenderQueue commandBuffer];
+    
     // Define a new command encoder
     m_State->RenderState.Encoder = [m_State->RenderState.CommandBuffer
                                         renderCommandEncoderWithDescriptor:descriptor];
+    // Set the viewport information
+    [m_State->RenderState.Encoder setViewport:m_State->RenderState.Viewport];
 }
 
 /**
@@ -274,18 +322,16 @@ void MetalContext::SwapBuffers()
     // finalize the encoding if necessary
     EndEncoding();
     
-    // Present the drawable to the screen. This schedules the presentation
-    // of the current framebuffer to the display
-    [m_State->RenderState.CommandBuffer presentDrawable:m_State->ScreenTarget.Drawable];
-    // Commit the command buffer. This submits all the commands in the buffer
-    // for execution by the GPU
-    [m_State->RenderState.CommandBuffer commit];
-
-    // Get the next drawable for the next frame
-    m_State->ScreenTarget.Drawable = [m_State->ScreenTarget.SwapChain nextDrawable];
-    m_State->ScreenTarget.ColorAttachment = m_State->ScreenTarget.Drawable.texture;
-    
-    m_State->RenderState.CommandBuffer = nil;
+    if (m_State->RenderState.CommandBuffer)
+    {
+        // Present the drawable to the screen. This schedules the presentation
+        // of the current framebuffer to the display
+        [m_State->RenderState.CommandBuffer presentDrawable:m_State->ScreenTarget.Drawable];
+        // Commit the command buffer. This submits all the commands in the buffer
+        // for execution by the GPU
+        [m_State->RenderState.CommandBuffer commit];
+        m_State->RenderState.CommandBuffer = nil;
+    }
 }
 
 /**
@@ -310,8 +356,6 @@ void MetalContext::InitializeMetalDeviceResources()
     
     // Create the command buffer and encoder
     m_State->RenderState.CommandBuffer = [m_State->DeviceResources.RenderQueue commandBuffer];
-    //m_State->RenderState.Encoder = [m_State->RenderState.CommandBuffer
-    //                                    renderCommandEncoderWithDescriptor:descriptor];
 }
 
 /**
@@ -331,7 +375,12 @@ void MetalContext::InitializeScreenTarget()
 
     // Set up the swap chain as the layer for the window's content view
     parentWindow.contentView.layer = m_State->ScreenTarget.SwapChain;
-    parentWindow.contentView.wantsLayer = YES;  // Ensure the content view manages a Core Animation layer
+    parentWindow.contentView.wantsLayer = YES;
+    
+    // Update the size of the screen buffer based on the windows size
+    int width, height;
+    glfwGetFramebufferSize(m_WindowHandle, &width, &height);
+    UpdateScreenbufferSize(width, height);
     
     // Get the surface to output the render result in the screen
     m_State->ScreenTarget.Drawable = [m_State->ScreenTarget.SwapChain nextDrawable];
@@ -343,6 +392,15 @@ void MetalContext::InitializeScreenTarget()
  */
 void MetalContext::CreateScreenDepthTexture()
 {
+    // Avoid unnecessary recreation
+    auto drawableSize = m_State->ScreenTarget.SwapChain.drawableSize;
+    if (m_State->ScreenTarget.DepthAttachment &&
+        m_State->ScreenTarget.DepthAttachment.width == drawableSize.width &&
+        m_State->ScreenTarget.DepthAttachment.height == drawableSize.height)
+    {
+        return;
+    }
+    
     // Define a depth texture
     MTLTextureDescriptor *descriptor = [[MTLTextureDescriptor alloc] init];
     
@@ -351,12 +409,12 @@ void MetalContext::CreateScreenDepthTexture()
     descriptor.pixelFormat = MTLPixelFormatDepth16Unorm;
     
     // Set the same texture dimensions
-    descriptor.width = m_State->ScreenTarget.ColorAttachment.width;
-    descriptor.height = m_State->ScreenTarget.ColorAttachment.height;
+    descriptor.width = drawableSize.width;
+    descriptor.height = drawableSize.height;
     
     // Set the texture's storage and usage modes
     descriptor.storageMode = MTLStorageModePrivate;
-    descriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+    descriptor.usage =  MTLTextureUsageShaderWrite | MTLTextureUsageRenderTarget;
     
     m_State->ScreenTarget.DepthAttachment = [m_State->DeviceResources.Device
                                                 newTextureWithDescriptor:descriptor];

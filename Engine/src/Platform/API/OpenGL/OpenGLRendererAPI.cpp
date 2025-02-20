@@ -86,7 +86,8 @@ void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
  * @param width The width of the viewport.
  * @param height The height of the viewport.
  */
-void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y,
+                                    unsigned int width, unsigned int height)
 {
     glViewport(x, y, width, height);
 }

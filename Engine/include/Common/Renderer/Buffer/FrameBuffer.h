@@ -124,7 +124,7 @@ public:
     
     // Usage
     // ----------------------------------------
-    virtual void Bind() const = 0;
+    virtual void Bind() const;
     virtual void BindForDrawAttachment(const unsigned int index) const = 0;
     virtual void BindForReadAttachment(const unsigned int index) const = 0;
     virtual void BindForDrawAttachmentCube(const unsigned int index, const unsigned int face,

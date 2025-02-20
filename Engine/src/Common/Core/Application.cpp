@@ -132,6 +132,7 @@ void Application::OnEvent(Event& e)
  */
 bool Application::OnWindowResize(WindowResizeEvent &e)
 {
+    m_Window->OnResize(e.GetWidth(), e.GetHeight());
     return false;
 }
 

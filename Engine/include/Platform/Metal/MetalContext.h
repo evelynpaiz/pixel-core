@@ -38,14 +38,18 @@ public:
     // ----------------------------------------
     static void SetWindowHints();
     void SetVerticalSync(bool enabled) override;
-    void SetDepthStencilState();
+    
+    void UpdateScreenbufferSize(unsigned int width, unsigned int height) override;
+    void UpdateViewport(unsigned int x, unsigned int y,
+                        unsigned int width, unsigned int height);
+    
+    void EnableDepthStencilState();
     
     // Render
     // ----------------------------------------
     void SetRenderTarget(const glm::vec4& color,
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
-    
     void EndEncoding();
     
     // Draw

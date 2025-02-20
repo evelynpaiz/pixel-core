@@ -84,8 +84,8 @@ void Simple::OnUpdate(Timestep ts)
     m_Framebuffer->Unbind();
     
     // -----------------------
+    
     RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
-    // Set the target to render into
     RendererCommand::SetRenderTarget({true, false, false});
     
     // Render the scene

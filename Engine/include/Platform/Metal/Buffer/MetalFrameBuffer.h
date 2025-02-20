@@ -16,7 +16,6 @@ public:
     
     // Usage
     // ----------------------------------------
-    void Bind() const override {};
     void BindForDrawAttachment(const unsigned int index) const override {};
     void BindForReadAttachment(const unsigned int index) const override {};
     void BindForDrawAttachmentCube(const unsigned int index, const unsigned int face,
