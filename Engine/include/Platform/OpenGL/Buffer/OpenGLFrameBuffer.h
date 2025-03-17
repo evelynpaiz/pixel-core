@@ -12,7 +12,7 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    std::vector<char> GetAttachmentData(const unsigned int index) override;
+    std::vector<char> GetAttachmentData(const unsigned int index) const override;
     
     // Usage
     // ----------------------------------------
@@ -37,11 +37,6 @@ public:
                                      const std::shared_ptr<OpenGLFrameBuffer>& dst,
                                      const unsigned int srcIndex, const unsigned int dstIndex,
                                      const TextureFilter& filter = TextureFilter::Nearest);
-    
-    // Save
-    // ----------------------------------------
-    void SaveAttachment(const unsigned int index, 
-                        const std::filesystem::path& path) override;
     
 private:
     // Destructor

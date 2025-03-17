@@ -8,6 +8,7 @@
 
 #include "Common/Renderer/Texture/Texture.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
+#include "Platform/Metal/Buffer/MetalFrameBuffer.h"
 
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
@@ -251,8 +252,8 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
         else
         {
             // Get the color attachment texture from the framebuffer
-            std::shared_ptr<MetalTexture> framebufferAttachment =
-                std::dynamic_pointer_cast<MetalTexture>(framebuffer->GetColorAttachment((unsigned int)i));
+            auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(
+                 framebuffer->GetColorAttachment((unsigned int)i));
             
             attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
         }
@@ -322,16 +323,18 @@ void MetalContext::SwapBuffers()
     // finalize the encoding if necessary
     EndEncoding();
     
-    if (m_State->RenderState.CommandBuffer)
-    {
-        // Present the drawable to the screen. This schedules the presentation
-        // of the current framebuffer to the display
-        [m_State->RenderState.CommandBuffer presentDrawable:m_State->ScreenTarget.Drawable];
-        // Commit the command buffer. This submits all the commands in the buffer
-        // for execution by the GPU
-        [m_State->RenderState.CommandBuffer commit];
-        m_State->RenderState.CommandBuffer = nil;
-    }
+    if (!m_State->RenderState.CommandBuffer)
+        return;
+    
+    // Present the drawable to the screen. This schedules the presentation
+    // of the current framebuffer to the display
+    [m_State->RenderState.CommandBuffer presentDrawable:m_State->ScreenTarget.Drawable];
+    
+    // Commit the command buffer (this submits all the commands to the GPU)
+    [m_State->RenderState.CommandBuffer commit];
+            
+    // Nullify the command buffer after committing to prepare for the next frame
+    m_State->RenderState.CommandBuffer = nil;
 }
 
 /**

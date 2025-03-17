@@ -42,32 +42,30 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
  *
  * @return A vector containing the pixel data of the color attachment, with each channel.
  */
-std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index)
+std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index) const
 {
     // Verify the index for the attachment
     CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
-    auto& format = m_ColorAttachmentsSpec[index].Format;
-    int channels = utils::textures::GetChannelCount(format);
+    // Get the specifications from the attachment
+    TextureSpecification spec = m_ColorAttachments[index]->GetSpecification();
+    int channels = m_ColorAttachments[index]->GetAlignedChannels();
+    int stride = m_ColorAttachments[index]->GetStride();
     
-    // Ensure numChannels is within a valid range
-    if (channels < 1 || channels > 4)
-        CORE_ASSERT(false, "Invalid number of channels in the color attachment!");
+    // Create a storage buffer for the texture data
+    int imageSize = stride * (spec.Height > 0 ? spec.Height : 1.0f);
+    std::vector<char> buffer(imageSize);
     
-    // Define the data container based on the size of the data
-    const int bytes = utils::textures::GetBytesPerChannel(format);
-    int stride = bytes * channels * m_Spec.Width;
-    channels += (stride % 4) ? (4 - stride % 4) : 0;
-    int bufferSize = stride * (m_Spec.Height > 0 ? m_Spec.Height : 1.0f);
-    std::vector<char> buffer(bufferSize);
-    
+    // Bind the framebuffer and write the data into the storage buffer
     BindForReadAttachment(index);
     glPixelStorei(GL_PACK_ALIGNMENT, channels);
     
-    glReadPixels(0, 0, m_Spec.Width, (m_Spec.Height > 0 ? m_Spec.Height : 1.0f),
-                 utils::textures::gl::ToOpenGLBaseFormat(format),
-                 utils::textures::gl::ToOpenGLDataFormat(format),
+    glReadPixels(0, 0, spec.Width, (spec.Height > 0 ? spec.Height : 1.0f),
+                 utils::textures::gl::ToOpenGLBaseFormat(spec.Format),
+                 utils::textures::gl::ToOpenGLDataFormat(spec.Format),
                  buffer.data());
+    
+    return buffer;
     
     // TODO: Add support for all texture types (currently only supports 1D and 2D).
     // consider using maybe:
@@ -75,8 +73,6 @@ std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index)
     //              utils::OpenGL::TextureFormatToOpenGLBaseType(format),
     //              utils::OpenGL::TextureFormatToOpenGLDataType(format),
     //              buffer.data());
-    
-    return buffer;
 }
 
 /**
@@ -314,56 +310,4 @@ void OpenGLFrameBuffer::ReleaseFramebuffer()
 {
     glDeleteFramebuffers(1, &m_ID);
     FrameBuffer::ReleaseFramebuffer();
-}
-
-/**
- * Save a color attachment into an output file.
- *
- * Reference:
- * https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/
- *
- * @param index Index to the color attachment to be saved.
- * @param path File path.
- */
-void OpenGLFrameBuffer::SaveAttachment(const unsigned int index,
-                                       const std::filesystem::path &path)
-{
-    auto& format = m_ColorAttachmentsSpec[index].Format;
-    int channels = utils::textures::GetChannelCount(format);
-    
-    std::string extension = path.extension().string();
-    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-    
-    // Ensure the number of channel is in a valid range
-    if (channels < 1 || channels > 4)
-        CORE_ASSERT(false, "Invalid number of channels in the color attachment!");
-    
-    // Define the buffer to allocate the attachment data
-    int stride = channels * m_Spec.Width;
-    channels += (stride % 4) ? (4 - stride % 4) : 0;
-    int bufferSize = stride * m_Spec.Height;
-    void* buffer = utils::textures::AllocateTextureData(format, bufferSize);
-    
-    // Read the pixel data
-    BindForReadAttachment(index);
-    glPixelStorei(GL_PACK_ALIGNMENT, channels);
-    glReadPixels(0, 0, m_Spec.Width, m_Spec.Height,
-                 utils::textures::gl::ToOpenGLBaseFormat(format),
-                 utils::textures::gl::ToOpenGLDataFormat(format),
-                 buffer);
-
-    // TODO: support more file formats
-    // Save data into the file
-    stbi_flip_vertically_on_write(true);
-    
-    if (extension == ".png")
-        stbi_write_png(path.string().c_str(), m_Spec.Width, m_Spec.Height, channels, buffer, stride);
-    else if (extension == ".jpg" || extension == ".jpeg")
-        stbi_write_jpg(path.string().c_str(), m_Spec.Width, m_Spec.Height, channels, buffer, 100);  // Quality parameter (0-100)
-    else if (extension == ".hdr")
-        stbi_write_hdr(path.string().c_str(), m_Spec.Width, m_Spec.Height, channels, (float*)buffer);
-    else
-        CORE_WARN("Unsupported file format!");
-    
-    utils::textures::FreeTextureData(format, buffer);
 }

@@ -41,7 +41,7 @@ void Simple::OnAttach()
     FrameBufferSpecification spec;
     spec.SetFrameBufferSize(m_Camera->GetWidth(), m_Camera->GetHeight());
     spec.AttachmentsSpec = {
-        { TextureType::TEXTURE2D, TextureFormat::RGB8 },
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
         { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
     };
     m_Framebuffer = FrameBuffer::Create(spec);

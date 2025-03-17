@@ -29,8 +29,10 @@ struct TextureSpecification
     /// @param filter The texture sampling filter.
     TextureSpecification(const TextureFormat& format, const TextureFilter& filter) :
         Format(format), Filter(filter)
-    { }
+    {}
     
+    // Setter(s)
+    // ----------------------------------------
     /// @brief Define the size of the texture (in pixels).
     /// @param width The texture size (width).
     /// @param height The texture size (height)
@@ -116,6 +118,15 @@ public:
     /// @brief Checks if the texture data has been successfully loaded.
     /// @return True if the texture data is loaded, false otherwise.
     bool IsLoaded() const { return m_IsLoaded; }
+    
+    virtual int GetChannels() const;
+    int GetAlignedChannels() const;
+    int GetStride() const;
+    
+    // Update
+    // ----------------------------------------
+    void Update(const unsigned int width, const unsigned int height,
+                const unsigned int channels, const std::string& extension = "");
     
     // Friend class definition(s)
     // ----------------------------------------
@@ -212,51 +223,6 @@ struct TextureHelper
         texture = TextureType::CreateFromData(whitePixel, spec);\
         return texture;\
     }
-
-/**
- * Update the specifications of a texture resource based on width, height, channels, and extension.
- *
- * This function updates the specifications of a texture resource (`TextureSpecification`) based on the provided
- * width, height, channels, and extension information. It determines the texture format, wrap mode, filter mode,
- * and whether mipmaps are enabled based on the input data.
- *
- * @param spec The texture specification to be updated.
- * @param width The width of the texture.
- * @param height The height of the texture.
- * @param channels The number of color channels in the texture.
- * @param extension The file extension (e.g., ".hdr") to determine if the texture is HDR.
- */
-inline void UpdateSpecsTextureResource(TextureSpecification& spec, const unsigned int width,
-                                       const unsigned int height, const unsigned int channels,
-                                       const std::string& extension = "")
-{
-    // Update width and height
-    spec.Width = width;
-    spec.Height = height;
-    
-    // Determine if the texture is HDR based on the file extension
-    bool isHDR = (extension == ".hdr");
-    
-    // Define the format of the data to be used
-    spec.Format = TextureFormat::None;
-    if (!isHDR && channels == 4)
-        spec.Format = TextureFormat::RGBA8;
-    else if (!isHDR && channels == 3)
-        spec.Format = TextureFormat::RGB8;
-    else if (isHDR && channels == 3)
-        spec.Format = TextureFormat::RGB16F;
-    
-    // Set default wrap mode based on HDR status
-    if (spec.Wrap == TextureWrap::None)
-        spec.Wrap = isHDR ? TextureWrap::ClampToEdge : TextureWrap::Repeat;
-    
-    // Set default filter mode
-    if (spec.Filter == TextureFilter::None)
-        spec.Filter = TextureFilter::Linear;
-    
-    // Enable mipmaps by default
-    spec.MipMaps = true;
-}
 
 } // namespace textures
 } // namespace utils

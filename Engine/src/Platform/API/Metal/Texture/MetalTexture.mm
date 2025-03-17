@@ -51,6 +51,21 @@ void* MetalTexture::MTLGetSampler() const
 }
 
 /**
+ * Retrieves the number of channels in the texture.
+ *
+ * @returns The number of channels.
+ */
+int MetalTexture::MTLGetChannels(TextureFormat format) const
+{
+    // Get the number of channels in the texture
+    int channels = utils::textures::mtl::GetMetalChannelCount(format);
+    CORE_ASSERT(channels >= 1 && channels <= 4, "Invalid number of channels in the attachment!");
+    
+    // TODO: Verify support for depth attachments (channels = 0 for now)
+    return channels;
+}
+
+/**
  * Creates and configures a Metal texture.
  *
  * @param data The texture data.
@@ -79,10 +94,11 @@ void MetalTexture::MTLCreateTexture(const void *data,
     MTLRegion region = utils::textures::mtl::GetMetalRegion(spec);
 
     // Calculate the number of channels, size per channel, and stride
-    const size_t channels = utils::textures::mtl::GetMetalChannelCount(spec.Format);
+    const size_t channels = MTLGetChannels(spec.Format);
     const size_t bytes = utils::textures::GetBytesPerChannel(spec.Format);
     const size_t stride = spec.Width * channels * bytes;
-    const size_t imageSize = spec.Width * spec.Height * channels * bytes;
+    
+    const size_t imageSize = stride * (spec.Height > 0 ? spec.Height : 1.0f);
 
     // Pointer to hold the data that will be uploaded to the GPU
     const void* uploadData = data;
@@ -91,8 +107,7 @@ void MetalTexture::MTLCreateTexture(const void *data,
     if (utils::textures::IsRGBFormat(spec.Format))
     {
         // Allocate memory for the converted RGBA data
-        size_t size = bytes * channels * spec.Width * spec.Height;
-        void* rgba = malloc(size);
+        void* rgba = malloc(imageSize);
 
         // Convert the RGB data to RGBA
         ConvertRGBToRGBA(data, rgba, spec);

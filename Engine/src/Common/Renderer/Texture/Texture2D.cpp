@@ -122,7 +122,7 @@ void Texture2D::LoadFromFile(const std::filesystem::path& filePath)
     }
     
     // Save the corresponding image information
-    utils::textures::UpdateSpecsTextureResource(m_Spec, width, height, channels, extension);
+    Update(width, height, channels, extension);
     CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + m_Path.filename().string() + " not supported!");
     
     // Generate the 2D texture

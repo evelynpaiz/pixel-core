@@ -151,7 +151,7 @@ void TextureCube::LoadFromFile(const std::filesystem::path& directory,
         }
         
         // Save the corresponding image information
-        utils::textures::UpdateSpecsTextureResource(m_Spec, width, height, channels);
+        Update(width, height, channels);
         CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + filePath.filename().string() + " not supported!");
     }
     

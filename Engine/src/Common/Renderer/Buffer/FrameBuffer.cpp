@@ -29,6 +29,15 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification&
 }
 
 /**
+ * Releases the resources associated with the framebuffer.
+ */
+void FrameBuffer::ReleaseFramebuffer()
+{
+    m_ColorAttachments.clear();
+    m_DepthAttachment = nullptr;
+}
+
+/**
  * Bind the framebuffer.
  */
 void FrameBuffer::Bind() const
@@ -230,10 +239,46 @@ void FrameBuffer::DefineAttachments()
 }
 
 /**
- * Releases the resources associated with the framebuffer.
+ * Save a color attachment into an output file.
+ *
+ * Reference:
+ * https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/
+ *
+ * @param index Index to the color attachment to be saved.
+ * @param path File path.
+ *
+ * @note At least one frame needs to be rendered before saving to ensure valid image data.
  */
-void FrameBuffer::ReleaseFramebuffer()
+void FrameBuffer::SaveAttachment(const unsigned int index,
+                                 const std::filesystem::path &path)
 {
-    m_ColorAttachments.clear();
-    m_DepthAttachment = nullptr;
+    // Verify the index for the attachment
+    CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
+    
+    // Get the specifications from the attachment
+    TextureSpecification spec = m_ColorAttachments[index]->GetSpecification();
+    int channels = m_ColorAttachments[index]->GetAlignedChannels();
+    int stride = m_ColorAttachments[index]->GetStride();
+    
+    // Get the texture data from the framebuffer attachment
+    std::vector<char> pixels = GetAttachmentData(index);
+    
+    // Extract extension and normalize to lowercase
+    std::string extension = path.extension().string();
+    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    
+    // Save the texture data into an image file
+    stbi_flip_vertically_on_write(true);
+    
+    if (extension == ".png")
+        stbi_write_png(path.string().c_str(), spec.Width, spec.Height,
+                       channels, pixels.data(), stride);
+    else if (extension == ".jpg" || extension == ".jpeg")
+        stbi_write_jpg(path.string().c_str(), spec.Width, spec.Height,
+                       channels, pixels.data(), 100);
+    else if (extension == ".hdr")
+        stbi_write_hdr(path.string().c_str(), spec.Width, spec.Height,
+                       channels, reinterpret_cast<float*>(pixels.data()));
+    else
+        CORE_WARN("Unsupported file format!");
 }

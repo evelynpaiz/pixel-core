@@ -25,6 +25,8 @@ public:
     void* MTLGetTexture() const;
     void* MTLGetSampler() const;
     
+    int MTLGetChannels(TextureFormat format) const;
+    
 protected:
     // Constructor(s)/Destructor
     // ----------------------------------------
@@ -74,6 +76,12 @@ private:
     void BindToTextureUnit(uint32_t slot) const override {}\
     /** @brief Unbinds the texture from the active texture unit. */\
     void Unbind() const override {}
+
+// Getter(s)
+// ----------------------------------------
+#define DEFINE_MTL_TEXTURE_GETTERS_METHODS()\
+    /** @brief Retrieves the number of channels in the texture. */\
+    int GetChannels() const override { return MTLGetChannels(m_Spec.Format); }
 
 // Creation & Release
 // ----------------------------------------

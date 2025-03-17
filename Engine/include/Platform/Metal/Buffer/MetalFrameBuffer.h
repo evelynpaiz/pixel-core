@@ -2,6 +2,8 @@
 
 #include "Common/Renderer/Buffer/FrameBuffer.h"
 
+#include "Platform/Metal/MetalContext.h"
+
 class MetalFrameBuffer : public FrameBuffer
 {
 public:
@@ -12,7 +14,7 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    std::vector<char> GetAttachmentData(const unsigned int index) override { return std::vector<char>(); };
+    std::vector<char> GetAttachmentData(const unsigned int index) const override;
     
     // Usage
     // ----------------------------------------
@@ -38,15 +40,16 @@ public:
                                      const unsigned int srcIndex, const unsigned int dstIndex,
                                      const TextureFilter& filter = TextureFilter::Nearest) {};
     
-    // Save
-    // ----------------------------------------
-    void SaveAttachment(const unsigned int index,
-                        const std::filesystem::path& path) override {};
-    
 private:
     // Reset
     // ----------------------------------------
     void Invalidate() override;
+    
+    // Framebuffer variables
+    // ----------------------------------------
+private:
+    ///< Metal context.
+    MetalContext* m_Context;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

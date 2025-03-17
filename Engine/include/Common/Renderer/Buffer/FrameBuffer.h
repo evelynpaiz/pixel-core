@@ -120,7 +120,7 @@ public:
     /// @return The state of the color, depth and stencil targets state.
     RenderTargetBuffers GetActiveRenderTargets() const { return m_ActiveTargets; }
     
-    virtual std::vector<char> GetAttachmentData(const unsigned int index) = 0;
+    virtual std::vector<char> GetAttachmentData(const unsigned int index) const = 0;
     
     // Usage
     // ----------------------------------------
@@ -154,8 +154,7 @@ public:
     
     // Save
     // ----------------------------------------
-    virtual void SaveAttachment(const unsigned int index,
-                                const std::filesystem::path& path) = 0;
+    void SaveAttachment(const unsigned int index, const std::filesystem::path& path);
     
 protected:
     // Constructor(s)/Destructor

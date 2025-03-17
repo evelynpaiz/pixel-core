@@ -41,7 +41,13 @@ public:
     // ----------------------------------------
     DEFINE_MTL_TEXTURE_BINDING_METHODS()
     
+    // Getter(s)
+    // ----------------------------------------
+    DEFINE_MTL_TEXTURE_GETTERS_METHODS()
+    
 protected:
+    // Creation & Release
+    // ----------------------------------------
     DEFINE_MTL_TEXTURE_RESOURCE_METHODS()
     void CreateTexture(const std::vector<const void *> &data) override;
     
