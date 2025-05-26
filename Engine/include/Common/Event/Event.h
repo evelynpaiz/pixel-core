@@ -4,7 +4,13 @@
 #include <sstream>
 
 /**
- * Enumeration of supported event types.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Enumeration of supported event types.
  *
  * The `EventType` enumeration  provides a set of values to represent different types of events that
  * can occur. It is used to categorize and handle events in event-driven systems. The supported event
@@ -19,7 +25,7 @@ enum class EventType
 };
 
 /**
- * Enumeration of supported event categories.
+ * @brief Enumeration of supported event categories.
  *
  * The `EventCategory` enumeration provides a set of values to represent different categories of events.
  * It is used to categorize and filter events in event-driven systems. Each event can belong to one or
@@ -39,13 +45,13 @@ enum EventCategory
 };
 
 /**
- * Represents an event on the application.
+ * @brief Represents an event on the application.
  *
  * The `Event` class serves as a base class for all types of events that can occur in the application.
  * It provides common functionality and interfaces to access information about the events.
  */
 class Event {
-public:
+    public:
     // Destructor
     // ----------------------------------------
     /// @brief Delete the event.
@@ -66,20 +72,20 @@ public:
     /// @return The event description.
     virtual std::string GetDescription() const { return GetName(); }
     /// @brief Check if the event is of certain category
-    bool IsInCategory(EventCategory category)
+    bool IsInCategory(const EventCategory category) const
     {
         return GetCategoryFlags() & category;
     }
     
     // Event variables
     // ----------------------------------------
-public:
+    public:
     ///< Status of the event.
     bool Handled = false;
     
     // Disable its construction, if it is not done from a child
     // ----------------------------------------
-protected:
+    protected:
     Event() = default;
     Event(const Event &) = default;
     Event(Event &&) = default;
@@ -89,20 +95,20 @@ protected:
 };
 
 /**
- * Macro to override the definition of the event types inside a child event class.
+ * @brief Macro to override the definition of the event types inside a child event class.
  *
  * @param type The name of the event type to be defined.
  */
 #define EVENT_CLASS_TYPE(type)\
-    static EventType GetEventTypeStatic() { return EventType::type; }\
-    virtual EventType GetEventType() const override { return GetEventTypeStatic(); }\
-    virtual const char* GetName() const override { return #type; }
+static EventType GetEventTypeStatic() { return EventType::type; }\
+virtual EventType GetEventType() const override { return GetEventTypeStatic(); }\
+virtual const char* GetName() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category)\
-    virtual int GetCategoryFlags() const override { return category; }
+virtual int GetCategoryFlags() const override { return category; }
 
 /**
- * Represents a dispatcher (of events) inside the application.
+ * @brief Represents a dispatcher (of events) inside the application.
  *
  * The `EventDispatcher` class provides a mechanism to dispatch events. It is responsible for verifying
  * the event type and invoking the appropriate callback function if the event matches.
@@ -111,11 +117,11 @@ protected:
  * unintended duplication.
  */
 class EventDispatcher {
-public:
+    public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Generate a dispatcher for the event.
-    EventDispatcher(Event &event)  : m_Event(event) {}
+    EventDispatcher(Event& event)  : m_Event(event) {}
     /// @brief Delete the event dispatcher.
     ~EventDispatcher() = default;
     
@@ -141,13 +147,13 @@ public:
     
     // Event dispatcher variables
     // ----------------------------------------
-private:
+    private:
     ///< Event (reference) to be dispatched.
     Event &m_Event;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
-public:
+    public:
     DISABLE_COPY_AND_MOVE(EventDispatcher);
 };
 
@@ -164,3 +170,5 @@ inline std::ostream &operator<<(std::ostream &os, const Event &e)
 
 /// Binding event function definition.
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+
+} // namespace pixc

@@ -6,15 +6,15 @@
 
 #include "Common/Core/Application.h"
 
-using namespace pixc;
+namespace pixc {
 
 /**
- * Check if a specific keyboard key is currently pressed.
+ * @brief Check if a specific keyboard key is currently pressed.
  *
  * @param key The key code of the keyboard key to check.
  *
  * @return `true` if the specified key is currently pressed, `false` otherwise.
-*/
+ */
 bool Input::IsKeyPressed(const KeyCode key)
 {
     auto window = (GLFWwindow*)Application::Get().GetWindow().GetNativeWindow();
@@ -24,10 +24,10 @@ bool Input::IsKeyPressed(const KeyCode key)
 }
 
 /**
- * Check if a specific mouse button is currently pressed.
+ * @brief Check if a specific mouse button is currently pressed.
  *
  * @param button The button code of the mouse button to check.
- * 
+ *
  * @return `true` if the specified mouse button is currently pressed, `false` otherwise.
  */
 bool Input::IsMouseButtonPressed(const MouseCode button)
@@ -39,7 +39,7 @@ bool Input::IsMouseButtonPressed(const MouseCode button)
 }
 
 /**
- * Get the current mouse position.
+ * @brief Get the current mouse position.
  *
  * @return A 2D vector representing the current mouse position.
  */
@@ -52,3 +52,5 @@ glm::vec2 Input::GetMousePosition()
     
     return glm::vec2(x, y);
 }
+
+} // namespace pixc

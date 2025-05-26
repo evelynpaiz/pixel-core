@@ -4,6 +4,8 @@
 
 #include "Common/Renderer/Camera/Camera.h"
 
+using namespace pixc;
+
 class MouseScrolledEvent;
 
 /**

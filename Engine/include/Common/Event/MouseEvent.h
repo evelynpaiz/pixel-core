@@ -3,14 +3,21 @@
 #include "Common/Event/Event.h"
 
 /**
- * Represents a mouse button event on the application.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+//namespace pixc {
+using namespace pixc;
+
+/**
+ * @brief Represents a mouse button event on the application.
  *
  * The `MouseButtonEvent` class is a base class for mouse button events. It inherits from the
  * `Event` class and provides common functionality and attributes related to mouse button events.
  */
 class MouseButtonEvent : public Event
 {
-public:
+    public:
     // Getter(s)
     // ----------------------------------------
     /// @brief Get the numerical code of the mouse button.
@@ -20,24 +27,24 @@ public:
     // Define the different categories of the event
     EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
     
-protected:
+    protected:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a mouse button event.
     /// @param button Numerical value of the button.
     MouseButtonEvent(const int button)
-        : m_Button(button)
+    : m_Button(button)
     {}
     
     // Mouse button event variables
     // ----------------------------------------
-protected:
+    protected:
     ///< Code of the button pressed/released.
     int m_Button;
 };
 
 /**
- * An event representing the pressing of a button on the mouse.
+ * @brief An event representing the pressing of a button on the mouse.
  *
  * The `MouseButtonPressedEvent` class is derived from `MouseButtonEvent` and represents
  * the event of a mouse button being pressed. It provides additional functionality and attributes specific
@@ -45,13 +52,13 @@ protected:
  */
 class MouseButtonPressedEvent : public MouseButtonEvent
 {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a mouse button pressed event.
     /// @param button Numerical value of the button.
     MouseButtonPressedEvent(const int button)
-        : MouseButtonEvent(button)
+    : MouseButtonEvent(button)
     {}
     
     // Getter(s)
@@ -70,7 +77,7 @@ public:
 };
 
 /**
- * An event representing the releasing of a button on the mouse.
+ * @brief An event representing the releasing of a button on the mouse.
  *
  * The `MouseButtonReleasedEvent` class is derived from `MouseButtonEvent` and represents
  * the event of a mouse button being released. It provides additional functionality and attributes specific
@@ -78,13 +85,13 @@ public:
  */
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a mouse button released event.
     /// @param button Numerical value of the button.
     MouseButtonReleasedEvent(const int button)
-        : MouseButtonEvent(button)
+    : MouseButtonEvent(button)
     {}
     
     // Getter(s)
@@ -103,21 +110,21 @@ public:
 };
 
 /**
- * An event representing the scrolling of the mouse.
+ * @brief An event representing the scrolling of the mouse.
  *
  * The `MouseScrolledEvent` class is derived from `Event` and represents the event of the
  * mouse scrolling. It provides functionality and attributes specific to mouse scrolling events.
  */
 class MouseScrolledEvent : public Event
 {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a mouse scrolled event.
     /// @param xOffset The scroll offset in the x-axis (horizontally).
     /// @param yOffset The scroll offset in the y-axis (vertically).
     MouseScrolledEvent(const float xOffset, const float yOffset)
-        : m_XOffset(xOffset), m_YOffset(yOffset)
+    : m_XOffset(xOffset), m_YOffset(yOffset)
     {}
     
     // Getter(s)
@@ -145,27 +152,27 @@ public:
     
     // Mouse scrolled event variables
     // ----------------------------------------
-private:
+    private:
     ///< Scroll offsets.
     float m_XOffset, m_YOffset;
 };
 
 /**
- * An event representing the movement of the mouse.
+ * @brief An event representing the movement of the mouse.
  *
  * The `MouseMovedEvent` class is derived from `Event` and represents the event of the
  * mouse moving. It provides functionality and attributes specific to mouse movement events.
  */
 class MouseMovedEvent : public Event
 {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a mouse moved event.
     /// @param x The mouse position in the x-axis.
     /// @param y The mouse position in the y-axis.
     MouseMovedEvent(const float x, const float y)
-        : m_X(x), m_Y(y)
+    : m_X(x), m_Y(y)
     {}
     
     // Getter(s)
@@ -193,7 +200,9 @@ public:
     
     // Mouse moved event variables
     // ----------------------------------------
-private:
+    private:
     ///< Mouse position.
     float m_X, m_Y;
 };
+
+//} // namespace pixc

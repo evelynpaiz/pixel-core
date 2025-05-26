@@ -6,6 +6,12 @@
 #include <glm/glm.hpp>
 
 /**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
  * Static class for handling user input.
  *
  * The `Input` class provides static methods for checking and retrieving user input such as keyboard
@@ -30,3 +36,5 @@ public:
     /// @return The current y-coordinate of the mouse position.
     static float GetMouseY() { return GetMousePosition().y; }
 };
+
+} // namespace pixc

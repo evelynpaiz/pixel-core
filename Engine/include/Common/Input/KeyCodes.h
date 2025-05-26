@@ -1,11 +1,21 @@
 #pragma once
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
 using KeyCode = unsigned int;
 
-namespace Key
+/**
+ * @namespace pixc::key
+ * @brief Key code definitions for keyboard input handling.
+ */
+namespace key
 {
 /**
- * Enumeration of key codes conventions.
+ * @brief Enumeration of key codes conventions.
  *
  * The `Key` namespace provides an enumeration of key codes representing different keys
  * on a keyboard. These key codes can be used to identify and handle specific keyboard input
@@ -21,7 +31,7 @@ enum : KeyCode
     Minus = 45,         ///< Minus key (-)
     Period = 46,        ///< Period key (.)
     Slash = 47,         ///< Slash key (/)
-
+    
     D0 = 48,            ///< 0 key
     D1 = 49,            ///< 1 key
     D2 = 50,            ///< 2 key
@@ -32,10 +42,10 @@ enum : KeyCode
     D7 = 55,            ///< 7 key
     D8 = 56,            ///< 8 key
     D9 = 57,            ///< 9 key
-
+    
     Semicolon = 59,     ///< Semicolon key (;)
     Equal = 61,         ///< Equal key (=)
-
+    
     A = 65,             ///< A key
     B = 66,             ///< B key
     C = 67,             ///< C key
@@ -62,15 +72,15 @@ enum : KeyCode
     X = 88,             ///< X key
     Y = 89,             ///< Y key
     Z = 90,             ///< Z key
-
+    
     LeftBracket = 91,   ///< Left bracket key ([)
     Backslash = 92,     ///< Backslash key (\)
     RightBracket = 93,  ///< Right bracket key (])
     GraveAccent = 96,   ///< Grave accent key (`)
-
+    
     World1 = 161,       ///< Non-US #1 key
     World2 = 162,       ///< Non-US #2 key
-
+    
     // Function keys
     // ----------------------------------------
     Escape = 256,       ///< Escape key
@@ -117,7 +127,7 @@ enum : KeyCode
     F23 = 312,          ///< F23 key
     F24 = 313,          ///< F24 key
     F25 = 314,          ///< F25 key
-
+    
     // Keypad
     // ----------------------------------------
     KP0 = 320,          ///< Numeric keypad 0
@@ -137,7 +147,7 @@ enum : KeyCode
     KPAdd = 334,        ///< Numeric keypad add
     KPEnter = 335,      ///< Numeric keypad enter
     KPEqual = 336,      ///< Numeric keypad equal
-
+    
     LeftShift = 340,    ///< Left shift key
     LeftControl = 341,  ///< Left control key
     LeftAlt = 342,      ///< Left alt key
@@ -148,4 +158,6 @@ enum : KeyCode
     RightSuper = 347,   ///< Right super key (e.g., Windows key)
     Menu = 348,         ///< Menu key
 };
-} // namespace Key
+
+} // namespace key
+} // namespace pixc

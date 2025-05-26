@@ -11,8 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-/// Binding event function definition
-#define BIND_FN(x) std::bind(&x, this, std::placeholders::_1)
+using namespace pixc;
 
 /**
  * Generate an orthographic camera.
@@ -48,13 +47,13 @@ void OrthographicCamera::OnUpdate(Timestep ts)
     // Translation of the camera
     glm::vec2 distance = glm::vec2(0.0f);
     
-    if(Input::IsKeyPressed(Key::W))     // up
+    if(Input::IsKeyPressed(key::W))     // up
         distance.y = ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::S))     // down
+    if(Input::IsKeyPressed(key::S))     // down
         distance.y = -ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::D))     // left
+    if(Input::IsKeyPressed(key::D))     // left
         distance.x = ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::A))     // right
+    if(Input::IsKeyPressed(key::A))     // right
         distance.x = -ts * m_TranslationFactor;
     
     Translate(distance);
@@ -65,7 +64,7 @@ void OrthographicCamera::OnUpdate(Timestep ts)
     deltaMouse *= ts;
     initialMousePosition = mouse;
     
-    if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+    if (Input::IsMouseButtonPressed(mouse::ButtonLeft))
         Rotate(deltaMouse * m_RotationFactor);
 }
 

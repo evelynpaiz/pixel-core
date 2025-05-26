@@ -11,8 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-/// Binding event function definition
-#define BIND_FN(x) std::bind(&x, this, std::placeholders::_1)
+using namespace pixc;
 
 /**
  * Generate a perspective camera.
@@ -49,17 +48,17 @@ void PerspectiveCamera::OnUpdate(Timestep ts)
     // Translation of the camera
     glm::vec3 distance = glm::vec3(0.0f);
     
-    if(Input::IsKeyPressed(Key::Q))     // up
+    if(Input::IsKeyPressed(key::Q))     // up
         distance.y = ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::E))     // down
+    if(Input::IsKeyPressed(key::E))     // down
         distance.y = -ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::D))     // left
+    if(Input::IsKeyPressed(key::D))     // left
         distance.x = ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::A))     // right
+    if(Input::IsKeyPressed(key::A))     // right
         distance.x = -ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::W))     // front
+    if(Input::IsKeyPressed(key::W))     // front
         distance.z = ts * m_TranslationFactor;
-    if(Input::IsKeyPressed(Key::S))     // back
+    if(Input::IsKeyPressed(key::S))     // back
         distance.z = -ts * m_TranslationFactor;
     
     Translate(distance);
@@ -70,9 +69,9 @@ void PerspectiveCamera::OnUpdate(Timestep ts)
     deltaMouse *= ts;
     initialMousePosition = mouse;
     
-    if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+    if (Input::IsMouseButtonPressed(mouse::ButtonLeft))
         Orbit(deltaMouse * m_OrbitFactor);
-    if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+    if (Input::IsMouseButtonPressed(mouse::ButtonRight))
         Rotate(deltaMouse * m_RotationFactor);
 }
 

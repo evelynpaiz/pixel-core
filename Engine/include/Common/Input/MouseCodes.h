@@ -1,8 +1,18 @@
 #pragma once
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
 using MouseCode = unsigned int;
 
-namespace Mouse
+/**
+ * @namespace pixc::mouse
+ * @brief Mouse code definitions for mouse input handling.
+ */
+namespace mouse
 {
 /**
  * @brief Enumeration of mouse codes conventions.
@@ -22,11 +32,12 @@ enum : MouseCode
     Button5 = 5,            ///< The sixth mouse button
     Button6 = 6,            ///< The seventh mouse button
     Button7 = 7,            ///< The eighth mouse button
-
+    
     ButtonLast = Button7,   ///< The last mouse button
     ButtonLeft = Button0,   ///< The left mouse button
     ButtonRight = Button1,  ///< The right mouse button
     ButtonMiddle = Button2  ///< The middle mouse button
 };
-} // namespace Mouse
 
+} // namespace mouse
+} // namespace pixc

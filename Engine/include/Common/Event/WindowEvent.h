@@ -3,41 +3,47 @@
 #include "Common/Event/Event.h"
 
 /**
- * Represents a window event on the application.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a window event on the application.
  *
  * The `WindowEvent` class is a base class for window events. It inherits from the `Event` class
  * and provides common functionality and attributes related to window events.
  */
 class WindowEvent : public Event
 {
-public:
+    public:
     // Getter(s)
     // ----------------------------------------
     /// @brief Get the title of the window.
     /// @return The window name.
-    const std::string& GetTitle() const { return m_Title; }
+    std::string GetTitle() const { return m_Title; }
     
     // Define the different categories of the event
     EVENT_CLASS_CATEGORY(EventCategoryApplication)
     
-protected:
+    protected:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a window event.
     /// @param title The window title.
     WindowEvent(const std::string& title)
-        : m_Title(title)
+    : m_Title(title)
     {}
     
     // Window event variables
     // ----------------------------------------
-protected:
+    protected:
     ///< Code of the key pressed.
     std::string m_Title;
 };
 
 /**
- * An event representing the resizing of the application window.
+ * @brief An event representing the resizing of the application window.
  *
  * The `WindowResizeEvent` class is derived from `WindowEvent` and represents the event
  * of the application window being resized. It provides additional functionality and attributes specific
@@ -45,7 +51,7 @@ protected:
  */
 class WindowResizeEvent : public WindowEvent
 {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a window resize event.
@@ -54,7 +60,7 @@ public:
     /// @param height Updated window size (height).
     WindowResizeEvent(const std::string& title, unsigned int width,
                       unsigned int height)
-        : WindowEvent(title), m_Width(width), m_Height(height)
+    : WindowEvent(title), m_Width(width), m_Height(height)
     {}
     
     // Getter(s)
@@ -79,26 +85,26 @@ public:
     
     // Window resize event variables
     // ----------------------------------------
-private:
+    private:
     ///< Size.
     unsigned int m_Width, m_Height;
 };
 
 /**
- * An event representing the closing of the application window.
+ * @brief An event representing the closing of the application window.
  *
  * The `WindowCloseEvent` class is derived from `WindowEvent` and represents the event of
  * the application window being closed. It provides additional functionality and attributes specific
  * to window close events.
  */
 class WindowCloseEvent : public WindowEvent {
-public:
+    public:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Generate a window close event.
     /// @param title The window title.
     WindowCloseEvent(const std::string& title)
-        : WindowEvent(title)
+    : WindowEvent(title)
     {}
     
     // Getter(s)
@@ -115,3 +121,5 @@ public:
     // Define the getter methods for the event type using the macro
     EVENT_CLASS_TYPE(WindowClose)
 };
+
+} // namespace pixcs

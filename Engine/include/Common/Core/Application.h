@@ -3,14 +3,14 @@
 #include "Common/Core/Window.h"
 #include "Common/Layer/LayerStack.h"
 
-class WindowResizeEvent;
-class WindowCloseEvent;
-
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
 namespace pixc {
+
+class WindowResizeEvent;
+class WindowCloseEvent;
 
 /**
  * @brief Represents the main rendering application.
