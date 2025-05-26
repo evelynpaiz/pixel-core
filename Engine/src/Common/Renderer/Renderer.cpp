@@ -78,7 +78,6 @@ void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
  */
 void Renderer::EndScene()
 {
-    RendererCommand::EndRenderPass();
     g_Stats.renderPasses++;
 }
 

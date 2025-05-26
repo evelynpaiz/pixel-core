@@ -129,14 +129,11 @@ void FrameBuffer::AdjustSampleCount(const unsigned int samples)
  *
  * @param src The source framebuffer from which to copy the contents.
  * @param dst The destination framebuffer to which the contents are copied.
- * @param filter The filtering method used for the blit operation.
- * @param colorBuffer If true, copy color buffer components.
- * @param depthBuffer If true, copy depth buffer components.
- * @param stencilBuffer If true, copy stencil buffer components.
+ * @param spec The blit-specific parameters such as filter type, target buffers, and attachment indices.
  */
 void FrameBuffer::Blit(const std::shared_ptr<FrameBuffer>& src,
                        const std::shared_ptr<FrameBuffer>& dst,
-                       const TextureFilter& filter, const RenderTargetBuffers& targets)
+                       const BlitSpecification& spec)
 {
     switch (Renderer::GetAPI())
     {
@@ -146,35 +143,11 @@ void FrameBuffer::Blit(const std::shared_ptr<FrameBuffer>& src,
         case RendererAPI::API::OpenGL:
             return OpenGLFrameBuffer::Blit(std::dynamic_pointer_cast<OpenGLFrameBuffer>(src),
                                            std::dynamic_pointer_cast<OpenGLFrameBuffer>(dst),
-                                           filter, targets);
-    }
-    CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
-}
-
-/**
- * Blit a specific color attachment from a source framebuffer to a destination framebuffer.
- *
- * @param src The source framebuffer from which to copy the color attachment.
- * @param dst The destination framebuffer to which the color attachment is copied.
- * @param srcIndex The index of the color attachment in the source framebuffer.
- * @param dstIndex The index of the color attachment in the destination framebuffer.
- * @param filter The filtering method used for the blit operation.
- */
-void FrameBuffer::BlitColorAttachments(const std::shared_ptr<FrameBuffer>& src,
-                                       const std::shared_ptr<FrameBuffer>& dst,
-                                       const unsigned int srcIndex, const unsigned int dstIndex,
-                                       const TextureFilter& filter)
-{
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            return nullptr;
-        case RendererAPI::API::OpenGL:
-            return OpenGLFrameBuffer::BlitColorAttachments(std::dynamic_pointer_cast<OpenGLFrameBuffer>(src),
-                                                           std::dynamic_pointer_cast<OpenGLFrameBuffer>(dst),
-                                                           srcIndex, dstIndex, filter);
+                                           spec);
+        case RendererAPI::API::Metal:
+            return MetalFrameBuffer::Blit(std::dynamic_pointer_cast<MetalFrameBuffer>(src),
+                                          std::dynamic_pointer_cast<MetalFrameBuffer>(dst),
+                                          spec);
     }
     CORE_ASSERT(false, "Unknown Renderer API!");
     return nullptr;

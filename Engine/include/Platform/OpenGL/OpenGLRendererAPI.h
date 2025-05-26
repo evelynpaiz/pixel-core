@@ -27,8 +27,6 @@ public:
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
-    void EndRenderPass() override {};
-    
     // Draw
     // ----------------------------------------
     void Draw(const std::shared_ptr<Drawable>& drawable,
@@ -40,4 +38,11 @@ public:
                      unsigned int width, unsigned int height) override;
     
     void SetDepthTesting(const bool enabled) override;
+    
+private:
+    // Clear
+    // ----------------------------------------
+    void Clear(const RenderTargetBuffers& targets);
+    void Clear(const glm::vec4& color,
+               const RenderTargetBuffers& targets);
 };

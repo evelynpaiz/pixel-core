@@ -47,6 +47,14 @@ struct RenderTargetBuffers
         : colorBufferActive(color), depthBufferActive(depth), stencilBufferActive(stencil)
     {}
     
+    // Comparison operator to check if the current state is equal to the default state
+    bool operator==(const RenderTargetBuffers& other) const
+    {
+        return colorBufferActive == other.colorBufferActive &&
+               depthBufferActive == other.depthBufferActive &&
+               stencilBufferActive == other.stencilBufferActive;
+    }
+    
     // Buffer state variables
     // ----------------------------------------
     bool colorBufferActive;     ///< Indicates whether the color buffer is active.

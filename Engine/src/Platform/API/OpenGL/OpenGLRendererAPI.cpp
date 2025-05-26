@@ -15,15 +15,38 @@ void OpenGLRendererAPI::Init()
 {}
 
 /**
+ * Clears the specified rendering buffers.
+ *
+ * @param targets The rendering buffers to be cleared.
+ */
+void OpenGLRendererAPI::Clear(const RenderTargetBuffers &targets)
+{
+    glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
+    SetDepthTesting(targets.depthBufferActive);
+}
+
+/**
+ * Sets the background color and clears the specified rendering buffers.
+ *
+ * @param color The RGBA color used to clear the color buffer.
+ * @param targets The rendering buffers to be cleared.
+ */
+void OpenGLRendererAPI::Clear(const glm::vec4& color,
+                              const RenderTargetBuffers& targets)
+{
+    glClearColor(color.r, color.g, color.b, color.a);
+    Clear(targets);
+}
+
+/**
  * Sets the active rendering targets and clears the specified buffers.
  *
  * @param targets Active rendering targets.
  */
 void OpenGLRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets)
 {
-    // Clear buffers
-    glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
-    SetDepthTesting(targets.depthBufferActive);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Clear(targets);
 }
 
 /**
@@ -35,8 +58,8 @@ void OpenGLRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets)
 void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
                                         const RenderTargetBuffers& targets)
 {
-    glClearColor(color.r, color.g, color.b, color.a);
-    SetRenderTarget(targets);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Clear(color, targets);
 }
 
 /**
@@ -47,7 +70,8 @@ void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
 void OpenGLRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets,
                                         const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    SetRenderTarget(targets);
+    framebuffer->Bind();
+    Clear(targets);
 }
 
 /**
@@ -60,7 +84,8 @@ void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
                                         const RenderTargetBuffers& targets,
                                         const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    SetRenderTarget(color, targets);
+    framebuffer->Bind();
+    Clear(color, targets);
 }
 
 /**

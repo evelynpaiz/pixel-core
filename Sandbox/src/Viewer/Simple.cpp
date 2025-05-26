@@ -44,7 +44,17 @@ void Simple::OnAttach()
         { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
         { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
     };
+    //spec.MipMaps = true;
     m_Framebuffer = FrameBuffer::Create(spec);
+    
+    spec.SetFrameBufferSize(m_Camera->GetWidth(), m_Camera->GetHeight());
+    spec.AttachmentsSpec = {
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
+        { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
+    };
+    m_Final = FrameBuffer::Create(spec);
 }
 
 /**
@@ -71,7 +81,6 @@ void Simple::OnUpdate(Timestep ts)
     
     // -----------------------
     // Set the target to render into
-    m_Framebuffer->Bind();
     RendererCommand::SetRenderTarget(glm::vec4(0.93f, 0.93f, 0.93f, 1.0f), m_Framebuffer);
     
     // Render the scene
@@ -80,8 +89,14 @@ void Simple::OnUpdate(Timestep ts)
     material->SetTextureMap(container);
     cube->DrawModel();
     Renderer::EndScene();
-
-    m_Framebuffer->Unbind();
+    
+    RendererCommand::EndRenderPass(m_Framebuffer);
+    
+    // -----------------------
+    BlitSpecification spec;
+    spec.SetAttachmentIndices(0, 2);
+    spec.SetTargets({true, false, false});
+    FrameBuffer::Blit(m_Framebuffer, m_Final, spec);
     
     // -----------------------
     
@@ -91,9 +106,11 @@ void Simple::OnUpdate(Timestep ts)
     // Render the scene
     Renderer::BeginScene();
     material->SetColor(glm::vec4(1.0f));
-    material->SetTextureMap(m_Framebuffer->GetColorAttachment(0));
+    material->SetTextureMap(m_Final->GetColorAttachment(2));
     plane->DrawModel();
     Renderer::EndScene();
+    
+    RendererCommand::EndRenderPass();
     
     // -----------------------
     // Update camera

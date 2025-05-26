@@ -30,9 +30,12 @@ public:
     // Getter(s)
     // ----------------------------------------
     void* GetDevice() const;
-    void* GetEncoder() const;
     
+    void* GetRenderQueue() const;
     void* GetResourceQueue() const;
+    
+    void* GetCommandBuffer() const;
+    void* GetEncoder() const;
     
     // Setter(s)
     // ----------------------------------------

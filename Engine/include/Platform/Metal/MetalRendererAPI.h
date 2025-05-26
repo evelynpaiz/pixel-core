@@ -36,7 +36,7 @@ public:
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
-    void EndRenderPass() override;
+    void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
     // Draw
     // ----------------------------------------

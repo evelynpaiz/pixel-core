@@ -31,12 +31,7 @@ public:
     // ----------------------------------------
     static void Blit(const std::shared_ptr<OpenGLFrameBuffer>& src,
                      const std::shared_ptr<OpenGLFrameBuffer>& dst,
-                     const TextureFilter& filter = TextureFilter::Nearest,
-                     const RenderTargetBuffers& targets = {});
-    static void BlitColorAttachments(const std::shared_ptr<OpenGLFrameBuffer>& src,
-                                     const std::shared_ptr<OpenGLFrameBuffer>& dst,
-                                     const unsigned int srcIndex, const unsigned int dstIndex,
-                                     const TextureFilter& filter = TextureFilter::Nearest);
+                     const BlitSpecification& spec);
     
 private:
     // Destructor

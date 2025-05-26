@@ -31,7 +31,7 @@ public:
                                 const std::shared_ptr<FrameBuffer>& framebuffer,
                                 const std::optional<RenderTargetBuffers>& targets = std::nullopt);
     
-    static void EndRenderPass();
+    static void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
     
     // Draw
     // ----------------------------------------

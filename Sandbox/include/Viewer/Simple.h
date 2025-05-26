@@ -29,6 +29,7 @@ private:
     ModelLibrary m_Models;
     
     std::shared_ptr<FrameBuffer> m_Framebuffer;
+    std::shared_ptr<FrameBuffer> m_Final;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

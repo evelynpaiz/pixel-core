@@ -118,13 +118,13 @@ void* MetalContext::GetDevice() const
 }
 
 /**
- * @brief Get the command encoder associated with the Metal context.
+ * @brief Get the command queue for render-related operations.
  *
- * @return A pointer to the command encoder, or `nullptr` if no command queue is available.
+ * @return A pointer to the command queue, or `nullptr` if no command queue is available.
  */
-void* MetalContext::GetEncoder() const
+void* MetalContext::GetRenderQueue() const
 {
-    return reinterpret_cast<void*>(m_State->RenderState.Encoder);
+    return reinterpret_cast<void*>(m_State->DeviceResources.RenderQueue);
 }
 
 /**
@@ -135,6 +135,26 @@ void* MetalContext::GetEncoder() const
 void* MetalContext::GetResourceQueue() const
 {
     return reinterpret_cast<void*>(m_State->DeviceResources.ResourceQueue);
+}
+
+/**
+ * @brief Get the command buffer associated with the Metal context.
+ *
+ * @return A pointer to the command buffer, or `nullptr` if no command buffer is available.
+ */
+void* MetalContext::GetCommandBuffer() const
+{
+    return reinterpret_cast<void*>(m_State->RenderState.CommandBuffer);
+}
+
+/**
+ * @brief Get the command encoder associated with the Metal context.
+ *
+ * @return A pointer to the command encoder, or `nullptr` if no command encoder is available.
+ */
+void* MetalContext::GetEncoder() const
+{
+    return reinterpret_cast<void*>(m_State->RenderState.Encoder);
 }
 
 /**

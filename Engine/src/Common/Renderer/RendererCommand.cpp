@@ -74,9 +74,9 @@ void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
 /**
  * Finalize the current rendering pass.
  */
-void RendererCommand::EndRenderPass()
+void RendererCommand::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    s_API->EndRenderPass();
+    s_API->EndRenderPass(framebuffer);
 }
 
 /**

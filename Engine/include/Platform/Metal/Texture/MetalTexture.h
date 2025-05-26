@@ -27,6 +27,10 @@ public:
     
     int MTLGetChannels(TextureFormat format) const;
     
+    // Friend class definition(s)
+    // ----------------------------------------
+    friend class MetalFrameBuffer;
+    
 protected:
     // Constructor(s)/Destructor
     // ----------------------------------------
@@ -41,7 +45,7 @@ protected:
                           unsigned int samples = 1);
     void MTLDefineSampler(const TextureSpecification& spec);
     
-    void MTLGenerateMipMaps();
+    void MTLGenerateMipMaps(bool isOffscreenResource = true);
     
 private:
     // Conversion(s)

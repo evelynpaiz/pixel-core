@@ -41,7 +41,6 @@ void MetalRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets)
 void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
                                        const RenderTargetBuffers& targets)
 {
-    // Clear the buffer with the selected color
     m_Context->SetRenderTarget(color, targets);
     SetDepthTesting(targets.depthBufferActive);
 }
@@ -67,7 +66,7 @@ void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
                                        const RenderTargetBuffers& targets,
                                        const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    // Clear the buffer with the selected color
+    framebuffer->Bind();
     m_Context->SetRenderTarget(color, targets, framebuffer);
     SetDepthTesting(targets.depthBufferActive);
 }
@@ -75,9 +74,10 @@ void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
 /**
  * Finalize the current rendering pass.
  */
-void MetalRendererAPI::EndRenderPass()
+void MetalRendererAPI::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
     m_Context->EndEncoding();
+    RendererAPI::EndRenderPass(framebuffer);
 }
 
 /**

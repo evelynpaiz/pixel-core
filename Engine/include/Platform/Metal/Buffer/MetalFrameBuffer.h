@@ -22,7 +22,8 @@ public:
     void BindForReadAttachment(const unsigned int index) const override {};
     void BindForDrawAttachmentCube(const unsigned int index, const unsigned int face,
                                    const unsigned int level = 0) const override {};
-    void Unbind(const bool& genMipMaps = true) const override {};
+    
+    void Unbind(const bool& genMipMaps = true) const override;
     
     // Draw
     // ----------------------------------------
@@ -33,14 +34,16 @@ public:
     // ----------------------------------------
     static void Blit(const std::shared_ptr<MetalFrameBuffer>& src,
                      const std::shared_ptr<MetalFrameBuffer>& dst,
-                     const TextureFilter& filter = TextureFilter::Nearest,
-                     const RenderTargetBuffers& targets = {}) {};
-    static void BlitColorAttachments(const std::shared_ptr<MetalFrameBuffer>& src,
-                                     const std::shared_ptr<MetalFrameBuffer>& dst,
-                                     const unsigned int srcIndex, const unsigned int dstIndex,
-                                     const TextureFilter& filter = TextureFilter::Nearest) {};
+                     const BlitSpecification& spec);
     
 private:
+    static void BlitDirect(const std::shared_ptr<MetalFrameBuffer>& src,
+                           const std::shared_ptr<MetalFrameBuffer>& dst,
+                           unsigned int srcIndex, unsigned int dstIndex);
+    static void BlitAdvanced(const std::shared_ptr<MetalFrameBuffer>& src,
+                             const std::shared_ptr<MetalFrameBuffer>& dst,
+                             const BlitSpecification& spec);
+    
     // Reset
     // ----------------------------------------
     void Invalidate() override;

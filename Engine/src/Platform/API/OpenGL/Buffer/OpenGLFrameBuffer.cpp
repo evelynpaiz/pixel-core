@@ -134,7 +134,9 @@ void OpenGLFrameBuffer::BindForDrawAttachmentCube(const unsigned int index,
 }
 
 /**
- * Unbind the vertex buffer.
+ * Unbind the framebuffer and generate the mipmaps if necessary.
+ *
+ * @param genMipMaps Mip map generation flag.
  */
 void OpenGLFrameBuffer::Unbind(const bool& genMipMaps) const
 {
@@ -169,64 +171,40 @@ void OpenGLFrameBuffer::ClearAttachment(const unsigned int index, const int valu
 }
 
 /**
- * Blit the contents of a source framebuffer to a destination framebuffer.
+ * Blit the contents of a source framebuffer to a destination framebuffer, optionally specifying color attachments.
  *
  * @param src The source framebuffer from which to copy the contents.
  * @param dst The destination framebuffer to which the contents are copied.
- * @param filter The filtering method used for the blit operation.
- * @param colorBuffer If true, copy color buffer components.
- * @param depthBuffer If true, copy depth buffer components.
- * @param stencilBuffer If true, copy stencil buffer components.
+ * @param spec The blit-specific parameters such as filter type, target buffers, and attachment indices.
  */
 void OpenGLFrameBuffer::Blit(const std::shared_ptr<OpenGLFrameBuffer>& src,
                              const std::shared_ptr<OpenGLFrameBuffer>& dst,
-                             const TextureFilter& filter,
-                             const RenderTargetBuffers& targets)
+                             const BlitSpecification& spec)
 {
     // Ensure that source and destination framebuffers are defined
     CORE_ASSERT(src && dst, "Trying to blit undefined framebuffer(s)");
     
+    // Ensure that the source attachment index is valid
+    CORE_ASSERT(spec.SrcAttachmentIndex < src->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+                "Invalid source color attachment index!");
+    CORE_ASSERT(spec.DstAttachmentIndex < dst->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+                "Invalid destination color attachment index!");
+    
     // Determine the mask based on selected buffer components
-    GLbitfield mask = utils::graphics::gl::ToOpenGLClearMask(targets);
+    GLbitfield mask = utils::graphics::gl::ToOpenGLClearMask(spec.Targets);
     
-    // Bind the source framebuffer for reading and the destination framebuffer for drawing
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, src->m_ID);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst->m_ID);
-    // Perform the blit operation
-    glBlitFramebuffer(0, 0, src->m_Spec.Width, src->m_Spec.Height,
-                      0, 0, dst->m_Spec.Width, dst->m_Spec.Height,
-                      mask, utils::textures::gl::ToOpenGLFilter(filter, false));
-    
-    // Unbind the framebuffers
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-/**
- * Blit a specific color attachment from a source framebuffer to a destination framebuffer.
- *
- * @param src The source framebuffer from which to copy the color attachment.
- * @param dst The destination framebuffer to which the color attachment is copied.
- * @param srcIndex The index of the color attachment in the source framebuffer.
- * @param dstIndex The index of the color attachment in the destination framebuffer.
- * @param filter The filtering method used for the blit operation.
- */
-void OpenGLFrameBuffer::BlitColorAttachments(const std::shared_ptr<OpenGLFrameBuffer>& src,
-                                             const std::shared_ptr<OpenGLFrameBuffer>& dst,
-                                             const unsigned int srcIndex, const unsigned int dstIndex,
-                                             const TextureFilter& filter)
-{
     // Bind the source framebuffer and set the read buffer to the specified color attachment
     glBindFramebuffer(GL_READ_FRAMEBUFFER, src->m_ID);
-    glReadBuffer(GL_COLOR_ATTACHMENT0 + srcIndex);
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + spec.SrcAttachmentIndex);
     
     // Bind the destination framebuffer and set the draw buffer to the specified color attachment
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst->m_ID);
-    glDrawBuffer(GL_COLOR_ATTACHMENT0 + dstIndex);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0 + spec.DstAttachmentIndex);
     
-    // Copy the block of pixels from the source to the destination color attachment
+    // Perform the blit operation
     glBlitFramebuffer(0, 0, src->m_Spec.Width, src->m_Spec.Height,
                       0, 0, dst->m_Spec.Width, dst->m_Spec.Height,
-                      GL_COLOR_BUFFER_BIT, utils::textures::gl::ToOpenGLFilter(filter, false));
+                      mask, utils::textures::gl::ToOpenGLFilter(spec.Filter, false));
     
     // Unbind the framebuffers and restore the default draw buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -311,3 +289,4 @@ void OpenGLFrameBuffer::ReleaseFramebuffer()
     glDeleteFramebuffers(1, &m_ID);
     FrameBuffer::ReleaseFramebuffer();
 }
+

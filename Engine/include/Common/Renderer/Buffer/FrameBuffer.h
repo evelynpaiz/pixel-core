@@ -75,6 +75,50 @@ struct FrameBufferSpecification
 };
 
 /**
+ * Defines the specifications for a framebuffer blit operation.
+ */
+struct BlitSpecification
+{
+    // Constructor(s)
+    // ----------------------------------------
+    /// @brief Define a blit specification with default values.
+    BlitSpecification() = default;
+    
+    // Setter(s)
+    // ----------------------------------------
+    /// @brief Set the texture filter to be used for the blit.
+    /// @param filter The texture filter for the blit operation.
+    void SetFilter(const TextureFilter& filter) { Filter = filter; }
+
+    /// @brief Set the color attachments for the blit operation.
+    /// @param targets The buffers to be copied during the blit.
+    void SetTargets(const RenderTargetBuffers& targets) { Targets = targets; }
+
+    /// @brief Set the source and destination attachment indices.
+    /// @param srcIndex The source attachment index.
+    /// @param dstIndex The destination attachment index.
+    void SetAttachmentIndices(unsigned int srcIndex, unsigned int dstIndex)
+    {
+        SrcAttachmentIndex = srcIndex;
+        DstAttachmentIndex = dstIndex;
+    }
+
+    // Blit specification variables
+    // ----------------------------------------
+    ///< The texture filter for the blit operation.
+    TextureFilter Filter = TextureFilter::Nearest;
+
+    ///< The buffers to be copied during the blit operation.
+    RenderTargetBuffers Targets;
+
+    ///< The index of the source color attachment.
+    unsigned int SrcAttachmentIndex = 0;
+
+    ///< The index of the destination color attachment.
+    unsigned int DstAttachmentIndex = 0;
+};
+
+/**
  * Represents a framebuffer object for rendering off-screen.
  *
  * The `FrameBuffer` class provides functionality to create, bind, unbind, and resize a framebuffer.
@@ -129,6 +173,7 @@ public:
     virtual void BindForReadAttachment(const unsigned int index) const = 0;
     virtual void BindForDrawAttachmentCube(const unsigned int index, const unsigned int face,
                                            const unsigned int level = 0) const = 0;
+    
     virtual void Unbind(const bool& genMipMaps = true) const = 0;
     
     // Draw
@@ -139,12 +184,7 @@ public:
     // ----------------------------------------
     static void Blit(const std::shared_ptr<FrameBuffer>& src,
                      const std::shared_ptr<FrameBuffer>& dst,
-                     const TextureFilter& filter = TextureFilter::Nearest,
-                     const RenderTargetBuffers& targets = {});
-    static void BlitColorAttachments(const std::shared_ptr<FrameBuffer>& src,
-                                     const std::shared_ptr<FrameBuffer>& dst,
-                                     const unsigned int srcIndex, const unsigned int dstIndex,
-                                     const TextureFilter& filter = TextureFilter::Nearest);
+                     const BlitSpecification& spec = BlitSpecification());
     
     // Reset
     // ----------------------------------------

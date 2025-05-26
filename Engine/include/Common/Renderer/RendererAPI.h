@@ -55,7 +55,13 @@ public:
                                  const RenderTargetBuffers& targets,
                                  const std::shared_ptr<FrameBuffer>& framebuffer) = 0;
     
-    virtual void EndRenderPass() = 0;
+    /// @brief Finish rendering pass by unbiding the framebuffer if existent.
+    /// @param framebuffer The framebuffer where it was rendered into.
+    virtual void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
+    {
+        if (framebuffer)
+            framebuffer->Unbind();
+    }
     
     // Draw
     // ----------------------------------------

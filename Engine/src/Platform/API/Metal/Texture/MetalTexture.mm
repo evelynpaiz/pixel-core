@@ -216,29 +216,52 @@ void MetalTexture::MTLDefineSampler(const TextureSpecification &spec)
 
 /**
  * Generates the mip-maps of the internal Metal texture.
+ *
+ * @param isOffscreenResource Specifies whether the texture is an offscreen resource.
  */
-void MetalTexture::MTLGenerateMipMaps()
+void MetalTexture::MTLGenerateMipMaps(bool isOffscreenResource)
 {
-    // Get the command queue dedicated for the resources
-    id<MTLCommandQueue> queue = reinterpret_cast<id<MTLCommandQueue>>(m_Context->GetResourceQueue());
+    // Define the command buffer to be used
+    id<MTLCommandBuffer> commandBuffer = nullptr;
     
-    // Create the command buffer
-    id<MTLCommandBuffer> commandBuffer = [queue commandBuffer];
+    if (isOffscreenResource)
+    {
+        // Use a separate command queue for resource-related textures
+        id<MTLCommandQueue> queue = reinterpret_cast<id<MTLCommandQueue>>(m_Context->GetResourceQueue());
+        commandBuffer = [queue commandBuffer];
+    }
+    else
+    {
+        // Ensure the render command buffer is valid and not encoding anything
+        CORE_ASSERT(m_Context->GetCommandBuffer(), "Command buffer is null!");
+        CORE_ASSERT(!m_Context->GetEncoder(), "Command buffer is still encoding!");
+        
+        // Use the existing render command buffer for on-screen textures (framebuffer attachments)
+        commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
+    }
+    
     // Create a blit command encoder to handle mipmap generation
     id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
     
     // Get the internal Metal texture object
     id<MTLTexture> texture = reinterpret_cast<id<MTLTexture>>(m_TextureData->Texture);
-
+    
     // Synchronize the texture data before generating mipmaps
     [blitEncoder synchronizeResource:texture];
+    
     // Generate mipmaps
     [blitEncoder generateMipmapsForTexture:texture];
 
-    // End encoding and submit the command buffer for execution
+    // End encoding
     [blitEncoder endEncoding];
-    [commandBuffer commit];
-    [commandBuffer waitUntilCompleted];
+    
+    // Only commit if using the offscreen resource queue (framebuffers handle
+    // commit in the swapBuffer function)
+    if (isOffscreenResource)
+    {
+        [commandBuffer commit];
+        [commandBuffer waitUntilCompleted];
+    }
 }
 
 /**
