@@ -8,6 +8,8 @@
 #include "Common/Event/KeyEvent.h"
 #include "Common/Event/MouseEvent.h"
 
+namespace pixc {
+
 // --------------------------------------------
 // Variable initialization
 // --------------------------------------------
@@ -20,18 +22,18 @@ static unsigned int g_WindowCount = 0;
 // --------------------------------------------
 
 /**
- * Function to be called when a GLFW error occurs.
+ * @brief Function to be called when a GLFW error occurs.
  *
  * @param error Error type.
  * @param description Description of the error.
  */
-static void ErrorCallback(int error, const char *description) noexcept
+static void ErrorCallback(const int error, const char *description) noexcept
 {
     CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
 /**
- * Function to be called when a window resize event happens.
+ * @brief Function to be called when a window resize event happens.
  *
  * @param window Native window.
  * @param width Updated window size (width).
@@ -43,8 +45,8 @@ static void WindowResizeCallback(GLFWwindow *window, int width, int height) noex
     WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
     
     // Update the size of the window
-    data.Width = width;
-    data.Height = height;
+    data.Width = static_cast<unsigned int>(width);
+    data.Height = static_cast<unsigned int>(height);
     
     // Call the event callback function with a window resize event
     if (data.EventCallback)
@@ -55,7 +57,7 @@ static void WindowResizeCallback(GLFWwindow *window, int width, int height) noex
 }
 
 /**
- * Function to be called when a window close event happens.
+ * @brief Function to be called when a window close event happens.
  *
  * @param window Native window.
  */
@@ -73,7 +75,7 @@ static void WindowCloseCallback(GLFWwindow *window)
 }
 
 /**
- * Function to be called when a key event happens.
+ * @brief Function to be called when a key event happens.
  *
  * @param window Native window.
  * @param key The key thas has been pressed or released.
@@ -82,7 +84,7 @@ static void WindowCloseCallback(GLFWwindow *window)
  * @param mods Bit fild describing the modifiers keys held down.
  */
 static void KeyCallback(GLFWwindow *window, int key, int scancode,
-                             int action, int mods) noexcept
+                        int action, int mods) noexcept
 {
     // Key pressed counter
     static unsigned int keyCount = 1;
@@ -119,7 +121,7 @@ static void KeyCallback(GLFWwindow *window, int key, int scancode,
 }
 
 /**
- * Function to be called when a mouse button event happens.
+ * @brief Function to be called when a mouse button event happens.
  *
  * @param window Native window.
  * @param button The button thas has been pressed or released.
@@ -127,7 +129,7 @@ static void KeyCallback(GLFWwindow *window, int key, int scancode,
  * @param mods Bit fild describing the modifiers keys held down.
  */
 static void MouseButtonCallback(GLFWwindow *window, int button, int action,
-                          int mods) noexcept
+                                int mods) noexcept
 {
     // Recover the window information
     WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -153,14 +155,14 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action,
 }
 
 /**
- * Function to be called when a mouse scrolled event happens.
+ * @brief Function to be called when a mouse scrolled event happens.
  *
  * @param window Native window.
  * @param xOffset The scroll offset in the x-axis (horizontally).
  * @param yOffset The scroll offset in the y-axis (vertically).
  */
 static void MouseScrolledCallback(GLFWwindow *window, double xOffset,
-                                double yOffset) noexcept
+                                  double yOffset) noexcept
 {
     // Recover the window information
     WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -172,7 +174,7 @@ static void MouseScrolledCallback(GLFWwindow *window, double xOffset,
 }
 
 /**
- * Function to be called when a mouse moved event happens.
+ * @brief Function to be called when a mouse moved event happens.
  *
  * @param window Native window.
  * @param x The mouse position in the x-axis.
@@ -193,20 +195,21 @@ static void MouseMovedCallback(GLFWwindow *window, double x, double y) noexcept
 // Window
 // --------------------------------------------
 /**
- * Generate a window.
+ * @brief Generate a window.
  *
  * @param title Window name.
  * @param width Size (width) of the window.
  * @param height Size (height) of the window.
  */
-Window::Window(const std::string& title, const int width, const int height)
-    : m_Data(title, width, height)
+Window::Window(const std::string& title, const unsigned int width,
+               const unsigned int height)
+: m_Data(title, width, height)
 {
     Init();
 }
 
 /**
- * Delete the window.
+ * @brief Delete the window.
  */
 Window::~Window()
 {
@@ -214,7 +217,7 @@ Window::~Window()
 }
 
 /**
- * Update the window.
+ * @brief Update the window.
  */
 void Window::OnUpdate() const
 {
@@ -226,15 +229,15 @@ void Window::OnUpdate() const
 }
 
 /**
- * Update the size information when the window is resized.
+ * @brief Update the size information when the window is resized.
  */
-void Window::OnResize(unsigned int width, unsigned int height) const
+void Window::OnResize(const unsigned int width, const unsigned int height) const
 {
     m_Context->UpdateScreenbufferSize(width, height);
 }
 
 /**
- * Define if the window's buffer swap will be synchronized with the vertical
+ * @brief Define if the window's buffer swap will be synchronized with the vertical
  * refresh rate of the monitor.
  *
  * @param enabled Enable or not the vertical synchronization.
@@ -246,7 +249,7 @@ void Window::SetVerticalSync(bool enabled)
 }
 
 /**
- * Initialize the window with all its corresponding components.
+ *  @brief Initialize the window with all its corresponding components.
  */
 void Window::Init()
 {
@@ -290,8 +293,13 @@ void Window::Init()
     glfwSetScrollCallback(m_Window, MouseScrolledCallback);
     glfwSetCursorPosCallback(m_Window, MouseMovedCallback);
     
-    // Retrieve the size of the window in pixel size and save the information
-    glfwGetFramebufferSize(m_Window, &m_Data.Width, &m_Data.Height);
+    // Retrieve the size of the window in pixel size and update the window information
+    int width, height;
+    glfwGetFramebufferSize(m_Window, &width, &height);
+    
+    m_Data.Width = static_cast<unsigned int>(width);
+    m_Data.Height = static_cast<unsigned int>(height);
+    
     m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
     
     // Show window created message
@@ -300,7 +308,7 @@ void Window::Init()
 }
 
 /**
- * Shutdown and close the window.
+ * @brief Shutdown and close the window.
  */
 void Window::Shutdown()
 {
@@ -315,3 +323,5 @@ void Window::Shutdown()
         glfwTerminate();
     }
 }
+
+} // namespace pixc

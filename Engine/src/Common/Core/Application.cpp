@@ -9,11 +9,13 @@
 
 #include "Common/Renderer/Renderer.h"
 
+namespace pixc {
+
 // Define static variables
 Application* Application::s_Instance = nullptr;
 
 /**
- * Generate a rendering application.
+ * @brief Generate a rendering application.
  *
  * @param name Application name.
  * @param width Size (width) of the application window.
@@ -36,7 +38,7 @@ Application::Application(const std::string& name, const int width,
 }
 
 /**
- * Add a new rendering layer to the application.
+ * @brief Add a new rendering layer to the application.
  *
  * @param layer New rendering layer.
  */
@@ -46,7 +48,7 @@ void Application::PushLayer(const std::shared_ptr<Layer>& layer)
 }
 
 /**
- * Add a new overlay layer (rendered on top) to the application.
+ * @brief Add a new overlay layer (rendered on top) to the application.
  *
  * @param overlay New overlay layer.
  */
@@ -56,7 +58,7 @@ void Application::PushOverlay(const std::shared_ptr<Layer>& overlay)
 }
 
 /**
- * Remove a rendering layer from the application.
+ * @brief Remove a rendering layer from the application.
  *
  * @param layer Rendering layer.
  */
@@ -66,8 +68,8 @@ void Application::PopLayer(const std::shared_ptr<Layer>& layer)
 }
 
 /**
- * Remove an overlay layer (rendered on top) from the application.
- * 
+ * @brief Remove an overlay layer (rendered on top) from the application.
+ *
  * @param overlay Overlay layer.
  */
 void Application::PopOverlay(const std::shared_ptr<Layer>& overlay)
@@ -76,7 +78,7 @@ void Application::PopOverlay(const std::shared_ptr<Layer>& overlay)
 }
 
 /**
- * Run this current application.
+ * @brief Run this current application.
  */
 void Application::Run()
 {
@@ -100,7 +102,7 @@ void Application::Run()
 }
 
 /**
- * Callback function definition for event handling on the application.
+ * @brief Callback function definition for event handling on the application.
  *
  * @param e Event to be handled.
  */
@@ -111,9 +113,9 @@ void Application::OnEvent(Event& e)
     
     // Dispatch the event to the application event callbacks
     dispatcher.Dispatch<WindowResizeEvent>(
-        BIND_EVENT_FN(Application::OnWindowResize));
+                                           BIND_EVENT_FN(Application::OnWindowResize));
     dispatcher.Dispatch<WindowCloseEvent>(
-        BIND_EVENT_FN(Application::OnWindowClose));
+                                          BIND_EVENT_FN(Application::OnWindowClose));
     
     // Dispatch the event to the rendered layers (check from top to bottom)
     for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
@@ -125,7 +127,7 @@ void Application::OnEvent(Event& e)
 }
 
 /**
- * Function to be called when a window resize event happens.
+ * @brief Function to be called when a window resize event happens.
  *
  * @param e Event to be handled.
  * @return `true` if the event has been handled.
@@ -137,7 +139,7 @@ bool Application::OnWindowResize(WindowResizeEvent &e)
 }
 
 /**
- * Function to be called when a window close event happens.
+ * @brief Function to be called when a window close event happens.
  *
  * @param e Event to be handled.
  * @return `true` if the event has been handled.
@@ -150,3 +152,5 @@ bool Application::OnWindowClose(WindowCloseEvent &e)
     
     return true;
 }
+
+} // namespace pixc

@@ -3,7 +3,13 @@
 #include <chrono>
 
 /**
- * Represents a high-resolution timer for measuring elapsed time.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a high-resolution timer for measuring elapsed time.
  */
 class Timer
 {
@@ -33,7 +39,7 @@ public:
     float Elapsed()
     {
         return std::chrono::duration_cast<std::chrono::nanoseconds>(
-            std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001f * 0.001f * 0.001f;
+                                                                    std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001f * 0.001f * 0.001f;
     }
     /// @brief Calculates the elapsed time since the timer was last reset.
     /// @return The elapsed time in milliseconds.
@@ -46,3 +52,5 @@ private:
     ///< The start time of the timer.
     std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
 };
+
+} // namespace pixc

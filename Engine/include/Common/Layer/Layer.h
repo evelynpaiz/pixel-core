@@ -4,6 +4,8 @@
 
 #include "Common/Event/Event.h"
 
+using namespace pixc;
+
 /**
  * Represents a layer in a rendering engine.
  *

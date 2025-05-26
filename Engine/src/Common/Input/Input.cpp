@@ -6,6 +6,8 @@
 
 #include "Common/Core/Application.h"
 
+using namespace pixc;
+
 /**
  * Check if a specific keyboard key is currently pressed.
  *

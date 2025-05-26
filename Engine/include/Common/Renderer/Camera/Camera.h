@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+using namespace pixc;
+
 /**
  * Represents a camera that captures the scene and displays it in a viewport.
  *

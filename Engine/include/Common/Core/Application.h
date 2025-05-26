@@ -7,7 +7,13 @@ class WindowResizeEvent;
 class WindowCloseEvent;
 
 /**
- * Handles the rendering application.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents the main rendering application.
  *
  * The `Application` class represents the main application handler for the rendering engine. It
  * provides methods to create and run the application, as well as handle window events. Layers can
@@ -22,7 +28,7 @@ class Application
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    Application(const std::string &name = "Basic Renderer", const int width = 800,
+    Application(const std::string &name = "Pixel Core Renderer", const int width = 800,
                 const int height = 600);
     /// @brief Delete the application.
     virtual ~Application() = default;
@@ -75,3 +81,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(Application);
 };
+
+} // namespace pixc

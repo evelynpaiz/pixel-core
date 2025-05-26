@@ -7,7 +7,7 @@
 #include "Viewer/ViewerGui.h"
 
 /**
- * Handles a 3D viewer application.
+ * @brief Handles a 3D viewer application.
  *
  * The `ViewerApp` class is a derived class of the `Application` class, specifically designed for creating
  * a 3D viewer application. It inherits all the properties and functionality of the base `Application` class
@@ -16,13 +16,13 @@
  * Copying or moving `ViewerApp` objects is disabled to ensure single ownership and prevent unintended
  * duplication.
  */
-class ViewerApp : public Application
+class ViewerApp : public pixc::Application
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    ViewerApp(const std::string &name = "Viewer Application", const int width = 800,
-                const int height = 600);
+    ViewerApp(const std::string &name = "3D Viewer Application", const int width = 800,
+              const int height = 600);
     ~ViewerApp();
     
     // Viewer application variables

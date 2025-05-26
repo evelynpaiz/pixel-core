@@ -6,7 +6,13 @@
 struct GLFWwindow;
 
 /**
- * Represents the information inside a window.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents the information inside a window.
  */
 struct WindowData
 {
@@ -15,7 +21,7 @@ struct WindowData
     ///< Window title.
     std::string Title;
     ///< Window size.
-    int Width, Height;
+    unsigned int Width, Height;
     ///< Vertical synchronization with the monitor.
     bool VerticalSync;
     
@@ -28,9 +34,9 @@ struct WindowData
     /// @param title Window name.
     /// @param width Size (width) of the window.
     /// @param height Size (height) of the window.
-    WindowData(const std::string& title, const int width, const int height,
-               bool verticalSync = true)
-        : Title(title), Width(width), Height(height), VerticalSync(verticalSync)
+    WindowData(const std::string& title, const unsigned int width,
+               const unsigned int height, bool verticalSync = true)
+    : Title(title), Width(width), Height(height), VerticalSync(verticalSync)
     {}
     /// @brief delete the data of the window.
     ~WindowData() = default;
@@ -50,25 +56,25 @@ class Window
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    Window(const std::string& title, const int width, const int height);
+    Window(const std::string& title, const unsigned int width, const unsigned int height);
     ~Window();
     
     // Handler(s)
     // ----------------------------------------
     void OnUpdate() const;
-    void OnResize(unsigned int width, unsigned int height) const;
+    void OnResize(const unsigned int width, const unsigned int height) const;
     
     // Getter(s)
     // ----------------------------------------
     /// @brief Get the title of the window.
     /// @return The window name.
-    const std::string& GetTitle() const { return m_Data.Title; }
+    std::string GetTitle() const { return m_Data.Title; }
     /// @brief Get the size (width) of the window.
     /// @return The width of the window.
-    unsigned int GetWidth() const { return m_Data.Width; }
+    int GetWidth() const { return m_Data.Width; }
     /// @brief Get the size (height) of the window.
     /// @return The height of the window.
-    unsigned int GetHeight() const { return m_Data.Height; }
+    int GetHeight() const { return m_Data.Height; }
     /// @brief Check if there is a vertical synchronization with the monitor.
     /// @return `true` if the window is synchronized.
     bool IsVerticalSync() const { return m_Data.VerticalSync; }
@@ -108,3 +114,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(Window);
 };
+
+} // namespace pixc

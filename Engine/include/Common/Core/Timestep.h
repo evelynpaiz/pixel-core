@@ -1,7 +1,13 @@
 #pragma once
 
 /**
- * Represents a time interval used for simulation and animation.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a time interval used for simulation and animation.
  */
 class Timestep
 {
@@ -10,18 +16,18 @@ public:
     // ----------------------------------------
     /// @brief Constructs a timestep with a specified time interval.
     /// @param time The time interval in seconds.
-    Timestep(float time = 0.0f)
-        : m_Time(time)
+    Timestep(const float time = 0.0f)
+    : m_Time(time)
     {}
     /// @brief Delete the timestep.
     ~Timestep() = default;
-
+    
     // Operator(s)
     // ----------------------------------------
     /// @brief Conversion operator to retrieve the time interval in seconds.
     /// @return The time interval in seconds.
     operator float() const { return m_Time; }
-
+    
     // Getter(s)
     // ----------------------------------------
     /// @brief Get the time interval in seconds.
@@ -35,10 +41,12 @@ public:
     /// @note This method provides an estimate of the FPS assuming a constant time interval.
     /// @return The estimated frames per second (FPS).
     int GetFPS() const { return (int)(1.0f / m_Time); }
-
+    
     // Timestep variables
     // ----------------------------------------
 private:
     ///< The time interval in seconds.
     float m_Time;
 };
+
+} // namespace pixc
