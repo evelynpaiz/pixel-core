@@ -4,10 +4,14 @@
 
 #include "Common/Event/Event.h"
 
-using namespace pixc;
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
- * Represents a layer in a rendering engine.
+ * @brief Represents a layer in a rendering engine.
  *
  * The `Layer` class provides a mechanism for organizing and managing the rendering process in a
  * rendering engine. Layers can be attached and detached, allowing for dynamic management of rendering
@@ -18,13 +22,13 @@ using namespace pixc;
  */
 class Layer
 {
-public:
+    public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Define a rendering layer.
     /// @param name Name of the layer.
     Layer(const std::string& name = "Unidentified Layer")
-        : m_LayerName(name)
+    : m_LayerName(name)
     {}
     /// @brief Delete the layer.
     virtual ~Layer() = default;
@@ -50,12 +54,14 @@ public:
     
     // Layer variables
     // ----------------------------------------
-protected:
+    protected:
     ///< Layer name.
     std::string m_LayerName;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
-public:
+    public:
     DISABLE_COPY_AND_MOVE(Layer);
 };
+
+} // namespace pixc

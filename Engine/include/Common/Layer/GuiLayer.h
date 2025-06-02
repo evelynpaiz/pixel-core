@@ -5,7 +5,13 @@
 struct ImGuiContext;
 
 /**
- * Rendering layer responsible for the graphics interface using the ImGui library.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Rendering layer responsible for the graphics interface using the ImGui library.
  *
  * The `GuiLayer` class is a derived class of the `Layer` class and represents a graphical
  * user interface (GUI) to provide graphical support to the user. It offers functionality for attaching,
@@ -16,16 +22,16 @@ struct ImGuiContext;
  */
 class GuiLayer : public Layer
 {
-public:
+    public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    GuiLayer(const std::string& name = "Unidentified GUI Layer");
+    GuiLayer(const std::string& name = "GUI Layer");
     
     // Layer handlers
     // ----------------------------------------
     void OnAttach() override;
     void OnDetach() override;
-    void OnUpdate(Timestep ts) override {}
+    void OnUpdate(Timestep ts) override;
     void OnEvent(Event& e) override;
     
     // Layer rendering
@@ -39,7 +45,7 @@ public:
     /// @param block Block the dispatching of the events.
     void BlockEvents(bool block) { m_BlockEvents = block; }
     
-protected:
+    protected:
     // GUI
     // ----------------------------------------
     void GUIStats(Timestep ts);
@@ -50,7 +56,7 @@ protected:
     
     // GUI layer variables
     // ----------------------------------------
-private:
+    private:
     ///< GUI context (using ImGui)
     ImGuiContext *m_GuiContext = nullptr;
     ///< Dispatch the event to this layers only.
@@ -58,6 +64,8 @@ private:
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
-public:
+    public:
     DISABLE_COPY_AND_MOVE(GuiLayer);
 };
+
+} // namespace pixc

@@ -3,14 +3,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 /**
- * Define a layer for a 3D viewer.
+ * @brief Define a layer for a 3D viewer.
  */
 Viewer::Viewer(int width, int height)
     : Layer("Viewer Layer"), m_Scene(std::make_unique<Scene>(width, height))
 {}
 
 /**
- * Attach (add) the viewer layer to the rendering engine.
+ * @brief Attach (add) the viewer layer to the rendering engine.
  */
 void Viewer::OnAttach()
 {
@@ -19,7 +19,7 @@ void Viewer::OnAttach()
 }
 
 /**
- * Render the viewer layer.
+ * @brief Render the viewer layer.
  *
  * @param deltaTime Times passed since the last update.
  */
@@ -38,7 +38,7 @@ void Viewer::OnUpdate(Timestep ts)
 }
 
 /**
- * Handle an event that possibly occurred inside the viewer layer.
+ * @brief Handle an event that possibly occurred inside the viewer layer.
  * @param e Event.
  */
 void Viewer::OnEvent(Event &e)
@@ -55,7 +55,7 @@ void Viewer::OnEvent(Event &e)
 }
 
 /**
- * Initialize all components inside the viewer layer.
+ * @brief Initialize all components inside the viewer layer.
  */
 void Viewer::InitializeViewer()
 {
@@ -89,7 +89,7 @@ void Viewer::InitializeViewer()
 }
 
 /**
- * Defines the materials used in the rendering process.
+ * @brief Defines the materials used in the rendering process.
  */
 void Viewer::DefineMaterials()
 {
@@ -110,7 +110,7 @@ void Viewer::DefineMaterials()
 }
 
 /**
- * Defines the scene geometry for the rendering process.
+ * @brief Defines the scene geometry for the rendering process.
  */
 void Viewer::DefineSceneGeometry()
 {
@@ -127,7 +127,7 @@ void Viewer::DefineSceneGeometry()
 }
 
 /**
- * Defines the rendering passes.
+ * @brief Defines the rendering passes.
  */
 void Viewer::DefineRenderPasses()
 {
@@ -175,7 +175,7 @@ void Viewer::DefineRenderPasses()
 }
 
 /**
- * Function to be called when a window resize event happens.
+ * @brief Function to be called when a window resize event happens.
  *
  * @param e Event to be handled.
  * @return True if the event has been handled.

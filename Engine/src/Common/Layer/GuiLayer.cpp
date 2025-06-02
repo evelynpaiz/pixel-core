@@ -7,20 +7,31 @@
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
-#include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
-using namespace pixc;
+// TODO: Add support for metal using a graphic interphase layer.
+//#ifdef __APPLE__
+//#define IMGUI_IMPL_METAL_CPP
+//#include <backends/imgui_impl_metal.h>
+
+// TODO: Test that metal cpp is properly working using:
+//#define NS_PRIVATE_IMPLEMENTATION
+//#define MTL_PRIVATE_IMPLEMENTATION
+//#include "Metal/Metal.hpp"
+//#endif
+
+namespace pixc {
 
 /**
- * Define a GUI layer.
+ * @brief Define a GUI layer.
  */
 GuiLayer::GuiLayer(const std::string& name)
-    : Layer(name)
+: Layer(name)
 {}
 
 /**
- * Attach (add) the GUI layer to the rendering engine.
+ * @brief Attach (add) the GUI layer to the rendering engine.
  */
 void GuiLayer::OnAttach()
 {
@@ -41,24 +52,52 @@ void GuiLayer::OnAttach()
     // Set the style of the graphics interface
     SetStyle();
     
-    // Initialize
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    // Initialize based on the graphics API
+    switch (Renderer::GetAPI())
+    {
+        case RendererAPI::API::None:
+            CORE_ASSERT(false, "RendererAPI::None is not supported!");
+            break;
+        case RendererAPI::API::OpenGL:
+            ImGui_ImplGlfw_InitForOpenGL(window, true);
+            ImGui_ImplOpenGL3_Init("#version 330");
+            break;
+        case RendererAPI::API::Metal:
+            break;
+        default:
+            CORE_ASSERT(false, "Unknown Renderer API!");
+    }
 }
 
 /**
- * Detach (remove) the GUI layer from the rendering engine.
+ * @brief Detach (remove) the GUI layer from the rendering engine.
  */
 void GuiLayer::OnDetach()
 {
-    ImGui_ImplOpenGL3_Shutdown();
+    // Shut down the appropriate ImGui backend based on the active graphics API
+    switch (Renderer::GetAPI())
+    {
+        case RendererAPI::API::None:
+            CORE_ASSERT(false, "RendererAPI::None is not supported!");
+            break;
+        case RendererAPI::API::OpenGL:
+            ImGui_ImplOpenGL3_Shutdown();
+            break;
+        case RendererAPI::API::Metal:
+            //ImGui_ImplMetal_Shutdown();
+            break;
+        default:
+            CORE_ASSERT(false, "Unknown Renderer API!");
+    }
+    
+    // Shut down the GLFW platform backend and destroy the ImGui context
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
 /**
- * Handle an event that possibly occurred inside the GUI layer.
- * 
+ * @brief Handle an event that possibly occurred inside the GUI layer.
+ *
  * @param e Event.
  */
 void GuiLayer::OnEvent(Event& e)
@@ -75,17 +114,46 @@ void GuiLayer::OnEvent(Event& e)
 }
 
 /**
- * Begin a new rendering frame for the GUI.
+ * @brief Render the GUI layer.
+ *
+ * @param deltaTime Times passed since the last update.
+ */
+void GuiLayer::OnUpdate(Timestep ts)
+{
+    // Render a simple GUI showing rendering stats
+    Begin();
+    GUIStats(ts);
+    End();
+}
+
+/**
+ * @brief Begin a new rendering frame for the GUI.
  */
 void GuiLayer::Begin()
 {
-    ImGui_ImplOpenGL3_NewFrame();
+    switch (Renderer::GetAPI())
+    {
+        // Prepare a new ImGui frame based on the active graphics API
+        case RendererAPI::API::None:
+            CORE_ASSERT(false, "RendererAPI::None is not supported!");
+            break;
+        case RendererAPI::API::OpenGL:
+            ImGui_ImplOpenGL3_NewFrame();
+            break;
+        case RendererAPI::API::Metal:
+            // TODO: send the render pass descriptor
+            //ImGui_ImplMetal_NewFrame();
+            break;
+        default:
+            CORE_ASSERT(false, "Unknown Renderer API!");
+    }
+    
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
 /**
- * Render the current defined data of the GUI in the current frame.
+ * @brief Render the current defined data of the GUI in the current frame.
  */
 void GuiLayer::End()
 {
@@ -97,7 +165,19 @@ void GuiLayer::End()
     
     // Render
     ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    switch (Renderer::GetAPI())
+    {
+        case RendererAPI::API::None:
+            CORE_ASSERT(false, "RendererAPI::None is not supported!");
+            break;
+        case RendererAPI::API::OpenGL:
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            break;
+        case RendererAPI::API::Metal:
+            break;
+        default:
+            CORE_ASSERT(false, "Unknown Renderer API!");
+    }
     
     // Update the context used to rendered
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -110,7 +190,7 @@ void GuiLayer::End()
 }
 
 /**
- * Render the rendering statistics.
+ * @brief Render the rendering statistics.
  */
 void GuiLayer::GUIStats(Timestep ts)
 {
@@ -133,7 +213,7 @@ void GuiLayer::GUIStats(Timestep ts)
 }
 
 /**
- * Define the style of the GUI.
+ * @brief Define the style of the GUI.
  */
 void GuiLayer::SetStyle()
 {
@@ -148,3 +228,5 @@ void GuiLayer::SetStyle()
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 }
+
+} // namespace pixc

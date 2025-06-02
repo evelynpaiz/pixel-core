@@ -6,6 +6,16 @@ set(SPDLOG_BUILD_ONLY_HEADERS ON CACHE BOOL "" FORCE)
 add_subdirectory(3rdparty/spdlog)
 add_library(spdlog::spdlog ALIAS spdlog_header_only)
 
+## Metal
+if(APPLE)
+    add_library(metal INTERFACE)
+    target_include_directories(metal
+        INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/metal-cpp/
+    )
+    add_library(Metal::Cpp ALIAS metal)
+endif()
+
 ## GLFW
 set(GLFW_MAPPING OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -55,8 +65,9 @@ add_library(imgui STATIC)
 file(GLOB imgui_headers ${IMGUI_DIR}/*.h)
 
 file(GLOB imgui_backend_headers 
-    ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
     ${IMGUI_DIR}/backends/imgui_impl_glfw.h
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
+    ${IMGUI_DIR}/backends/imgui_impl_metal.h
 )
 
 file(
@@ -70,8 +81,9 @@ file(
 
 file(
     GLOB imgui_backends_sources
-    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_metal.mm
 )
 
 target_sources(imgui 
@@ -87,6 +99,11 @@ target_include_directories(imgui
 )
 
 target_link_libraries(imgui OpenGL::GL glfw::glfw)
+if (APPLE)
+    target_link_libraries(imgui
+        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL} Metal::Cpp
+    )
+endif()
 
 source_group("include" FILES ${imgui_headers})
 source_group("include/backends" FILES ${imgui_backend_headers})

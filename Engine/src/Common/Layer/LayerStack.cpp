@@ -1,6 +1,8 @@
 #include "enginepch.h"
 #include "Common/Layer/LayerStack.h"
 
+namespace pixc {
+
 /**
  * Empty resources and delete the stack.
  */
@@ -21,7 +23,7 @@ void LayerStack::PushLayer(const std::shared_ptr<Layer>& layer)
     // Add the rendering layer above all layers in the stack
     m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
     m_LayerInsertIndex++;
-
+    
     layer->OnAttach();
 }
 
@@ -73,3 +75,5 @@ void LayerStack::PopOverlay(const std::shared_ptr<Layer>& overlay)
         m_Layers.erase(it);
     }
 }
+
+} // namespace pixc

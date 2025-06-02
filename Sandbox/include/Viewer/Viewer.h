@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 /**
- * Rendering layer containing a basic 3D viewer.
+ * @brief Rendering layer containing a basic 3D viewer.
  *
  * The `Viewer` class is a derived class of the `Layer` class and represents a rendering layer
  * specifically designed for a basic 3D viewer. It provides functionality for attaching, detaching, updating,

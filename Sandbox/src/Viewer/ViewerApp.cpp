@@ -1,7 +1,7 @@
 #include "Viewer/ViewerApp.h"
 
 /**
- * Generate a (sandbox) rendering application.
+ * @brief Generate a (sandbox) rendering application.
  *
  * @param name Name of the application.
  * @param width Size of the window (width).
@@ -12,17 +12,19 @@ ViewerApp::ViewerApp(const std::string &name, const int width, const int height)
 {
     // Push the viewer layer to the layer stack
     m_Viewer = std::make_shared<Simple>(GetWindow().GetWidth(), GetWindow().GetHeight());
-    //m_Gui = std::make_shared<ViewerGui>(m_Viewer);
+    m_Gui = std::make_shared<GuiLayer>();
     
+    // TODO: Add support of imgui with metal
     PushLayer(m_Viewer);
     //PushOverlay(m_Gui);
 }
 
 /**
- * Delete this application.
+ * @brief Delete this application.
  */
 ViewerApp::~ViewerApp()
 {
+    // TODO: Add support of imgui with metal
     PopLayer(m_Viewer);
     //PopOverlay(m_Gui);
 }

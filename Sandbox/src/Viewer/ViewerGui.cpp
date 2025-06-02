@@ -3,14 +3,14 @@
 #include <imgui.h>
 
 /**
- * Define a Viewer GUI layer.
+ * @brief Define a Viewer GUI layer.
  */
 ViewerGui::ViewerGui(const std::shared_ptr<Viewer>& layer)
     : GuiLayer("GUI Layer"), m_Viewer(layer)
 {}
 
 /**
- * Render the GUI layer.
+ * @brief Render the GUI layer.
  *
  * @param deltaTime Times passed since the last update.
  */
@@ -22,12 +22,13 @@ void ViewerGui::OnUpdate(Timestep ts)
     GUIMenu();
     End();
     
+    // TODO: incorporate into a RENDERING LAYER
     // If GUI is active, disable the interaction in the rendering layer
-    m_Viewer->EnableInteraction(!IsActive());
+    //m_Viewer->EnableInteraction(!IsActive());
 }
 
 /**
- * Handle an event that possibly occurred inside this layer.
+ * @brief Handle an event that possibly occurred inside this layer.
  * @param e Event.
  */
 void ViewerGui::OnEvent(Event &e)
@@ -40,7 +41,7 @@ void ViewerGui::OnEvent(Event &e)
 }
 
 /**
- * Check if the GUI is currently active or hovered in.
+ * @brief Check if the GUI is currently active or hovered in.
  *
  * @return `true` if the GUI is active.
  */
@@ -52,7 +53,7 @@ bool ViewerGui::IsActive()
 }
 
 /**
- * The viewer menu GUI.
+ * @brief The viewer menu GUI.
  */
 void ViewerGui::GUIMenu()
 {
@@ -73,7 +74,7 @@ void ViewerGui::GUIMenu()
 }
 
 /**
- * Define the style of the GUI.
+ * @brief Define the style of the GUI.
  */
 void ViewerGui::SetStyle()
 {
@@ -135,7 +136,7 @@ void ViewerGui::SetStyle()
 }
 
 /**
- * Function to be called when a mouse scroll event happens.
+ * @brief Function to be called when a mouse scroll event happens.
  *
  * @param e Event to be handled.
  * @return `true` if the event has been handled.

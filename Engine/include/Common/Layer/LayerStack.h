@@ -3,7 +3,13 @@
 #include "Common/Layer/Layer.h"
 
 /**
- * Manages a stack of layers in the rendering engine.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Manages a stack of layers in the rendering engine.
  *
  * The `LayerStack` class provides a way to manage a stack of layers in the rendering engine.
  * Layers can be pushed and popped onto the stack, allowing for dynamic management of the rendering
@@ -11,7 +17,7 @@
  */
 class LayerStack
 {
-public:
+    public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Generate an empty stack of layers.
@@ -79,9 +85,11 @@ public:
     
     // Layer stack variables
     // ----------------------------------------
-private:
+    private:
     ///< Set of layers in the stack.
     std::vector<std::shared_ptr<Layer>> m_Layers;
     ///< Insert index (separating the overlays and rendering layers).
     unsigned int m_LayerInsertIndex = 0;
 };
+
+} // namespace pixc

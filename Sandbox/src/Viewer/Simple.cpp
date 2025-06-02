@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 /**
- * Define a layer for a 3D viewer.
+ * @brief Define a layer for a 3D viewer.
  */
 Simple::Simple(int width, int height)
     : Layer("Metal Testing Layer")
@@ -18,7 +18,7 @@ Simple::Simple(int width, int height)
 }
 
 /**
- * Attach (add) the viewer layer to the rendering engine.
+ * @brief Attach (add) the viewer layer to the rendering engine.
  */
 void Simple::OnAttach()
 {
@@ -58,7 +58,7 @@ void Simple::OnAttach()
 }
 
 /**
- * Render the viewer layer.
+ * @brief Render the viewer layer.
  *
  * @param deltaTime Times passed since the last update.
  */
@@ -118,7 +118,7 @@ void Simple::OnUpdate(Timestep ts)
 }
 
 /**
- * Handle an event that possibly occurred inside the viewer layer.
+ * @brief Handle an event that possibly occurred inside the viewer layer.
  * @param e Event.
  */
 void Simple::OnEvent(Event &e)
@@ -135,7 +135,7 @@ void Simple::OnEvent(Event &e)
 }
 
 /**
- * Function to be called when a window resize event happens.
+ * @brief Function to be called when a window resize event happens.
  *
  * @param e Event to be handled.
  * @return True if the event has been handled.
