@@ -64,8 +64,8 @@ set_target_properties(Engine PROPERTIES
 
 # Link external libraries
 target_link_libraries(Engine 
-     spdlog::spdlog_header_only OpenGL::GL glfw::glfw
-#    glew::glew glm::glm stb::stb assimp::assimp imgui::imgui
+    spdlog::spdlog_header_only OpenGL::GL glfw::glfw glew::glew
+#    glm::glm stb::stb assimp::assimp imgui::imgui
 )
 
 # Link metal if apple device is used

@@ -1,12 +1,4 @@
 
-## GLEW
-set(GLEW_BUILD_SHARED OFF CACHE BOOL "" FORCE)
-set(GLEW_INSTALL OFF CACHE BOOL "" FORCE)
-set(ONLY_LIBS ON CACHE BOOL "" FORCE)
-
-add_subdirectory(3rdparty/glew)
-add_library(glew::glew ALIAS glew)
-
 ## GLM
 set(GLM_UNINSTALL OFF CACHE BOOL "" FORCE)
 
