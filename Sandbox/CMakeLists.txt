@@ -5,12 +5,13 @@ file(
     GLOB_RECURSE sources
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/*.cpp src/*.h include/*.h
+    src/Main.cpp
+#    src/*.cpp src/*.h include/*.h
 )
 
 # Define the executable
 add_executable(Sandbox ${sources})
-add_dependencies(Sandbox Resources)
+#add_dependencies(Sandbox Resources)
 
 # Define include directories
 target_include_directories(

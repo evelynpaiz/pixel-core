@@ -5,43 +5,45 @@ file(
     GLOB_RECURSE sources
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/Common/*.cpp src/Common/*.mm
+    src/Common/Core/Log.cpp 
+#    src/Common/*.cpp src/Common/*.mm
 )
 
 # Find platform-specific source files
-if(WIN32)
-    set(PLATFORM_OS_DIR "Platform/OS/Windows")
-    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
-elseif(APPLE)
-    set(PLATFORM_OS_DIR "Platform/OS/MacOS")
-    set(PLATFORM_API_METAL_DIR "Platform/API/Metal")
-else()
-    set(PLATFORM_OS_DIR "Platform/OS/Generic")
-    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
-endif()
+#if(WIN32)
+#    set(PLATFORM_OS_DIR "Platform/OS/Windows")
+#    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
+#elseif(APPLE)
+#    set(PLATFORM_OS_DIR "Platform/OS/MacOS")
+#    set(PLATFORM_API_METAL_DIR "Platform/API/Metal")
+#else()
+#    set(PLATFORM_OS_DIR "Platform/OS/Generic")
+#    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
+#endif()
 
-set(PLATFORM_API_OPENGL_DIR "Platform/API/OpenGL")
+#set(PLATFORM_API_OPENGL_DIR "Platform/API/OpenGL")
 
-file(
-    GLOB_RECURSE platform_sources
-    LIST_DIRECTORIES false
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/${PLATFORM_OS_DIR}/*.cpp
-    src/${PLATFORM_OS_DIR}/*.mm
+#file(
+#    GLOB_RECURSE platform_sources
+#    LIST_DIRECTORIES false
+#    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+#    src/${PLATFORM_OS_DIR}/*.cpp
+#    src/${PLATFORM_OS_DIR}/*.mm
     
-    src/${PLATFORM_API_OPENGL_DIR}/*.cpp
-    src/${PLATFORM_API_OPENGL_DIR}/*.mm
+#    src/${PLATFORM_API_OPENGL_DIR}/*.cpp
+#    src/${PLATFORM_API_OPENGL_DIR}/*.mm
     
-    src/${PLATFORM_API_METAL_DIR}/*.cpp
-    src/${PLATFORM_API_METAL_DIR}/*.mm
-)
+#    src/${PLATFORM_API_METAL_DIR}/*.cpp
+#    src/${PLATFORM_API_METAL_DIR}/*.mm
+#)
 
 # Find header files
 file(
     GLOB_RECURSE public_headers
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    include/*.h
+    include/Common/Core/Log.h
+#    include/*.h
 )
 
 # Define the engine library
@@ -62,18 +64,19 @@ set_target_properties(Engine PROPERTIES
 
 # Link external libraries
 target_link_libraries(Engine 
-    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm stb::stb assimp::assimp imgui::imgui
+     spdlog::spdlog_header_only
+#    spdlog::spdlog_header_only OpenGL::GL glfw::glfw glew::glew glm::glm stb::stb assimp::assimp imgui::imgui
 )
 
 # Link metal if apple device is used
-if (APPLE)
-    target_link_libraries(Engine
-        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
-    )
-endif()
+#if (APPLE)
+#    target_link_libraries(Engine
+#        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
+#    )
+#endif()
 
 # Define pre-compiled header
-target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
+#target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
 
 # Add pre-processing flag
 target_compile_definitions(Engine PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
