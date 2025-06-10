@@ -15,12 +15,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Third party libraries
-#find_package(OpenGL REQUIRED)
-#if (APPLE)
-#    find_library(APPLE_FWK_FOUNDATION Foundation REQUIRED)
-#    find_library(APPLE_FWK_QUARTZ_CORE QuartzCore REQUIRED)
-#    find_library(APPLE_FWK_METAL Metal REQUIRED)
-#endif()
+find_package(OpenGL REQUIRED)
+if (APPLE)
+    find_library(APPLE_FWK_FOUNDATION Foundation REQUIRED)
+    find_library(APPLE_FWK_QUARTZ_CORE QuartzCore REQUIRED)
+    find_library(APPLE_FWK_METAL Metal REQUIRED)
+endif()
 include(Dependencies.cmake)
 
 # Define options for the user

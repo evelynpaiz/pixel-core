@@ -64,16 +64,16 @@ set_target_properties(Engine PROPERTIES
 
 # Link external libraries
 target_link_libraries(Engine 
-     spdlog::spdlog_header_only
+     spdlog::spdlog_header_only OpenGL::GL glfw::glfw
 #    spdlog::spdlog_header_only OpenGL::GL glfw::glfw glew::glew glm::glm stb::stb assimp::assimp imgui::imgui
 )
 
 # Link metal if apple device is used
-#if (APPLE)
-#    target_link_libraries(Engine
-#        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
-#    )
-#endif()
+if (APPLE)
+    target_link_libraries(Engine
+        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
+    )
+endif()
 
 # Define pre-compiled header
 #target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
