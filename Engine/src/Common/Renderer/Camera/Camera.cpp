@@ -4,8 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+namespace pixc {
+
 /**
- * Get the camera orientation defined as a quaternion.
+ * @brief Get the camera orientation defined as a quaternion.
  *
  * @return The camera orientation.
  */
@@ -16,7 +18,7 @@ glm::quat Camera::GetOrientation() const
 }
 
 /**
- * Get the camera's up direction vector.
+ * @brief Get the camera's up direction vector.
  *
  * @return The up vector.
  */
@@ -26,7 +28,7 @@ glm::vec3 Camera::GetUpDirection() const
 }
 
 /**
- * Get the camera's right direction vector.
+ * @brief Get the camera's right direction vector.
  *
  * @return The right vector.
  */
@@ -36,7 +38,7 @@ glm::vec3 Camera::GetRightDirection() const
 }
 
 /**
- * Get the camera's forward direction vector.
+ * @brief Get the camera's forward direction vector.
  *
  * @return The forward vector.
  */
@@ -59,7 +61,7 @@ void Camera::SetViewportSize(const int width, const int height)
         CORE_WARN("Attempted to rezize camera resolution to {0}, {1}", width, height);
         return;
     }
-
+    
     // Define the new resolution value
     m_Width = width;
     m_Height = height;
@@ -91,7 +93,7 @@ float Camera::CalculateYaw() const
 }
 
 /**
- * Update the camera view matrix.
+ * @brief Update the camera view matrix.
  */
 void Camera::UpdateViewMatrix()
 {
@@ -99,12 +101,12 @@ void Camera::UpdateViewMatrix()
     glm::quat orientation = GetOrientation();
     // Compute the view matrix
     glm::mat4 view = glm::translate(glm::mat4(1.0f), m_Position)
-        * glm::toMat4(orientation);
+    * glm::toMat4(orientation);
     m_ViewMatrix = glm::inverse(view);
 }
 
 /**
- * Update the camera projection matrix (perspective projection).
+ * @brief Update the camera projection matrix (perspective projection).
  */
 void Camera::UpdateProjectionMatrix()
 {
@@ -112,10 +114,12 @@ void Camera::UpdateProjectionMatrix()
 }
 
 /**
- * Update the camera matrices.
+ * @brief Update the camera matrices.
  */
 void Camera::UpdateCameraMatrices()
 {
     UpdateViewMatrix();
     UpdateProjectionMatrix();
 }
+
+} // namespace pixc

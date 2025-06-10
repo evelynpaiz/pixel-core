@@ -5,7 +5,13 @@
 #include "Platform/Metal/MetalContext.h"
 
 /**
- * Represents a drawable object designed for rendering using Apple's Metal framework.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a drawable object designed for rendering using Apple's Metal framework.
  *
  * This class inherits from `Drawable` and provides a higher-level interface
  * for drawing geometry using Metal. It manages the creation, configuration,
@@ -57,7 +63,7 @@ private:
     {
         // Search for the vertex buffer
         auto it = std::find(m_VertexBuffers.begin(), m_VertexBuffers.end(), vbo);
-
+        
         // Check if the vertex buffer was found
         if (it != m_VertexBuffers.end()) {
             // Calculate and return the index
@@ -82,3 +88,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(MetalDrawable);
 };
+
+} // namespace pixc

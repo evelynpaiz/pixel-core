@@ -3,8 +3,14 @@
 #include "Common/Renderer/Buffer/Buffer.h"
 
 /**
- * Represents a vertex buffer for storing vertex data.
- * 
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a vertex buffer for storing vertex data.
+ *
  * The `VertexBuffer` class provides an abstract interface for managing vertex buffers, which
  * are used to store vertex attribute data (position, color, texture coordinates, etc.) on the GPU.
  * This data is used by the graphics pipeline during rendering.
@@ -37,7 +43,7 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    /// Get the number of vertices.
+    /// @brief Get the number of vertices.
     /// @return The amount of vertices defined.
     uint32_t GetCount() const { return m_Count; }
     /// @brief Retrieve the current layout of the buffer, specifying the arrangement and format
@@ -71,3 +77,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(VertexBuffer);
 };
+
+} // namespace pixc

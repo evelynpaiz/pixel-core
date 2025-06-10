@@ -5,8 +5,10 @@
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 /**
- * Generate a vertex array.
+ * @brief Generate a vertex array.
  */
 OpenGLVertexArray::OpenGLVertexArray()
 {
@@ -14,7 +16,7 @@ OpenGLVertexArray::OpenGLVertexArray()
 }
 
 /**
- * Delete the vertex array.
+ * @brief Delete the vertex array.
  */
 OpenGLVertexArray::~OpenGLVertexArray()
 {
@@ -22,7 +24,7 @@ OpenGLVertexArray::~OpenGLVertexArray()
 }
 
 /**
- * Bind the vertex array.
+ * @brief Bind the vertex array.
  */
 void OpenGLVertexArray::Bind() const
 {
@@ -30,7 +32,7 @@ void OpenGLVertexArray::Bind() const
 }
 
 /**
- * Unbind the vertex array.
+ * @brief Unbind the vertex array.
  */
 void OpenGLVertexArray::Unbind() const
 {
@@ -38,7 +40,7 @@ void OpenGLVertexArray::Unbind() const
 }
 
 /**
- * Link an input vertex buffer to the vertex array.
+ * @brief Link an input vertex buffer to the vertex array.
  *
  * @param vbo Vertex buffer.
  * @param index Attribute index.
@@ -72,3 +74,5 @@ void OpenGLVertexArray::SetVertexAttributes(const std::shared_ptr<VertexBuffer>&
     vbo->Unbind();
     Unbind();
 }
+
+} // namespace pixc

@@ -3,6 +3,12 @@
 #include "Common/Renderer/Buffer/VertexBuffer.h"
 
 /**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
  * Represents a vertex array that describes how vertex attributes are stored in vertex buffer(s).
  *
  * The `OpenGLVertexArray` class manages the overall state and bindings related to vertex
@@ -41,3 +47,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLVertexArray);
 };
+
+} // namespace pixc

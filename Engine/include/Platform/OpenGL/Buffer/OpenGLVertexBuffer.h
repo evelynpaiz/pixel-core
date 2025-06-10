@@ -3,7 +3,13 @@
 #include "Common/Renderer/Buffer/VertexBuffer.h"
 
 /**
- * Concrete implementation of `VertexBuffer` for the OpenGL rendering API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of `VertexBuffer` for the OpenGL rendering API.
  *
  * This class handles the creation, binding, and management of vertex buffers specifically
  * for OpenGL. It uses OpenGL functions to interact with the GPU.
@@ -36,3 +42,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLVertexBuffer);
 };
+
+} // namespace pixc

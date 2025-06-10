@@ -6,12 +6,14 @@
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
 #include "Platform/Metal/Shader/MetalShader.h"
 
+namespace pixc {
+
 // ----------------------------------------
 // Shader
 // ----------------------------------------
 
 /**
- * Create a shader based on the active rendering API.
+ * @brief Create a shader based on the active rendering API.
  *
  * @param name The name to assign to the shader.
  * @param filePath The path to the shader source file.
@@ -27,7 +29,7 @@ std::shared_ptr<Shader> Shader::Create(const std::string &name,
 
 
 /**
- * Create a shader based on the active rendering API.
+ * @brief Create a shader based on the active rendering API.
  *
  * @param filePath The path to the shader source file.
  *
@@ -50,14 +52,14 @@ std::string Shader::ReadFile(const std::filesystem::path& filePath)
 {
     std::ifstream fileStream(filePath);
     CORE_ASSERT(fileStream.is_open(), "Failed to open file: " + filePath.string());
-
+    
     std::stringstream buffer;
     buffer << fileStream.rdbuf();
     return buffer.str();
 }
 
 /**
- * Verify if the uniform is defined in the shader program.
+ * @brief Verify if the uniform is defined in the shader program.
  *
  * @param name Name of the uniform.
  *
@@ -68,13 +70,13 @@ bool Shader::IsUniform(const std::string& name) const
     auto [group, member] = utils::SplitString(name);
     if (m_Uniforms.Exists(group, member))
         return true;
-        
+    
     CORE_WARN("Uniform " + name + " doesn't exist!");
     return false;
 }
 
 /**
- * Constructs the full file path for a shader, including the correct extension.
+ * @brief Constructs the full file path for a shader, including the correct extension.
  *
  * This function takes a base file path for a shader (e.g., "shaders/MyShader")
  * and automatically appends the appropriate file extension based on the currently
@@ -106,14 +108,14 @@ std::filesystem::path Shader::GetFullFilePath(const std::filesystem::path& fileP
             CORE_ASSERT(false, "Unknown Renderer API!");
             return filePath;
     }
-
+    
     // Update the extension of the file path if necessary
     if (filePath.extension() != extension)
     {
         CORE_ASSERT(filePath.extension().empty(), "Shader extension not supported for the current graphics API");
         fullFilePath += extension;
     }
-
+    
     return fullFilePath;
 }
 
@@ -122,7 +124,7 @@ std::filesystem::path Shader::GetFullFilePath(const std::filesystem::path& fileP
 // ----------------------------------------
 
 /**
- * Loads a shader from a file and adds it to the library.
+ * @brief Loads a shader from a file and adds it to the library.
  *
  * @param filePath The path to the file containing the shader.
  *
@@ -134,7 +136,7 @@ std::shared_ptr<Shader> ShaderLibrary::Load(const std::filesystem::path& filePat
 }
 
 /**
- * Loads a shader from a file with a specified name and adds it to the library.
+ * @brief Loads a shader from a file with a specified name and adds it to the library.
  *
  * @param name The name to associate with the loaded shader.
  * @param filePath The path to the file containing the shader.
@@ -148,3 +150,5 @@ std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& name,
     Add(name, shader);
     return shader;
 }
+
+} // namespace pixc

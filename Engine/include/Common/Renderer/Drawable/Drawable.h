@@ -6,7 +6,13 @@
 #include "Common/Renderer/Shader/Shader.h"
 
 /**
- * Represents a drawable object in a rendering system.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a drawable object in a rendering system.
  *
  * The `Drawable` class serves as an abstract base class for objects that can be
  * drawn using a graphics API. It provides functionality for managing vertex buffers,
@@ -79,8 +85,8 @@ public:
     void SetIndexData(const std::vector<unsigned int> &indices)
     {
         // Verify that the size of the data is not higher than supported
-       CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)) >= indices.size(),
-                   "Potential integer overflow in index buffer size calculation!");
+        CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)) >= indices.size(),
+                    "Potential integer overflow in index buffer size calculation!");
         unsigned int size = static_cast<unsigned int>(indices.size());
         
         // Copy the index data in the buffer
@@ -99,7 +105,7 @@ protected:
     // Setter(s)
     // ----------------------------------------
     virtual void SetVertexAttributes(const std::shared_ptr<VertexBuffer>& vbo) = 0;
-
+    
     // Vertex array variables
     // ----------------------------------------
 protected:
@@ -119,3 +125,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(Drawable);
 };
+
+} // namespace pixc

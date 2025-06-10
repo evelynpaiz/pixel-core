@@ -6,8 +6,10 @@
 #include "Platform/OpenGL/Buffer/OpenGLVertexBuffer.h"
 #include "Platform/Metal/Buffer/MetalVertexBuffer.h"
 
+namespace pixc {
+
 /**
- * Create a vertex buffer based on the active rendering API.
+ * @brief Create a vertex buffer based on the active rendering API.
  *
  * @param vertices Vertices to be rendered.
  * @param size Size of vertices in bytes.
@@ -21,3 +23,5 @@ std::shared_ptr<VertexBuffer> VertexBuffer::Create(const void* vertices, const u
 {
     CREATE_RENDERER_OBJECT(VertexBuffer, vertices, size, count)
 }
+
+} // namespace pixc

@@ -3,6 +3,8 @@
 #include "Common/Renderer/Camera/OrthographicCamera.h"
 #include "Common/Renderer/Camera/PerspectiveCamera.h"
 
+using namespace pixc;
+
 /**
  * Represents an orthographic shadow camera projection.
  *

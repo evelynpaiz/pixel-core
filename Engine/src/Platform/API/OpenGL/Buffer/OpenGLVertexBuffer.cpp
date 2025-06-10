@@ -3,8 +3,10 @@
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 /**
- * Generate a vertex buffer and link it to the input vertex data.
+ * @brief Generate a vertex buffer and link it to the input vertex data.
  *
  * @param vertices Vertices to be rendered.
  * @param size Size of vertices in bytes.
@@ -12,7 +14,7 @@
  */
 OpenGLVertexBuffer::OpenGLVertexBuffer(const void *vertices, const uint32_t size,
                                        const uint32_t count)
-    : VertexBuffer(count)
+: VertexBuffer(count)
 {
     glGenBuffers(1, &m_ID);
     glBindBuffer(GL_ARRAY_BUFFER, m_ID);
@@ -20,7 +22,7 @@ OpenGLVertexBuffer::OpenGLVertexBuffer(const void *vertices, const uint32_t size
 }
 
 /**
- * Delete the vertex buffer.
+ * @brief Delete the vertex buffer.
  */
 OpenGLVertexBuffer::~OpenGLVertexBuffer()
 {
@@ -28,7 +30,7 @@ OpenGLVertexBuffer::~OpenGLVertexBuffer()
 }
 
 /**
- * Bind the vertex buffer.
+ * @brief Bind the vertex buffer.
  */
 void OpenGLVertexBuffer::Bind() const
 {
@@ -36,9 +38,11 @@ void OpenGLVertexBuffer::Bind() const
 }
 
 /**
- * Unbind the vertex buffer.
+ * @brief Unbind the vertex buffer.
  */
 void OpenGLVertexBuffer::Unbind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
+} // namespace pixc

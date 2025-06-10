@@ -7,8 +7,10 @@
 
 #include <Metal/Metal.h>
 
+//namespace pixc {
+
 /**
- * Generate a framebuffer.
+ * @brief Generate a framebuffer.
  *
  * @param spec Framebuffer specifications.
  */
@@ -25,7 +27,7 @@ MetalFrameBuffer::MetalFrameBuffer(const FrameBufferSpecification& spec)
 }
 
 /**
- * Delete the framebuffer.
+ * @brief Delete the framebuffer.
  */
 MetalFrameBuffer::~MetalFrameBuffer()
 {
@@ -33,7 +35,7 @@ MetalFrameBuffer::~MetalFrameBuffer()
 }
 
 /**
- * Unbind the framebuffer and generate the mipmaps if necessary.
+ * @brief Unbind the framebuffer and generate the mipmaps if necessary.
  *
  * @param genMipMaps Mip map generation flag.
  */
@@ -52,7 +54,7 @@ void MetalFrameBuffer::Unbind(const bool& genMipMaps) const
 }
 
 /**
- * Blit the contents of a source framebuffer to a destination framebuffer.
+ * @brief Blit the contents of a source framebuffer to a destination framebuffer.
  *
  * @param src The source framebuffer from which to copy the contents.
  * @param dst The destination framebuffer to which the contents are copied.
@@ -80,7 +82,7 @@ void MetalFrameBuffer::Blit(const std::shared_ptr<MetalFrameBuffer>& src,
 }
 
 /**
- * Perform a simple, direct blit of color attachments from the source framebuffer to the destination framebuffer.
+ * @brief Perform a simple, direct blit of color attachments from the source framebuffer to the destination framebuffer.
  *
  * @param src The source framebuffer from which to copy the color attachment.
  * @param dst The destination framebuffer to which the color attachment is copied.
@@ -89,7 +91,7 @@ void MetalFrameBuffer::Blit(const std::shared_ptr<MetalFrameBuffer>& src,
  */
 void MetalFrameBuffer::BlitDirect(const std::shared_ptr<MetalFrameBuffer> &src,
                                   const std::shared_ptr<MetalFrameBuffer> &dst,
-                                  unsigned int srcIndex, unsigned int dstIndex)
+                                  uint32_t srcIndex, uint32_t dstIndex)
 {
     // Get the graphics context
     MetalContext* context = dynamic_cast<MetalContext*>(&GraphicsContext::Get());
@@ -148,7 +150,7 @@ void MetalFrameBuffer::BlitAdvanced(const std::shared_ptr<MetalFrameBuffer> &src
 }
 
 /**
- * Define/re-define the framebuffer and its attachments.
+ * @brief Define/re-define the framebuffer and its attachments.
  */
 void MetalFrameBuffer::Invalidate()
 {
@@ -160,13 +162,13 @@ void MetalFrameBuffer::Invalidate()
 }
 
 /**
- * Retrieves pixel data from a color attachment of the framebuffer.
+ * @brief Retrieves pixel data from a color attachment of the framebuffer.
  *
  * @param index The index of the color attachment to retrieve data from.
  *
  * @return A vector containing the pixel data of the color attachment, with each channel.
  */
-std::vector<char> MetalFrameBuffer::GetAttachmentData(const unsigned int index) const
+std::vector<char> MetalFrameBuffer::GetAttachmentData(const uint32_t index) const
 {
     // Verify the index for the attachment
     CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
@@ -221,3 +223,5 @@ std::vector<char> MetalFrameBuffer::GetAttachmentData(const unsigned int index) 
     memcpy(data.data(), [buffer contents], imageSize);
     return data;
 }
+
+//} // namespace pixc

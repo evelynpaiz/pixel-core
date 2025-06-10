@@ -4,6 +4,8 @@
 #include "Common/Renderer/Shader/Shader.h"
 #include "Common/Renderer/Texture/Texture.h"
 
+using namespace pixc;
+
 /**
  * @brief Flags representing properties of a material.
  */

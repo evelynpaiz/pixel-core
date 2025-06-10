@@ -11,10 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-using namespace pixc;
+namespace pixc {
 
 /**
- * Generate a perspective camera.
+ * @brief Generate a perspective camera.
  *
  * @param width Viewport size (width).
  * @param height Viewport size (height).
@@ -30,7 +30,7 @@ PerspectiveCamera::PerspectiveCamera(const int width, const int height,
 }
 
 /**
- * Update the camera information in the current frame.
+ * @brief Update the camera information in the current frame.
  *
  * @param ts Timestep.
  */
@@ -76,7 +76,7 @@ void PerspectiveCamera::OnUpdate(Timestep ts)
 }
 
 /**
- * Handle an event on the application related to the camera.
+ * @brief Handle an event on the application related to the camera.
  *
  * @param e Event to be handled.
  */
@@ -89,7 +89,7 @@ void PerspectiveCamera::OnEvent(Event &e)
 }
 
 /**
- * Update the camera projection matrix (perspective projection).
+ * @brief Update the camera projection matrix (perspective projection).
  */
 void PerspectiveCamera::UpdateProjectionMatrix()
 {
@@ -98,7 +98,7 @@ void PerspectiveCamera::UpdateProjectionMatrix()
 }
 
 /**
- * Calculate the distance between two points along a given direction.
+ * @brief Calculate the distance between two points along a given direction.
  *
  * @param p1 The first point.
  * @param p2 The second point.
@@ -113,7 +113,7 @@ glm::vec3 PerspectiveCamera::CalculateDistance(const glm::vec3& p1, const glm::v
 }
 
 /**
- * Zoom in/out the camera.
+ * @brief Zoom in/out the camera.
  *
  * @param delta The change in the field of view.
  */
@@ -124,7 +124,7 @@ void PerspectiveCamera::Zoom(const float delta)
 }
 
 /**
- * Translate the camera from one position to another.
+ * @brief Translate the camera from one position to another.
  *
  * @param delta The distance to move the camera in x,y,z coordinates.
  */
@@ -143,7 +143,7 @@ void PerspectiveCamera::Translate(const glm::vec3 &delta)
 }
 
 /**
- * Rotate the camera in a static position.
+ * @brief Rotate the camera in a static position.
  *
  * @param delta The rotation angles in x and y axes.
  */
@@ -162,7 +162,7 @@ void PerspectiveCamera::Rotate(const glm::vec2 &delta)
 }
 
 /**
- * Orbit the camera around a target point.
+ * @brief Orbit the camera around a target point.
  *
  * @param delta The orbit rotation angles in x and y axes.
  */
@@ -184,7 +184,7 @@ void PerspectiveCamera::Orbit(const glm::vec2 &delta)
 }
 
 /**
- * Function to be called when a mouse scrolled event happens.
+ * @brief Function to be called when a mouse scrolled event happens.
  *
  * @param e Event to be handled.
  * @return `true` if the event has been handled.
@@ -197,3 +197,5 @@ bool PerspectiveCamera::OnMouseScroll(MouseScrolledEvent &e)
     // Set the event as handled
     return true;
 }
+
+} // namespace pixc

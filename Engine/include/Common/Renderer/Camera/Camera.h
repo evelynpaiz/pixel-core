@@ -6,10 +6,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-using namespace pixc;
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
- * Represents a camera that captures the scene and displays it in a viewport.
+ * @brief Represents a camera that captures the scene and displays it in a viewport.
  *
  * The `Camera` class provides an abstraction for a camera in a rendering engine. It captures the scene
  * and provides methods to access and manipulate camera properties. The camera's view matrix and
@@ -137,7 +141,7 @@ protected:
     /// @param near Distance to the near plane.
     /// @param far Distance to the far plane.
     Camera(const int width, const int height, const float nearPlane, const float farPlane)
-        : m_Width(width), m_Height(height), m_NearPlane(nearPlane), m_FarPlane(farPlane)
+    : m_Width(width), m_Height(height), m_NearPlane(nearPlane), m_FarPlane(farPlane)
     {}
     
     // Getter(s)
@@ -155,7 +159,7 @@ protected:
     // ----------------------------------------
 protected:
     ///< Camera resolution.
-    unsigned int m_Width, m_Height;
+    uint32_t m_Width, m_Height;
     
     ///< Distance to near and far plane.
     float m_NearPlane, m_FarPlane;
@@ -181,3 +185,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(Camera);
 };
+
+} // namespace pixc

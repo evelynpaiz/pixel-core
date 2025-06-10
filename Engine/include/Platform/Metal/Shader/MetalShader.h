@@ -5,7 +5,13 @@
 #include "Platform/Metal/MetalContext.h"
 
 /**
- * Concrete implementation of the Shader class for the Metal API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of the Shader class for the Metal API.
  *
  * The `MetalShader` class specializes the `Shader` base class for Metal, handling the
  * compilation of Metal Shading Language (MSL) code, management of Metal functions,
@@ -88,3 +94,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(MetalShader);
 };
+
+} // namespace pixc

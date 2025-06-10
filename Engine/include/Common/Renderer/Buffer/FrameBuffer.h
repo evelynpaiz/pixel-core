@@ -8,7 +8,13 @@
 #include "Common/Renderer/Texture/TextureUtils.h"
 
 /**
- * Defines the specification for framebuffer attachments.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+//namespace pixc {
+
+/**
+ * @brief Defines the specification for framebuffer attachments.
  *
  * The `AttachmentSpecification` struct provides a way to define the specifications for
  * framebuffer attachments. It allows specifying one or more `TextureSpecification`
@@ -24,9 +30,9 @@ struct AttachmentSpecification
     /// @brief Define a framebuffer attachment with texture specifications.
     /// @param spec The texture specifications.
     AttachmentSpecification(std::initializer_list<TextureSpecification> spec) :
-        TexturesSpec(spec)
+    TexturesSpec(spec)
     { }
-
+    
     // Attachment specification variables
     // ----------------------------------------
     ///< The texture specifications for the framebuffer attachments.
@@ -34,7 +40,7 @@ struct AttachmentSpecification
 };
 
 /**
- * Defines the specifications for a framebuffer.
+ * @brief Defines the specifications for a framebuffer.
  *
  * The `FrameBufferSpecification` struct provides a way to define the specifications for
  * a framebuffer. It includes the framebuffer size (width and height) and the number of samples
@@ -53,8 +59,8 @@ struct FrameBufferSpecification
     /// @brief Define the size of the framebuffer (in pixels).
     /// @param width The framebuffer size (width).
     /// @param height The framebuffer size (height)
-    void SetFrameBufferSize(unsigned int width, unsigned int height = 0,
-                            unsigned int depth = 0)
+    void SetFrameBufferSize(uint32_t width, uint32_t height = 0,
+                            uint32_t depth = 0)
     {
         Width = width;
         Height = height;
@@ -64,10 +70,10 @@ struct FrameBufferSpecification
     // Framebuffer specification variables
     // ----------------------------------------
     ///< The size (width, height, and depth) in pixels.
-    unsigned int Width = 0, Height = 0, Depth = 0;
+    uint32_t Width = 0, Height = 0, Depth = 0;
     ///< The number of samples in the framebuffer texture attachments (only valid for 2D textures).
-    int Samples = 1;
-    ///< A flag indicating whether mipmaps should be created for the texture. 
+    uint32_t Samples = 1;
+    ///< A flag indicating whether mipmaps should be created for the texture.
     bool MipMaps = false;
     
     ///< The properties for framebuffer texture attachments.
@@ -75,7 +81,7 @@ struct FrameBufferSpecification
 };
 
 /**
- * Defines the specifications for a framebuffer blit operation.
+ * @brief Defines the specifications for a framebuffer blit operation.
  */
 struct BlitSpecification
 {
@@ -89,37 +95,37 @@ struct BlitSpecification
     /// @brief Set the texture filter to be used for the blit.
     /// @param filter The texture filter for the blit operation.
     void SetFilter(const TextureFilter& filter) { Filter = filter; }
-
+    
     /// @brief Set the color attachments for the blit operation.
     /// @param targets The buffers to be copied during the blit.
     void SetTargets(const RenderTargetBuffers& targets) { Targets = targets; }
-
+    
     /// @brief Set the source and destination attachment indices.
     /// @param srcIndex The source attachment index.
     /// @param dstIndex The destination attachment index.
-    void SetAttachmentIndices(unsigned int srcIndex, unsigned int dstIndex)
+    void SetAttachmentIndices(uint32_t srcIndex, uint32_t dstIndex)
     {
         SrcAttachmentIndex = srcIndex;
         DstAttachmentIndex = dstIndex;
     }
-
+    
     // Blit specification variables
     // ----------------------------------------
     ///< The texture filter for the blit operation.
     TextureFilter Filter = TextureFilter::Nearest;
-
+    
     ///< The buffers to be copied during the blit operation.
     RenderTargetBuffers Targets;
-
+    
     ///< The index of the source color attachment.
-    unsigned int SrcAttachmentIndex = 0;
-
+    uint32_t SrcAttachmentIndex = 0;
+    
     ///< The index of the destination color attachment.
-    unsigned int DstAttachmentIndex = 0;
+    uint32_t DstAttachmentIndex = 0;
 };
 
 /**
- * Represents a framebuffer object for rendering off-screen.
+ * @brief Represents a framebuffer object for rendering off-screen.
  *
  * The `FrameBuffer` class provides functionality to create, bind, unbind, and resize a framebuffer.
  * It allows users to attach color and depth textures to the framebuffer for rendering.
@@ -129,7 +135,7 @@ struct BlitSpecification
  */
 class FrameBuffer
 {
-public:
+    public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     static std::shared_ptr<FrameBuffer> Create(const FrameBufferSpecification& spec);
@@ -144,7 +150,7 @@ public:
     /// @brief Get a specific framebuffer color attachment.
     /// @param index Color attachment index.
     /// @return The color attachment (texture reference).
-    const std::shared_ptr<Texture>& GetColorAttachment(const unsigned int index) const
+    const std::shared_ptr<Texture>& GetColorAttachment(const uint32_t index) const
     {
         CORE_ASSERT(index >= 0 && index < m_ColorAttachments.size(),
                     "Trying to get color attachment out of scope!");
@@ -164,21 +170,21 @@ public:
     /// @return The state of the color, depth and stencil targets state.
     RenderTargetBuffers GetActiveRenderTargets() const { return m_ActiveTargets; }
     
-    virtual std::vector<char> GetAttachmentData(const unsigned int index) const = 0;
+    virtual std::vector<char> GetAttachmentData(const uint32_t index) const = 0;
     
     // Usage
     // ----------------------------------------
     virtual void Bind() const;
-    virtual void BindForDrawAttachment(const unsigned int index) const = 0;
-    virtual void BindForReadAttachment(const unsigned int index) const = 0;
-    virtual void BindForDrawAttachmentCube(const unsigned int index, const unsigned int face,
-                                           const unsigned int level = 0) const = 0;
+    virtual void BindForDrawAttachment(const uint32_t index) const = 0;
+    virtual void BindForReadAttachment(const uint32_t index) const = 0;
+    virtual void BindForDrawAttachmentCube(const uint32_t index, const uint32_t face,
+                                           const uint32_t level = 0) const = 0;
     
     virtual void Unbind(const bool& genMipMaps = true) const = 0;
     
     // Draw
     // ----------------------------------------
-    virtual void ClearAttachment(const unsigned int index, const int value) = 0;
+    virtual void ClearAttachment(const uint32_t index, const int value) = 0;
     
     // Blit
     // ----------------------------------------
@@ -188,15 +194,15 @@ public:
     
     // Reset
     // ----------------------------------------
-    void Resize(const unsigned int width, const unsigned int height = 0,
-                const unsigned int depth = 0);
-    void AdjustSampleCount(const unsigned int samples);
+    void Resize(const uint32_t width, const uint32_t height = 0,
+                const uint32_t depth = 0);
+    void AdjustSampleCount(const uint32_t samples);
     
     // Save
     // ----------------------------------------
-    void SaveAttachment(const unsigned int index, const std::filesystem::path& path);
+    void SaveAttachment(const uint32_t index, const std::filesystem::path& path);
     
-protected:
+    protected:
     // Constructor(s)/Destructor
     // ----------------------------------------
     FrameBuffer(const FrameBufferSpecification& spec);
@@ -209,10 +215,10 @@ protected:
     // Destructor
     // ----------------------------------------
     virtual void ReleaseFramebuffer();
-
+    
     // Framebuffer variables
     // ----------------------------------------
-protected:
+    protected:
     ///< Depth attachment.
     std::shared_ptr<Texture> m_DepthAttachment;
     ///< Color attachments.
@@ -230,12 +236,12 @@ protected:
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
-public:
+    public:
     DISABLE_COPY_AND_MOVE(FrameBuffer);
 };
 
 /**
- * A library for managing framebuffers used in rendering.
+ * @brief A library for managing framebuffers used in rendering.
  *
  * The `FrameBufferLibrary` class provides functionality to add, create, retrieve, and check for
  * the existence of framebuffers within the library. Framebuffers can be associated with unique names
@@ -243,7 +249,7 @@ public:
  */
 class FrameBufferLibrary : public Library<std::shared_ptr<FrameBuffer>>
 {
-public:
+    public:
     // Constructor
     // ----------------------------------------
     /// @brief Create a new framebuffer library.
@@ -265,3 +271,5 @@ public:
         return framebuffer;
     }
 };
+
+//} // namespace pixc

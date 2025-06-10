@@ -3,24 +3,26 @@
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 /**
- * Generate an index buffer and link it to the input indices.
+ * @brief Generate an index buffer and link it to the input indices.
  *
  * @param indices Index information for the vertices.
  * @param count Number of indices.
  */
 OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t *indices,
                                      const uint32_t count)
-    : IndexBuffer(count)
+: IndexBuffer(count)
 {
     glGenBuffers(1, &m_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(count * sizeof(uint32_t)),
-        indices, GL_STATIC_DRAW);
+                 indices, GL_STATIC_DRAW);
 }
 
 /**
- * Delete the index buffer.
+ * @brief Delete the index buffer.
  */
 OpenGLIndexBuffer::~OpenGLIndexBuffer()
 {
@@ -28,7 +30,7 @@ OpenGLIndexBuffer::~OpenGLIndexBuffer()
 }
 
 /**
- * Bind the index buffer.
+ * @brief Bind the index buffer.
  */
 void OpenGLIndexBuffer::Bind() const
 {
@@ -36,9 +38,11 @@ void OpenGLIndexBuffer::Bind() const
 }
 
 /**
- * Unbind the index buffer.
+ * @brief Unbind the index buffer.
  */
 void OpenGLIndexBuffer::Unbind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+} // namespace pixc

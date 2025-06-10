@@ -6,8 +6,10 @@
 
 #include <Metal/Metal.h>
 
+namespace pixc {
+
 /**
- * Internal representation of compiled Metal shader source.
+ * @brief Internal representation of compiled Metal shader source.
  */
 struct MetalShader::MetalShaderSource
 {
@@ -21,13 +23,13 @@ struct MetalShader::MetalShaderSource
 };
 
 /**
- * Generate a shader program.
+ * @brief Generate a shader program.
  *
  * @param name The name for the shader.
  * @param filePath Path to the source file.
  */
 MetalShader::MetalShader(const std::string& name, const std::filesystem::path& filePath)
-    : Shader(name, filePath)
+: Shader(name, filePath)
 {
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
@@ -41,34 +43,34 @@ MetalShader::MetalShader(const std::string& name, const std::filesystem::path& f
 }
 
 /**
- * Generate a shader program.
+ * @brief Generate a shader program.
  *
  * @param filePath Path to the source file.
  */
 MetalShader::MetalShader(const std::filesystem::path& filePath)
-    : MetalShader(filePath.stem().string(), filePath)
+: MetalShader(filePath.stem().string(), filePath)
 {}
 
 /**
- * Delete the shader program.
+ * @brief Delete the shader program.
  */
 MetalShader::~MetalShader()
 {}
 
 /**
- * Activate the shader.
+ * @brief Activate the shader.
  */
 void MetalShader::Bind() const
 {}
 
 /**
- * Deactivate the shader.
+ * @brief Deactivate the shader.
  */
 void MetalShader::Unbind() const
 {}
 
 /**
- * Gets the compiled Metal vertex function.
+ * @brief Gets the compiled Metal vertex function.
  *
  * @return A pointer to the compiled Metal vertex function as a void pointer,
  * or nullptr if the function was not compiled or found.
@@ -79,7 +81,7 @@ void* MetalShader::GetVertexFunction() const
 }
 
 /**
- * Gets the compiled Metal fragment function.
+ * @brief Gets the compiled Metal fragment function.
  *
  * @return A pointer to the compiled Metal vertex function as a void pointer,
  * or nullptr if the function was not compiled or found.
@@ -90,7 +92,7 @@ void* MetalShader::GetFragmentFunction() const
 }
 
 /**
- * Set the uniform with a bool value.
+ * @brief Set the uniform with a bool value.
  *
  * @param name Uniform name.
  * @param value Uniform value.
@@ -101,7 +103,7 @@ void MetalShader::SetBool(const std::string& name, bool value)
 }
 
 /**
- * Set the uniform with an integer value.
+ * @brief Set the uniform with an integer value.
  *
  * @param name Uniform name.
  * @param value Uniform value.
@@ -112,7 +114,7 @@ void MetalShader::SetInt(const std::string& name, int value)
 }
 
 /**
- * Set the uniform with a float value.
+ * @brief Set the uniform with a float value.
  *
  * @param name Uniform name.
  * @param value Uniform value.
@@ -123,7 +125,7 @@ void MetalShader::SetFloat(const std::string& name, float value)
 }
 
 /**
- * Set the uniform with a vector with 2 values (x, y).
+ * @brief Set the uniform with a vector with 2 values (x, y).
  *
  * @param name Uniform name.
  * @param value Vector input value.
@@ -134,7 +136,7 @@ void MetalShader::SetVec2(const std::string& name, const glm::vec2& value)
 }
 
 /**
- * Set the uniform with a vector with 3 values (x, y, z).
+ * @brief Set the uniform with a vector with 3 values (x, y, z).
  *
  * @param name Uniform name.
  * @param value Vector input value.
@@ -145,7 +147,7 @@ void MetalShader::SetVec3(const std::string& name, const glm::vec3& value)
 }
 
 /**
- * Set the uniform with a vector with 4 values (x, y, z, w).
+ * @brief Set the uniform with a vector with 4 values (x, y, z, w).
  *
  * @param name Uniform name.
  * @param value Vector input value.
@@ -156,7 +158,7 @@ void MetalShader::SetVec4(const std::string& name, const glm::vec4& value)
 }
 
 /**
- * Set the uniform with a matrix with 2x2 values.
+ * @brief Set the uniform with a matrix with 2x2 values.
  *
  * @param name Uniform name.
  * @param value Matrix input value.
@@ -167,7 +169,7 @@ void MetalShader::SetMat2(const std::string& name, const glm::mat2& value)
 }
 
 /**
- * Set the uniform with a matrix with 3x3 values.
+ * @brief Set the uniform with a matrix with 3x3 values.
  *
  * @param name Uniform name.
  * @param value Matrix input value.
@@ -178,7 +180,7 @@ void MetalShader::SetMat3(const std::string& name, const glm::mat3& value)
 }
 
 /**
- * Set the uniform with a matrix with 4x4 values.
+ * @brief Set the uniform with a matrix with 4x4 values.
  *
  * @param name Uniform name.
  * @param value Matrix input value.
@@ -189,7 +191,7 @@ void MetalShader::SetMat4(const std::string& name, const glm::mat4& value)
 }
 
 /**
- * Set a texture map in the shader program.
+ * @brief Set a texture map in the shader program.
  *
  * @param texture The texture map.
  * @param name Uniform name.
@@ -202,10 +204,10 @@ void MetalShader::SetTexture(const std::string &name,
     // Return early if the texture pointer is null
     if(!texture)
         return;
-
+    
     // Get the current Metal render command encoder
     id<MTLRenderCommandEncoder> encoder =
-        reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
+    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
     
     // Dynamically cast the Texture to a MetalTexture
     std::shared_ptr<MetalTexture> metalTexture = std::dynamic_pointer_cast<MetalTexture>(texture);
@@ -242,7 +244,7 @@ void MetalShader::SetTexture(const std::string &name,
 }
 
 /**
- * Compiles the shader source code for Metal.
+ * @brief Compiles the shader source code for Metal.
  *
  * @param filePath Path to the source file.
  */
@@ -264,14 +266,14 @@ void MetalShader::CompileShader(const std::filesystem::path& filePath)
     m_ShaderSource->VertexFunction = [m_ShaderSource->Library newFunctionWithName:@"vertex_main"];
     m_ShaderSource->FragmentFunction = [m_ShaderSource->Library newFunctionWithName:@"fragment_main"];
     
-    // Note: Metal Shaders need to have a function called "vertex_main" 
+    // Note: Metal Shaders need to have a function called "vertex_main"
     // for the vertex shader and "fragment_main" for the fragment shader
     CORE_ASSERT(m_ShaderSource->VertexFunction, "Failed to create vertex shader function 'vertex_main'!");
     CORE_ASSERT(m_ShaderSource->FragmentFunction, "Failed to create fragment shader function 'fragment_main'!");
 }
 
 /**
- * Parse shader input file.
+ * @brief Parse shader input file.
  *
  * @param filepath Path to the shader file.
  *
@@ -304,7 +306,7 @@ std::string MetalShader::ParseShader(const std::filesystem::path& filepath)
 }
 
 /**
- * Processes a texture argument from Metal reflection data.
+ * @brief Processes a texture argument from Metal reflection data.
  *
  * @param name  The name of the texture uniform.
  * @param index The binding index of the texture in the shader.
@@ -394,7 +396,7 @@ void MetalShader::ProcessBufferArgument(void *arg, const char *name,
 }
 
 /**
- * Processes a single shader argument (uniform) from Metal reflection data.
+ * @brief Processes a single shader argument (uniform) from Metal reflection data.
  *
  * @param arg  A `void*` pointer to the `MTLArgument` object.
  * @param type The shader type associated with the argument.
@@ -418,13 +420,13 @@ void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
     
     switch (argument.type)
     {
-        // Uniform is a texture
+            // Uniform is a texture
         case MTLBindingTypeTexture:
         {
             ProcessTextureArgument(name, index, type);
             return;
         }
-        // Uniform is a buffer
+            // Uniform is a buffer
         case MTLBindingTypeBuffer:
         {
             ProcessBufferArgument(arg, name, index, type);
@@ -436,7 +438,7 @@ void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
 }
 
 /**
- * Extracts and stores information about active attributes and uniforms from the shader program.
+ * @brief Extracts and stores information about active attributes and uniforms from the shader program.
  *
  * @param descriptor A pointer to the `MTLRenderPipelineDescriptor` object.
  *
@@ -454,7 +456,7 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     
     // Get the Metal pipeline descriptor
     MTLRenderPipelineDescriptor* pipelineDescriptor =
-        reinterpret_cast<MTLRenderPipelineDescriptor*>(descriptor);
+    reinterpret_cast<MTLRenderPipelineDescriptor*>(descriptor);
     
     // Obtain shader reflection information
     NSError *error = nil;
@@ -462,10 +464,10 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     MTLPipelineOption option = MTLPipelineOptionBindingInfo | MTLPipelineOptionBufferTypeInfo;
     
     [device
-        newRenderPipelineStateWithDescriptor:pipelineDescriptor
-        options:option
-        reflection:&reflection
-        error:&error];
+     newRenderPipelineStateWithDescriptor:pipelineDescriptor
+     options:option
+     reflection:&reflection
+     error:&error];
     CORE_ASSERT(!error, "Error creating a reflection of the shader program!");
     
     // Process vertex and fragment uniforms
@@ -476,7 +478,7 @@ void MetalShader::ExtractShaderResources(void* descriptor)
 }
 
 /**
- * Updates and binds uniform buffers for the shader.
+ * @brief Updates and binds uniform buffers for the shader.
  *
  * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
  *        objects and that the `DataElement` objects within the layouts have
@@ -487,7 +489,7 @@ void MetalShader::UpdateUniformBuffers()
     // Get the Metal device and command encoder
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     id<MTLRenderCommandEncoder> encoder =
-        reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
+    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
     
     // Iterate through each uniform
     for (auto& [uniform, layout]: m_Uniforms)
@@ -502,8 +504,8 @@ void MetalShader::UpdateUniformBuffers()
         {
             // Create a new uniform buffer if one doesn't exist
             uniformBuffer = [device
-                                newBufferWithLength:stride
-                                options:MTLResourceStorageModeShared];
+                             newBufferWithLength:stride
+                             options:MTLResourceStorageModeShared];
             buffer = reinterpret_cast<void*>(uniformBuffer);
         }
         else
@@ -518,7 +520,7 @@ void MetalShader::UpdateUniformBuffers()
             
             // Prevent buffer overflows
             CORE_ASSERT(member.Offset + member.Size <= stride, "Uniform data overflow!");
-
+            
             // Copy member data into the correct location within the buffer
             memcpy(content + member.Offset, member.Data, member.Size);
         }
@@ -541,3 +543,5 @@ void MetalShader::UpdateUniformBuffers()
         }
     }
 }
+
+} // namespace pixc

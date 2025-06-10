@@ -13,6 +13,8 @@
 
 #include <glm/glm.hpp>
 
+using namespace pixc;
+
 /**
  * Responsible for rendering geometry using a specified shader program.
  *

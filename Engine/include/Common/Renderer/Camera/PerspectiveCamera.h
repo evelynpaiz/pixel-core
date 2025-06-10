@@ -4,14 +4,18 @@
 
 #include "Common/Renderer/Camera/Camera.h"
 
-using namespace pixc;
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 class MouseScrolledEvent;
 
 /**
  * Represents a perspective camera that captures the scene and displays it in a viewport.
  *
- * The `PerspectiveCamera`  class is a derived class of the Camera class, providing a perspective
+ * The `PerspectiveCamera`  class is a derived class of the `Camera` class, providing a perspective
  * projection for rendering. It inherits all the properties and functionality of the base Camera class and
  * adds additional methods to manipulate the camera's orientation and field of view. The camera's view
  * matrix and projection matrix are automatically updated when camera properties change.
@@ -132,3 +136,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(PerspectiveCamera);
 };
+
+} // namespace pixc

@@ -3,7 +3,13 @@
 #include "Common/Renderer/Buffer/VertexBuffer.h"
 
 /**
- * Concrete implementation of `VertexBuffer` for the OpenGL rendering API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of `VertexBuffer` for the OpenGL rendering API.
  *
  * This class handles the creation, binding, and management of vertex buffers specifically
  * for OpenGL. It uses OpenGL functions to interact with the GPU.
@@ -17,7 +23,7 @@ public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     MetalVertexBuffer(const void *vertices, const uint32_t size,
-                       const uint32_t count);
+                      const uint32_t count);
     ///@brief Delete the vertex buffer.
     ~MetalVertexBuffer() override = default;
     
@@ -32,6 +38,8 @@ public:
     
     // Getter(s)
     // ----------------------------------------
+    /// @brief Returns the instance of this as a Metal Buffer.
+    /// @returns The vertex buffer as a void pointer.
     void* GetBuffer() const { return m_Buffer; }
     
     // Vertex buffer variables
@@ -45,3 +53,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(MetalVertexBuffer);
 };
+
+} // namespace pixc

@@ -5,15 +5,17 @@
 
 #include <Metal/Metal.h>
 
+namespace pixc {
+
 /**
- * Generate an index buffer and link it to the input indices.
+ * @brief Generate an index buffer and link it to the input indices.
  *
  * @param indices Index information for the vertices.
  * @param count Number of indices.
  */
 MetalIndexBuffer::MetalIndexBuffer(const uint32_t *indices,
                                    const uint32_t count)
-    : IndexBuffer(count)
+: IndexBuffer(count)
 {
     // Get the Metal graphics context
     MetalContext* context = dynamic_cast<MetalContext*>(&GraphicsContext::Get());
@@ -25,9 +27,11 @@ MetalIndexBuffer::MetalIndexBuffer(const uint32_t *indices,
     NSUInteger length = count * sizeof(uint32_t);
     
     // Create the Metal buffer
-    id<MTLBuffer> buffer = [device 
+    id<MTLBuffer> buffer = [device
                             newBufferWithBytes:indices
                             length:length
                             options:MTLResourceStorageModeShared];
     m_Buffer = reinterpret_cast<void*>(buffer);
 }
+
+} // namespace pixc

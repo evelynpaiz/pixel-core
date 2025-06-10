@@ -3,7 +3,13 @@
 #include "Common/Renderer/Buffer/IndexBuffer.h"
 
 /**
- * Concrete implementation of `IndexBuffer` for the Metal rendering API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of `IndexBuffer` for the Metal rendering API.
  *
  * The `MetalIndexBuffer` handles the creation, binding, and management of index buffers
  * specifically for Metal. It uses Metal functions to interact with the GPU.
@@ -31,6 +37,8 @@ public:
     
     // Getter(s)
     // ----------------------------------------
+    /// @brief Returns the instance of this as a Metal Buffer.
+    /// @returns The index buffer as a void pointer.
     void* GetBuffer() const { return m_Buffer; }
     
     // Index buffer variables
@@ -44,3 +52,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(MetalIndexBuffer);
 };
+
+} // namespace pixc

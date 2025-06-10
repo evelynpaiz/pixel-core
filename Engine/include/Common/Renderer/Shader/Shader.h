@@ -8,7 +8,13 @@
 #include <glm/glm.hpp>
 
 /**
- * Represents a shader program executed on the GPU.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a shader program executed on the GPU.
  *
  * The `Shader` class provides functionality to load, compile, and use shader programs in
  * the graphics pipeline. Shaders can be loaded from file paths and bound for use in rendering
@@ -54,7 +60,7 @@ public:
     virtual void SetMat3(const std::string& name, const glm::mat3& value) = 0;
     virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
     
-    virtual void SetTexture(const std::string &name, 
+    virtual void SetTexture(const std::string &name,
                             const std::shared_ptr<Texture>& texture,
                             int slot) = 0;
     
@@ -69,7 +75,7 @@ protected:
     /// @param name The name for the shader.
     /// @param filePath Path to the source file.
     Shader(const std::string& name, const std::filesystem::path& filePath)
-        : m_Name(name), m_FilePath(filePath)
+    : m_Name(name), m_FilePath(filePath)
     {}
     
     // Getter(s)
@@ -109,12 +115,12 @@ protected:
         // Save the data of the uniform
         if (!uniform.Data)
         {
-             uniform.Data = ::operator new(uniform.Size);
-             new (uniform.Data) T(value);
+            uniform.Data = ::operator new(uniform.Size);
+            new (uniform.Data) T(value);
         }
         else
         {
-             *reinterpret_cast<T*>(uniform.Data) = value;
+            *reinterpret_cast<T*>(uniform.Data) = value;
         }
         uniform.Update = true;
         return uniform;
@@ -168,3 +174,5 @@ public:
     std::shared_ptr<Shader> Load(const std::string& name,
                                  const std::filesystem::path& filePath);
 };
+
+} // namespace pixc

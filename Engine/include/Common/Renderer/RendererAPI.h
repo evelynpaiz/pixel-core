@@ -8,6 +8,8 @@
 
 #include <glm/glm.hpp>
 
+using namespace pixc;
+
 /**
  * Abstract base class for rendering APIs.
  *

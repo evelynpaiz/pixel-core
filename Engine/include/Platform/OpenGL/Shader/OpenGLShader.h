@@ -3,7 +3,13 @@
 #include "Common/Renderer/Shader/Shader.h"
 
 /**
- * Concrete implementation of the `Shader` class for the OpenGL API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of the `Shader` class for the OpenGL API.
  *
  * The `OpenGLShader` class extends the base `Shader` class to provide OpenGL-specific
  * functionality for compiling, linking, binding, and setting uniform values in OpenGL shader programs.
@@ -97,3 +103,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLShader);
 };
+
+} // namespace pixc

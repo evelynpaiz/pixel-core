@@ -4,7 +4,13 @@
 #include "Platform/OpenGL/Buffer/OpenGLVertexArray.h"
 
 /**
- * Represents a drawable object specifically for OpenGL rendering.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a drawable object specifically for OpenGL rendering.
  *
  * This class derives from `Drawable` and implements the necessary functionality
  * to manage and bind vertex buffers, an index buffer, and shaders within
@@ -55,3 +61,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLDrawable);
 };
+
+} // namespace pixc

@@ -6,8 +6,10 @@
 #include "Platform/OpenGL/Buffer/OpenGLIndexBuffer.h"
 #include "Platform/Metal/Buffer/MetalIndexBuffer.h"
 
+namespace pixc {
+
 /**
- * Create a vertex buffer based on the active rendering API.
+ * @brief Create a vertex buffer based on the active rendering API.
  *
  * @param indices Index information for the vertices.
  * @param count Number of indices.
@@ -20,3 +22,5 @@ std::shared_ptr<IndexBuffer> IndexBuffer::Create(const uint32_t *indices,
 {
     CREATE_RENDERER_OBJECT(IndexBuffer, indices, count)
 }
+
+} // namespace pixc

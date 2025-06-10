@@ -1,7 +1,13 @@
 #pragma once
 
 /**
- * Represents an index buffer for efficient rendering.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents an index buffer for efficient rendering.
  *
  * The `IndexBuffer` class provides an abstract interface for managing index buffers,
  * which store indices that define the order in which vertices are rendered. This
@@ -36,7 +42,7 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    /// Get the number of indices.
+    /// @brief Get the number of indices.
     /// @return The count of indices.
     uint32_t GetCount() const { return m_Count; }
     
@@ -58,3 +64,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(IndexBuffer);
 };
+
+} // namespace pixc

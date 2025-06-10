@@ -6,8 +6,7 @@
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
-//namespace pixc {
-using namespace pixc;
+namespace pixc {
 
 /**
  * @brief Represents a mouse button event on the application.
@@ -205,4 +204,4 @@ class MouseMovedEvent : public Event
     float m_X, m_Y;
 };
 
-//} // namespace pixc
+} // namespace pixc

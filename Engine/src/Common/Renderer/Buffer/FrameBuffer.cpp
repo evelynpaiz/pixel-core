@@ -15,8 +15,10 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
+//namespace pixc {
+
 /**
- * Create a framebuffer based on the active rendering API.
+ * @brief Create a framebuffer based on the active rendering API.
  *
  * @param spec Framebuffer specifications.
  *
@@ -29,7 +31,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification&
 }
 
 /**
- * Releases the resources associated with the framebuffer.
+ * @brief Releases the resources associated with the framebuffer.
  */
 void FrameBuffer::ReleaseFramebuffer()
 {
@@ -38,7 +40,7 @@ void FrameBuffer::ReleaseFramebuffer()
 }
 
 /**
- * Bind the framebuffer.
+ * @brief Bind the framebuffer.
  */
 void FrameBuffer::Bind() const
 {
@@ -46,12 +48,12 @@ void FrameBuffer::Bind() const
 }
 
 /**
- * Define the framebuffer.
+ * @brief Define the framebuffer.
  *
  * @param spec Framebuffer specifications.
  */
 FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
-    : m_Spec(spec)
+: m_Spec(spec)
 {
     // Define the specification for each framebuffer attachment
     for (auto& spec : m_Spec.AttachmentsSpec.TexturesSpec)
@@ -62,8 +64,8 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
         spec.MipMaps = m_Spec.MipMaps;
         
         spec.Wrap = spec.Wrap != TextureWrap::None ? spec.Wrap :
-                    utils::textures::IsDepthFormat(spec.Format) ?
-                    TextureWrap::ClampToBorder : TextureWrap::ClampToEdge;
+        utils::textures::IsDepthFormat(spec.Format) ?
+        TextureWrap::ClampToBorder : TextureWrap::ClampToEdge;
         
         // Depth attachment
         if (utils::textures::IsDepthFormat(spec.Format))
@@ -86,13 +88,13 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
 }
 
 /**
- * Reset the size of the framebuffer.
+ * @brief Reset the size of the framebuffer.
  *
  * @param width Framebuffer width.
  * @param height Famebuffer height.
  */
-void FrameBuffer::Resize(const unsigned int width, const unsigned int height,
-                         const unsigned int depth)
+void FrameBuffer::Resize(const uint32_t width, const uint32_t height,
+                         const uint32_t depth)
 {
     // Update the size of the framebuffer
     m_Spec.SetFrameBufferSize(width, height, depth);
@@ -111,11 +113,11 @@ void FrameBuffer::Resize(const unsigned int width, const unsigned int height,
 }
 
 /**
- * Adjust the sample count of the framebuffer.
+ * @brief Adjust the sample count of the framebuffer.
  *
  * @param samples New number of samples for multi-sampling.
  */
-void FrameBuffer::AdjustSampleCount(const unsigned int samples)
+void FrameBuffer::AdjustSampleCount(const uint32_t samples)
 {
     // Update the sample count of the framebuffer
     m_Spec.Samples = samples;
@@ -125,7 +127,7 @@ void FrameBuffer::AdjustSampleCount(const unsigned int samples)
 }
 
 /**
- * Blit the contents of a source framebuffer to a destination framebuffer.
+ * @brief Blit the contents of a source framebuffer to a destination framebuffer.
  *
  * @param src The source framebuffer from which to copy the contents.
  * @param dst The destination framebuffer to which the contents are copied.
@@ -154,7 +156,7 @@ void FrameBuffer::Blit(const std::shared_ptr<FrameBuffer>& src,
 }
 
 /**
- * Defines the attachments for the framebuffer.
+ * @brief Defines the attachments for the framebuffer.
  */
 void FrameBuffer::DefineAttachments()
 {
@@ -174,7 +176,7 @@ void FrameBuffer::DefineAttachments()
     m_ColorAttachments.resize(m_ColorAttachmentsSpec.size());
     
     // Iterate through each color attachment specification
-    for (unsigned int i = 0; i < m_ColorAttachments.size(); i++)
+    for (size_t i = 0; i < m_ColorAttachments.size(); i++)
     {
         // Get the type and format from the specification
         TextureType &type = m_ColorAttachmentsSpec[i].Type;
@@ -212,7 +214,7 @@ void FrameBuffer::DefineAttachments()
 }
 
 /**
- * Save a color attachment into an output file.
+ * @brief Save a color attachment into an output file.
  *
  * Reference:
  * https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/
@@ -222,7 +224,7 @@ void FrameBuffer::DefineAttachments()
  *
  * @note At least one frame needs to be rendered before saving to ensure valid image data.
  */
-void FrameBuffer::SaveAttachment(const unsigned int index,
+void FrameBuffer::SaveAttachment(const uint32_t index,
                                  const std::filesystem::path &path)
 {
     // Verify the index for the attachment
@@ -255,3 +257,5 @@ void FrameBuffer::SaveAttachment(const unsigned int index,
     else
         CORE_WARN("Unsupported file format!");
 }
+
+//} // namespace pixc

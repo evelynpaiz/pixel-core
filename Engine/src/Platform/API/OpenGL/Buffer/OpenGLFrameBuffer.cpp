@@ -15,20 +15,22 @@
 
 #include <GL/glew.h>
 
+//namespace pixc {
+
 /**
- * Generate a framebuffer.
+ * @brief Generate a framebuffer.
  *
  * @param spec Framebuffer specifications.
  */
 OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
-    : FrameBuffer(spec)
+: FrameBuffer(spec)
 {
     // Define the framebuffer along with all its attachments
     Invalidate();
 }
 
 /**
- * Delete the framebuffer.
+ * @brief Delete the framebuffer.
  */
 OpenGLFrameBuffer::~OpenGLFrameBuffer()
 {
@@ -36,13 +38,13 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
 }
 
 /**
- * Retrieves pixel data from a color attachment of the framebuffer.
+ * @brief Retrieves pixel data from a color attachment of the framebuffer.
  *
  * @param index The index of the color attachment to retrieve data from.
  *
  * @return A vector containing the pixel data of the color attachment, with each channel.
  */
-std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index) const
+std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index) const
 {
     // Verify the index for the attachment
     CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
@@ -76,7 +78,7 @@ std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const unsigned int index)
 }
 
 /**
- * Bind the framebuffer.
+ * @brief Bind the framebuffer.
  */
 void OpenGLFrameBuffer::Bind() const
 {
@@ -85,11 +87,11 @@ void OpenGLFrameBuffer::Bind() const
 }
 
 /**
- * Bind the framebuffer to draw in a specific color attachment.
+ * @brief Bind the framebuffer to draw in a specific color attachment.
  *
  * @param index The color attachment index.
  */
-void OpenGLFrameBuffer::BindForDrawAttachment(const unsigned int index) const
+void OpenGLFrameBuffer::BindForDrawAttachment(const uint32_t index) const
 {
     CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
@@ -99,26 +101,26 @@ void OpenGLFrameBuffer::BindForDrawAttachment(const unsigned int index) const
 }
 
 /**
- * Bind the framebuffer to read a specific color attachment.
+ * @brief Bind the framebuffer to read a specific color attachment.
  *
  * @param index The color attachment index.
  */
-void OpenGLFrameBuffer::BindForReadAttachment(const unsigned int index) const
+void OpenGLFrameBuffer::BindForReadAttachment(const uint32_t index) const
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_ID);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 }
 
 /**
- * Bind the framebuffer to draw in a specific (cube) color attachment.
+ * @brief Bind the framebuffer to draw in a specific (cube) color attachment.
  *
  * @param index The color attachment index.
  * @param face The face to be selected from the cube attachment.
  * @param level The mipmap level of the texture image to be attached.
  */
-void OpenGLFrameBuffer::BindForDrawAttachmentCube(const unsigned int index, 
-                                                  const unsigned int face,
-                                                  const unsigned int level) const
+void OpenGLFrameBuffer::BindForDrawAttachmentCube(const uint32_t index,
+                                                  const uint32_t face,
+                                                  const uint32_t level) const
 {
     if (m_ColorAttachmentsSpec[index].Type != TextureType::TEXTURECUBE)
     {
@@ -134,7 +136,7 @@ void OpenGLFrameBuffer::BindForDrawAttachmentCube(const unsigned int index,
 }
 
 /**
- * Unbind the framebuffer and generate the mipmaps if necessary.
+ * @brief Unbind the framebuffer and generate the mipmaps if necessary.
  *
  * @param genMipMaps Mip map generation flag.
  */
@@ -155,12 +157,12 @@ void OpenGLFrameBuffer::Unbind(const bool& genMipMaps) const
 }
 
 /**
- * Clear a specific attachment belonging to this framebuffer (set a default value on it).
+ * @brief Clear a specific attachment belonging to this framebuffer (set a default value on it).
  *
  * @param index Attachment index to be cleared.
  * @param value Clear (reset) value.
  */
-void OpenGLFrameBuffer::ClearAttachment(const unsigned int index, const int value)
+void OpenGLFrameBuffer::ClearAttachment(const uint32_t index, const int value)
 {
     // TODO: support other types of data. For the moment this is only for RED images.
     auto& spec = m_ColorAttachmentsSpec[index];
@@ -171,7 +173,7 @@ void OpenGLFrameBuffer::ClearAttachment(const unsigned int index, const int valu
 }
 
 /**
- * Blit the contents of a source framebuffer to a destination framebuffer, optionally specifying color attachments.
+ * @brief Blit the contents of a source framebuffer to a destination framebuffer, optionally specifying color attachments.
  *
  * @param src The source framebuffer from which to copy the contents.
  * @param dst The destination framebuffer to which the contents are copied.
@@ -212,7 +214,7 @@ void OpenGLFrameBuffer::Blit(const std::shared_ptr<OpenGLFrameBuffer>& src,
 }
 
 /**
- * Define/re-define the framebuffer and its attachments.
+ * @brief Define/re-define the framebuffer and its attachments.
  */
 void OpenGLFrameBuffer::Invalidate()
 {
@@ -282,7 +284,7 @@ void OpenGLFrameBuffer::Invalidate()
 }
 
 /**
- * Releases the resources associated with the framebuffer.
+ * @brief Releases the resources associated with the framebuffer.
  */
 void OpenGLFrameBuffer::ReleaseFramebuffer()
 {
@@ -290,3 +292,4 @@ void OpenGLFrameBuffer::ReleaseFramebuffer()
     FrameBuffer::ReleaseFramebuffer();
 }
 
+//} // namespace pixc

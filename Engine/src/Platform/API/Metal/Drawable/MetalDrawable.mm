@@ -11,8 +11,10 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 
+namespace pixc {
+
 /**
- * An internal structure encapsulating the Metal-specific state of a `MetalDrawable`.
+ * @brief An internal structure encapsulating the Metal-specific state of a `MetalDrawable`.
  */
 struct MetalDrawable::DrawableState {
     ///< The compiled Metal render pipeline state.
@@ -25,7 +27,7 @@ struct MetalDrawable::DrawableState {
 };
 
 /**
- * Creates a drawable object for the Metal pipeline.
+ * @brief Creates a drawable object for the Metal pipeline.
  */
 MetalDrawable::MetalDrawable() : Drawable()
 {
@@ -43,7 +45,7 @@ MetalDrawable::MetalDrawable() : Drawable()
 }
 
 /**
- * Destroys the Metal drawable object.
+ * @brief Destroys the Metal drawable object.
  */
 MetalDrawable::~MetalDrawable()
 {
@@ -53,7 +55,7 @@ MetalDrawable::~MetalDrawable()
 }
 
 /**
- * Binds the drawble  to the current Metal rendering context.
+ * @brief Binds the drawble  to the current Metal rendering context.
  */
 void MetalDrawable::Bind() const
 {
@@ -74,9 +76,9 @@ void MetalDrawable::Bind() const
         
         id<MTLBuffer> vertexBuffer = reinterpret_cast<id<MTLBuffer>>(metalVertexBuffer->GetBuffer());
         [encoder
-            setVertexBuffer:vertexBuffer
-            offset:0
-            atIndex:static_cast<NSUInteger>(i)];
+         setVertexBuffer:vertexBuffer
+         offset:0
+         atIndex:static_cast<NSUInteger>(i)];
     }
     
     // Define the uniforms in the command encoder
@@ -86,7 +88,7 @@ void MetalDrawable::Bind() const
 }
 
 /**
- * Creates and configures the Metal render pipeline state.
+ * @brief Creates and configures the Metal render pipeline state.
  */
 void MetalDrawable::SetPipelineState() const
 {
@@ -99,11 +101,11 @@ void MetalDrawable::SetPipelineState() const
     // Dynamic cast the shader to a Metal shader
     auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
     CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
-
+    
     // Get Metal functions
     id<MTLFunction> vertexFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetVertexFunction());
     id<MTLFunction> fragmentFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetFragmentFunction());
-
+    
     // Assign to pipeline descriptor
     m_State->PipelineDescriptor.vertexFunction = vertexFunction;
     m_State->PipelineDescriptor.fragmentFunction = fragmentFunction;
@@ -123,7 +125,7 @@ void MetalDrawable::SetPipelineState() const
 }
 
 /**
- * Sets the vertex attribute layout for the drawable.
+ * @brief Sets the vertex attribute layout for the drawable.
  *
  * @param vbo The vertex buffer whose layout will be used to set the vertex attributes.
  */
@@ -154,9 +156,11 @@ void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo
 }
 
 /**
- * Retrieves the Metal render pipeline state.
+ * @brief Retrieves the Metal render pipeline state.
  */
 void* MetalDrawable::GetPipelineState() const
 {
     return reinterpret_cast<void*>(m_State->PipelineState);
 }
+
+} // namespace pixc

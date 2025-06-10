@@ -3,7 +3,13 @@
 #include "Common/Renderer/Buffer/IndexBuffer.h"
 
 /**
- * Concrete implementation of `IndexBuffer` for the OpenGL rendering API.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of `IndexBuffer` for the OpenGL rendering API.
  *
  * The `OpenGLIndexBuffer` handles the creation, binding, and management of index buffers
  * specifically for OpenGL. It uses OpenGL functions to interact with the GPU.
@@ -35,3 +41,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLIndexBuffer);
 };
+
+} // namespace pixc

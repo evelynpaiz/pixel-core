@@ -4,8 +4,26 @@
 
 #include "Common/Renderer/Camera/Camera.h"
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
 class MouseScrolledEvent;
 
+/**
+ * @brief Represents an orthographic camera that captures the scene without perspective distortion.
+ *
+ * The `OrthographicCamera`  class is a derived class of the `Camera` class, providing an orthographic
+ * projection for rendering. It is typically used for 2D scenes or UI rendering, where objects should retain
+ * their size regardless of depth. It inherits the functionality of the base `Camera` class and offers
+ * additional methods to control orthographic bounds and zoom levels. The camera's view matrix and
+ * projection matrix are automatically updated when camera properties change.
+ *
+ * Copying or moving `OrthographicCamera` objects is disabled to ensure single ownership and
+ * prevent unintended camera duplication.
+ */
 class OrthographicCamera : public Camera
 {
 public:
@@ -75,3 +93,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(OrthographicCamera);
 };
+
+} // namespace pixc
