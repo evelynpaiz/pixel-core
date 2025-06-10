@@ -2,10 +2,12 @@
     #define GL_SILENCE_DEPRECATION
 #endif
 
-#include "Common/Core/Log.h"
+#include "Foundation/Core/Log.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
 
 //#include "Engine.h"
 //#include "Viewer/ViewerApp.h"
@@ -24,6 +26,8 @@ int main()
     Log::Init();
     CORE_INFO("Test passed info!");
     CORE_DEBUG("Test passed debug!");
+    
+    glm::vec2 test = glm::vec2(0, 1);
     
     GLFWwindow* window;
 

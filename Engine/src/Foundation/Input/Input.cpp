@@ -1,10 +1,10 @@
 #include "enginepch.h"
-#include "Common/Input/Input.h"
+#include "Foundation/Input/Input.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Common/Core/Application.h"
+#include "Foundation/Core/Application.h"
 
 namespace pixc {
 

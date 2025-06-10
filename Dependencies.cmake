@@ -4,6 +4,8 @@
 set(SPDLOG_BUILD_ONLY_HEADERS ON CACHE BOOL "" FORCE)
 add_subdirectory(3rdparty/spdlog)
 
+add_library(spdlog::spdlog ALIAS spdlog_header_only)
+
 ## GLFW
 set(GLFW_MAPPING OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -33,3 +35,9 @@ set(ONLY_LIBS ON CACHE BOOL "" FORCE)
 
 add_subdirectory(3rdparty/glew)
 add_library(glew::glew ALIAS glew)
+
+
+## GLM
+set(GLM_BUILD_LIBRARY OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(3rdparty/glm)

@@ -1,5 +1,5 @@
 #include "enginepch.h"
-#include "Common/Core/Log.h"
+#include "Foundation/Core/Log.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 

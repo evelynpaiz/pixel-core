@@ -5,8 +5,9 @@ file(
     GLOB_RECURSE sources
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/Common/Core/Log.cpp 
-#    src/Common/*.cpp src/Common/*.mm
+    src/Foundation/Core/Log.cpp
+
+#   src/Foundation/*.cpp src/Foundation/*.mm
 )
 
 # Find platform-specific source files
@@ -42,7 +43,10 @@ file(
     GLOB_RECURSE public_headers
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    include/Common/Core/Log.h
+    include/Foundation/Core/Base.h
+    include/Foundation/Core/Assert.h
+    include/Foundation/Core/Log.h
+    include/Foundation/Event/*.h
 #    include/*.h
 )
 
@@ -64,8 +68,8 @@ set_target_properties(Engine PROPERTIES
 
 # Link external libraries
 target_link_libraries(Engine 
-    spdlog::spdlog_header_only OpenGL::GL glfw::glfw glew::glew
-#    glm::glm stb::stb assimp::assimp imgui::imgui
+    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm
+#   stb::stb assimp::assimp imgui::imgui
 )
 
 # Link metal if apple device is used
@@ -76,7 +80,7 @@ if (APPLE)
 endif()
 
 # Define pre-compiled header
-#target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
+target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
 
 # Add pre-processing flag
 target_compile_definitions(Engine PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)

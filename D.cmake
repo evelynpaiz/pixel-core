@@ -1,9 +1,4 @@
 
-## GLM
-set(GLM_UNINSTALL OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(3rdparty/glm)
-
 ## STB
 add_library(stb INTERFACE)
 
