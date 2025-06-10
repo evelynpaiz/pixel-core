@@ -38,6 +38,11 @@ add_library(glew::glew ALIAS glew)
 
 
 ## GLM
+cmake_policy(PUSH)
+cmake_policy(VERSION 3.15)  # Set modern policies in effect for the following
+
 set(GLM_BUILD_LIBRARY OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(3rdparty/glm)
+
+cmake_policy(POP)           # Restore previous policies
