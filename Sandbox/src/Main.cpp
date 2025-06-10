@@ -54,6 +54,7 @@ int main()
         glfwPollEvents();
     }
 
+    glfwDestroyWindow(window);
     glfwTerminate();
     
     // Create the application

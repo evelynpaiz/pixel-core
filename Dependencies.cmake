@@ -15,3 +15,13 @@ add_subdirectory(3rdparty/glfw)
 add_library(glfw::glfw ALIAS glfw)
 
 set_target_properties(glfw PROPERTIES FOLDER "")
+
+## Metal
+if(APPLE)
+    add_library(metalcpp INTERFACE)
+    target_include_directories(metalcpp
+        INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/metal-cpp/
+    )
+    add_library(Metal::Cpp ALIAS metalcpp)
+endif()
