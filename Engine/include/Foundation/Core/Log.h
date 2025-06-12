@@ -4,6 +4,15 @@
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/pattern_formatter.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
 /**
  * Logging manager used as a wraper for spdlog.
  *
@@ -59,12 +68,14 @@ private:
     const std::vector<std::string> m_Symbols = { "📓", "📘", "📗", "⚠️", "🛑", "⚡️", "" };
 };
 
+} // namespace pixc
+
 // --------------------------------------------
 // Definition of the logging macros.
 // --------------------------------------------
-#define CORE_TRACE(...)     ::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define CORE_DEBUG(...)     ::Log::GetCoreLogger()->debug(__VA_ARGS__)
-#define CORE_INFO(...)      ::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define CORE_WARN(...)      ::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define CORE_ERROR(...)     ::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define CORE_CRITICAL(...)  ::Log::GetCoreLogger()->critical(__VA_ARGS__)
+#define PIXEL_CORE_TRACE(...)     ::pixc::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define PIXEL_CORE_DEBUG(...)     ::pixc::Log::GetCoreLogger()->debug(__VA_ARGS__)
+#define PIXEL_CORE_INFO(...)      ::pixc::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define PIXEL_CORE_WARN(...)      ::pixc::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define PIXEL_CORE_ERROR(...)     ::pixc::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define PIXEL_CORE_CRITICAL(...)  ::pixc::Log::GetCoreLogger()->critical(__VA_ARGS__)

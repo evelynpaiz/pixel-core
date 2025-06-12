@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/RendererAPI.h"
+#include "Foundation/Renderer/RendererAPI.h"
 
 /**
  * Concrete implementation of the RendererAPI interface for OpenGL.
@@ -17,6 +17,7 @@ public:
     
     // Render
     // ----------------------------------------
+    /*
     void SetRenderTarget(const RenderTargetBuffers& targets) override;
     void SetRenderTarget(const glm::vec4& color,
                          const RenderTargetBuffers& targets) override;
@@ -38,6 +39,7 @@ public:
                      unsigned int width, unsigned int height) override;
     
     void SetDepthTesting(const bool enabled) override;
+     */
     
 private:
     // Clear

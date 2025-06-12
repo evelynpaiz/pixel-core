@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Common/Renderer/GraphicsContext.h"
+#include "Foundation/Renderer/GraphicsContext.h"
 
-#include "Common/Renderer/Buffer/Buffer.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+//#include "Foundation/Renderer/Buffer/Buffer.h"
+//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 struct GLFWwindow;
 
@@ -50,9 +50,11 @@ public:
     
     // Render
     // ----------------------------------------
+    /*
     void SetRenderTarget(const glm::vec4& color,
                          const RenderTargetBuffers& targets,
                          const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
+     */
     void EndEncoding();
     
     // Draw

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Common/Core/Window.h"
-#include "Common/Layer/LayerStack.h"
+#include "Foundation/Core/Base.h"
+#include "Foundation/Core/Window.h"
+#include "Foundation/Layer/LayerStack.h"
 
 /**
  * @namespace pixc

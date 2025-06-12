@@ -1,7 +1,7 @@
 #include "enginepch.h"
-#include "Common/Core/FileDialogs.h"
+#include "Foundation/Core/FileDialogs.h"
 
-#include "Common/Core/Application.h"
+#include "Foundation/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_COCOA
@@ -131,6 +131,11 @@ void ProcessFilterString(const char* filter, NSOpenPanel* panel)
  *
  * @param filter A pointer to a filter string that specifies the file types to display.
  * @return The selected file path. If the user cancels the dialog or an error occurs, an empty string is returned.
+ *
+ * @example
+ * @code
+ * std::string path = FileDialogs::OpenFile("HDR Image (*.hdr)\0*.hdr\0");
+ * @endcode
  */
 std::string FileDialogs::OpenFile(const char *filter)
 {
@@ -192,8 +197,14 @@ std::string FileDialogs::OpenFile(const char *filter)
  * the user to select a location and specify a file name for saving a file.
  *
  * @param filter A pointer to a filter string that specifies the allowed file types.
+ * 
  * @return The selected file path. If the user cancels the dialog or an error occurs,
  *         an empty string is returned.
+ *
+ * @example
+ * @code
+ * std::string filepath = FileDialogs::SaveFile("Pixel Core Scene (*.pixc)\0*.pixc\0");
+ * @endcode
  *
  * @note TODO: Add filter information as the extension of the saved file.
  */

@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/RendererAPI.h"
-#include "Common/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/RendererAPI.h"
+#include "Foundation/Renderer/RendererUtils.h"
 
-#include "Common/Renderer/Buffer/IndexBuffer.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
-#include "Common/Renderer/Drawable/Drawable.h"
+#include "Foundation/Renderer/Buffer/IndexBuffer.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Drawable/Drawable.h"
 
-#include "Common/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Material/Material.h"
 
-#include "Common/Renderer/Camera/Camera.h"
+#include "Foundation/Renderer/Camera/Camera.h"
 
 #include <glm/glm.hpp>
 

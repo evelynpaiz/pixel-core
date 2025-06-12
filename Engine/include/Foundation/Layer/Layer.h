@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Common/Core/Timestep.h"
+#include "Foundation/Core/Base.h"
+#include "Foundation/Core/Timestep.h"
 
-#include "Common/Event/Event.h"
+#include "Foundation/Event/Event.h"
 
 /**
  * @namespace pixc

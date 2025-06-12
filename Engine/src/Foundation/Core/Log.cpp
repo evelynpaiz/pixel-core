@@ -3,6 +3,8 @@
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+namespace pixc {
+
 // --------------------------------------------
 // Log
 // --------------------------------------------
@@ -58,3 +60,5 @@ std::unique_ptr<spdlog::custom_flag_formatter> FlagLogSymbol::clone() const
 {
     return spdlog::details::make_unique<FlagLogSymbol>();
 }
+
+} // namespace pixc

@@ -1,9 +1,12 @@
 #include "enginepch.h"
-#include "Common/Renderer/GraphicsContext.h"
+#include "Foundation/Renderer/GraphicsContext.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/RendererAPI.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#ifdef __APPLE__
 #include "Platform/Metal/MetalContext.h"
+#endif
 
 // Define static variables
 GraphicsContext* GraphicsContext::s_Instance = nullptr;

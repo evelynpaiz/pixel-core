@@ -1,10 +1,12 @@
 #include "enginepch.h"
-#include "Common/Renderer/RendererAPI.h"
+#include "Foundation/Renderer/RendererAPI.h"
 
-#include "Common/Renderer/GraphicsContext.h"
+#include "Foundation/Renderer/GraphicsContext.h"
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
+#ifdef __APPLE__
 #include "Platform/Metal/MetalRendererAPI.h"
+#endif
 
 // Define static variables
 RendererAPI::API RendererAPI::s_API = RendererAPI::API::Metal;

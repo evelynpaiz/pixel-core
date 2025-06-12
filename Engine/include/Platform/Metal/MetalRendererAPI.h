@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/RendererAPI.h"
+#include "Foundation/Renderer/RendererAPI.h"
 
 #include "Platform/Metal/MetalContext.h"
 

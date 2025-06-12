@@ -5,49 +5,55 @@ file(
     GLOB_RECURSE sources
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/Foundation/Core/Log.cpp
+    #   src/Foundation/*.cpp src/Foundation/*.mm
 
-#   src/Foundation/*.cpp src/Foundation/*.mm
+    src/Foundation/Core/*.cpp
+    src/Foundation/Input/*.cpp
+
+    src/Foundation/Layer/LayerStack.cpp
 )
 
 # Find platform-specific source files
-#if(WIN32)
-#    set(PLATFORM_OS_DIR "Platform/OS/Windows")
+if(WIN32)
+    set(PLATFORM_OS_DIR "Platform/OS/Windows")
 #    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
-#elseif(APPLE)
-#    set(PLATFORM_OS_DIR "Platform/OS/MacOS")
+elseif(APPLE)
+    set(PLATFORM_OS_DIR "Platform/OS/MacOS")
 #    set(PLATFORM_API_METAL_DIR "Platform/API/Metal")
-#else()
-#    set(PLATFORM_OS_DIR "Platform/OS/Generic")
+else()
+    set(PLATFORM_OS_DIR "Platform/OS/Generic")
 #    set(PLATFORM_API_METAL_DIR "Platform/API/Generic")
-#endif()
+endif()
 
 #set(PLATFORM_API_OPENGL_DIR "Platform/API/OpenGL")
 
-#file(
-#    GLOB_RECURSE platform_sources
-#    LIST_DIRECTORIES false
-#    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-#    src/${PLATFORM_OS_DIR}/*.cpp
-#    src/${PLATFORM_OS_DIR}/*.mm
+file(
+    GLOB_RECURSE platform_sources
+    LIST_DIRECTORIES false
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    src/${PLATFORM_OS_DIR}/*.cpp
+    src/${PLATFORM_OS_DIR}/*.mm
     
 #    src/${PLATFORM_API_OPENGL_DIR}/*.cpp
 #    src/${PLATFORM_API_OPENGL_DIR}/*.mm
     
 #    src/${PLATFORM_API_METAL_DIR}/*.cpp
 #    src/${PLATFORM_API_METAL_DIR}/*.mm
-#)
+)
 
 # Find header files
 file(
     GLOB_RECURSE public_headers
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    include/Foundation/Core/Base.h
-    include/Foundation/Core/Assert.h
-    include/Foundation/Core/Log.h
+#   include/*.h
+
+    include/Foundation/Core/*.h
     include/Foundation/Event/*.h
-#    include/*.h
+    include/Foundation/Input/*.h
+
+    include/Foundation/Layer/Layer.h
+    include/Foundation/Layer/LayerStack.h
 )
 
 # Define the engine library

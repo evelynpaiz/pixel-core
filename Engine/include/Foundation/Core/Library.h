@@ -1,5 +1,15 @@
 #pragma once
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @namespace pixc::utils
+ * @brief Utility functions and helper classes for the Pixel Core rendering engine.
+ */
 namespace utils {
 /**
  * Splits a string into two parts based on a delimiter.
@@ -11,13 +21,13 @@ namespace utils {
  */
 inline std::pair<std::string, std::string> SplitString(const std::string& combinedString,
                                                        char delimiter = '.') {
-  size_t delimiterPos = combinedString.find(delimiter);
-
-  // No need for a separate 'else' block - simplifies the logic
-  return (delimiterPos != std::string::npos)
-           ? std::make_pair(combinedString.substr(0, delimiterPos),
-                            combinedString.substr(delimiterPos + 1))
-           : std::make_pair(combinedString, "");
+    size_t delimiterPos = combinedString.find(delimiter);
+    
+    // No need for a separate 'else' block - simplifies the logic
+    return (delimiterPos != std::string::npos)
+    ? std::make_pair(combinedString.substr(0, delimiterPos),
+                     combinedString.substr(delimiterPos + 1))
+    : std::make_pair(combinedString, "");
 }
 
 /**
@@ -31,9 +41,9 @@ inline std::pair<std::string, std::string> SplitString(const std::string& combin
  * @return A string containing the merged parts, delimited if necessary.
  */
 inline std::string MergeStrings(const std::string& group,
-                                 const std::string& member,
-                                 char delimiter = '.') {
-  return member.empty() ? group : group + delimiter + member;
+                                const std::string& member,
+                                char delimiter = '.') {
+    return member.empty() ? group : group + delimiter + member;
 }
 } // namespace utils
 
@@ -187,7 +197,7 @@ public:
     Library(const std::string& type = "Object") : m_Type(type) {}
     /// @brief Delete the library.
     virtual ~Library() = default;
-
+    
     // Add
     // ----------------------------------------
     /// @brief Adds an object to the library.
@@ -201,9 +211,9 @@ public:
                      const ObjectType& object)
     {
         std::string message = GetType() + " '" +
-            utils::MergeStrings(group, member) + "' already exists!";
+        utils::MergeStrings(group, member) + "' already exists!";
         CORE_ASSERT(!Exists(group, member), message);
-
+        
         m_Objects[group].Add(member, object);
     }
     
@@ -218,12 +228,12 @@ public:
                     const std::string& member)
     {
         std::string message = GetType() + " '" +
-            utils::MergeStrings(group, member) + "' not found!";
+        utils::MergeStrings(group, member) + "' not found!";
         CORE_ASSERT(Exists(group, member), message);
         
         return m_Objects[group].Get(member);
     }
-
+    
     /// @brief Retrieves an object from the library by its group and object names (const version).
     /// @param group The name of the group to associate with the object.
     /// @param member The name of the member of a group.
@@ -233,7 +243,7 @@ public:
                           const std::string& member) const
     {
         std::string message = GetType() + " '" +
-            utils::MergeStrings(group, member) + "' not found!";
+        utils::MergeStrings(group, member) + "' not found!";
         CORE_ASSERT(Exists(group, member), message);
         return m_Objects.at(group).Get(member);
     }
@@ -284,7 +294,7 @@ protected:
     /// @brief Get the name of the libraries that are contained in the library.
     /// @return The name of the libraries.
     const std::string& GetType() const { return m_Type; }
-
+    
     // Library variables
     // ----------------------------------------
 protected:
@@ -293,3 +303,5 @@ protected:
     ///< The name of the libraries contained in the library.
     std::string m_Type;
 };
+
+} // namespace pixc

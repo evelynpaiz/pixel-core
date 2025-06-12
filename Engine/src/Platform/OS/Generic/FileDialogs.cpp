@@ -1,5 +1,7 @@
 #include "enginepch.h"
-#include "Common/Core/FileDialogs.h"
+#include "Foundation/Core/FileDialogs.h"
+
+namespace pixc {
 
 /**
  * Placeholder (select directory) function for unsupported platforms.
@@ -10,7 +12,7 @@ std::string FileDialogs::SelectDirectory()
 {
     // Log a warning message indicating that file dialogs are not supported on this platform
     CORE_WARN("Platform doesn't support file dialogs yet!");
-
+    
     // Return an empty string by default
     return std::string();
 }
@@ -24,7 +26,7 @@ std::string FileDialogs::OpenFile(const char *filter)
 {
     // Log a warning message indicating that file dialogs are not supported on this platform
     CORE_WARN("Platform doesn't support file dialogs yet!");
-
+    
     // Return an empty string by default
     return std::string();
 }
@@ -38,7 +40,9 @@ std::string FileDialogs::SaveFile(const char *filter)
 {
     // Log a warning message indicating that file dialogs are not supported on this platform
     CORE_WARN("Platform doesn't support file dialogs yet!");
-
+    
     // Return an empty string by default
     return std::string();
 }
+
+} // namespace pixc

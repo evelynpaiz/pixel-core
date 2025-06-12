@@ -1,7 +1,7 @@
 #include "enginepch.h"
-#include "Common/Core/FileDialogs.h"
+#include "Foundation/Core/FileDialogs.h"
 
-#include "Common/Core/Application.h"
+#include "Foundation/Core/Application.h"
 
 #include <ShlObj_core.h>
 #include <commdlg.h>
@@ -60,7 +60,13 @@ std::string FileDialogs::SelectDirectory()
  * @brief Displays an open file dialog on Windows using GetOpenFileNameA.
  *
  * @param filter A pointer to a filter string that specifies the file types to display.
+ * 
  * @return The selected file path. If the user cancels the dialog or an error occurs, an empty string is returned.
+ *
+ * @example
+ * @code
+ * std::string path = FileDialogs::OpenFile("HDR Image (*.hdr)\0*.hdr\0");
+ * @endcode
  */
 std::string FileDialogs::OpenFile(const char *filter)
 {
@@ -102,7 +108,13 @@ std::string FileDialogs::OpenFile(const char *filter)
  * @brief Displays a save file dialog on Windows using GetSaveFileNameA.
  *
  * @param filter A pointer to a filter string specifying the file types to display.
+ *
  * @return The selected file path or an empty string if canceled or on error.
+ *
+ * @example
+ * @code
+ * std::string filepath = FileDialogs::SaveFile("Pixel Core Scene (*.pixc)\0*.pixc\0");
+ * @endcode
  */
 std::string FileDialogs::SaveFile(const char *filter)
 {

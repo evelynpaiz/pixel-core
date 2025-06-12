@@ -1,12 +1,12 @@
 #include "enginepch.h"
-#include "Common/Core/Window.h"
+#include "Foundation/Core/Window.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Common/Event/WindowEvent.h"
-#include "Common/Event/KeyEvent.h"
-#include "Common/Event/MouseEvent.h"
+#include "Foundation/Event/WindowEvent.h"
+#include "Foundation/Event/KeyEvent.h"
+#include "Foundation/Event/MouseEvent.h"
 
 namespace pixc {
 
@@ -29,7 +29,7 @@ static unsigned int g_WindowCount = 0;
  */
 static void ErrorCallback(const int error, const char *description) noexcept
 {
-    CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+    PIXEL_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
 /**
@@ -222,7 +222,7 @@ Window::~Window()
 void Window::OnUpdate() const
 {
     // Swap front and back buffers
-    m_Context->SwapBuffers();
+    //m_Context->SwapBuffers();
     
     // Poll for and process events
     glfwPollEvents();
@@ -233,7 +233,7 @@ void Window::OnUpdate() const
  */
 void Window::OnResize(const unsigned int width, const unsigned int height) const
 {
-    m_Context->UpdateScreenbufferSize(width, height);
+    //m_Context->UpdateScreenbufferSize(width, height);
 }
 
 /**
@@ -244,7 +244,7 @@ void Window::OnResize(const unsigned int width, const unsigned int height) const
  */
 void Window::SetVerticalSync(bool enabled)
 {
-    m_Context->SetVerticalSync(enabled);
+    //m_Context->SetVerticalSync(enabled);
     m_Data.VerticalSync = enabled;
 }
 
@@ -256,26 +256,26 @@ void Window::Init()
     // Check if GLFW is already initialized, if not initialize it
     if (g_WindowCount == 0)
     {
-        CORE_TRACE("Initializing GLFW");
+        PIXEL_CORE_TRACE("Initializing GLFW");
         
         int success = glfwInit();
-        CORE_ASSERT(success, "Failed to initialize GLFW!");
+        PIXEL_CORE_ASSERT(success, "Failed to initialize GLFW!");
         
         glfwSetErrorCallback(ErrorCallback);
     }
     
     // Define the window hints for on the graphics context
-    GraphicsContext::SetWindowHints();
+    //GraphicsContext::SetWindowHints();
     
     // Create a windowed mode window and its OpenGL context
     m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height,
                                 m_Data.Title.c_str(), nullptr, nullptr);
-    CORE_ASSERT(m_Window, "Failed to create a GLFW window!");
+    PIXEL_CORE_ASSERT(m_Window, "Failed to create a GLFW window!");
     ++g_WindowCount;
     
     // Initialize the rendering context
-    m_Context = GraphicsContext::Create(m_Window);
-    m_Context->Init();
+    //m_Context = GraphicsContext::Create(m_Window);
+    //m_Context->Init();
     
     // Set a vertical synchronization
     SetVerticalSync(true);
@@ -300,10 +300,10 @@ void Window::Init()
     m_Data.Width = static_cast<unsigned int>(width);
     m_Data.Height = static_cast<unsigned int>(height);
     
-    m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
+    //m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
     
     // Show window created message
-    CORE_INFO("Creating '{0}' window ({1} x {2})", m_Data.Title,
+    PIXEL_CORE_INFO("Creating '{0}' window ({1} x {2})", m_Data.Title,
               m_Data.Width, m_Data.Height);
 }
 
@@ -319,7 +319,7 @@ void Window::Shutdown()
     // Check if is the only window available, if so, terminate GLFW too
     if (g_WindowCount == 0)
     {
-        CORE_TRACE("Terminating GLFW");
+        PIXEL_CORE_TRACE("Terminating GLFW");
         glfwTerminate();
     }
 }

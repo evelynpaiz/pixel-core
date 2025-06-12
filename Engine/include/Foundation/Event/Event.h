@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <sstream>
+#include <spdlog/fmt/fmt.h>
 
 /**
  * @namespace pixc
@@ -156,17 +157,6 @@ class EventDispatcher {
     public:
     DISABLE_COPY_AND_MOVE(EventDispatcher);
 };
-
-/**
- * Operator that allows to log the event information.
- 
- * @param os Output stream.
- * @param e Event to be described.
- */
-inline std::ostream &operator<<(std::ostream &os, const Event &e)
-{
-    return os << e.GetDescription();
-}
 
 /// Binding event function definition.
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)

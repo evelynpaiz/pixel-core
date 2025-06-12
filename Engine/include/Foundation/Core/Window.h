@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Common/Event/Event.h"
-#include "Common/Renderer/GraphicsContext.h"
+#include "Foundation/Core/Base.h"
+#include "Foundation/Event/Event.h"
+//#include "Foundation/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;
 
@@ -104,7 +105,7 @@ private:
     ///< Native window (GLFW).
     GLFWwindow* m_Window;
     ///< Graphics context for rendering.
-    std::unique_ptr<GraphicsContext> m_Context;
+    //std::unique_ptr<GraphicsContext> m_Context;
     
     ///< Window information.
     WindowData m_Data;

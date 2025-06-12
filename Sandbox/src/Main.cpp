@@ -2,15 +2,19 @@
     #define GL_SILENCE_DEPRECATION
 #endif
 
+//#include "Engine.h"
+#include "Viewer/ViewerApp.h"
+
 #include "Foundation/Core/Log.h"
+#include "Foundation/Core/Library.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
-
-//#include "Engine.h"
-//#include "Viewer/ViewerApp.h"
+#define NS_PRIVATE_IMPLEMENTATION
+#define CA_PRIVATE_IMPLEMENTATION
+#define MTL_PRIVATE_IMPLEMENTATION
+#include <Metal/Metal.hpp>
 
 /**
  * Entry point of the application.
@@ -23,46 +27,12 @@
 int main()
 {
     // Initialize the logging system
-    Log::Init();
-    CORE_INFO("Test passed info!");
-    CORE_DEBUG("Test passed debug!");
+    pixc::Log::Init();
     
-    glm::vec2 test = glm::vec2(0, 1);
-    
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Pixel Core", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    MTL::Device* pDevice = MTL::CreateSystemDefaultDevice();
+    pDevice->release();
     
     // Create the application
-    //auto application = std::make_unique<ViewerApp>("3D Viewer", 800, 600);
-    //application->Run();
+    auto application = std::make_unique<ViewerApp>("3D Viewer", 800, 600);
+    application->Run();
 }

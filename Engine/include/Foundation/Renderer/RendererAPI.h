@@ -1,14 +1,12 @@
 #pragma once
 
-#include "Common/Renderer/Drawable/Drawable.h"
-#include "Common/Renderer/Material/Material.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+//#include "Foundation/Renderer/Drawable/Drawable.h"
+//#include "Foundation/Renderer/Material/Material.h"
+//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
-#include "Common/Renderer/RendererUtils.h"
+//#include "Foundation/Renderer/RendererUtils.h"
 
 #include <glm/glm.hpp>
-
-using namespace pixc;
 
 /**
  * Abstract base class for rendering APIs.
@@ -47,6 +45,7 @@ public:
     
     // Clear
     // ----------------------------------------
+    /*
     virtual void SetRenderTarget(const RenderTargetBuffers& targets) = 0;
     virtual void SetRenderTarget(const glm::vec4& color,
                                  const RenderTargetBuffers& targets) = 0;
@@ -76,7 +75,7 @@ public:
                             unsigned int width, unsigned int height) = 0;
     
     virtual void SetDepthTesting(const bool enabled) = 0;
-    
+    */
     // Getter(s)
     // ----------------------------------------
     /// @brief Retrieves the currently active rendering API.

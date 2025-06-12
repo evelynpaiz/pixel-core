@@ -20,12 +20,12 @@
 #endif
 
 #ifdef ENGINE_ENABLE_ASSERTS
-    #define CORE_ASSERT(x, ...)                                                 \
+    #define PIXEL_CORE_ASSERT(x, ...)                                           \
         do                                                                      \
         {                                                                       \
             if (!(x))                                                           \
             {                                                                   \
-                CORE_ERROR("{0}", __VA_ARGS__);                                 \
+                PIXEL_CORE_ERROR("{0}", __VA_ARGS__);                           \
                 DEBUGBREAK();                                                   \
             }                                                                   \
         } while (false)
@@ -35,7 +35,7 @@
         {                                                                       \
             if (!(x))                                                           \
             {                                                                   \
-                CORE_ERROR("{0}", __VA_ARGS__);                                 \
+                PIXEL_CORE_ERROR("{0}", __VA_ARGS__);                           \
             }                                                                   \
         } while (false)
 #endif

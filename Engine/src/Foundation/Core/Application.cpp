@@ -1,13 +1,13 @@
 #include "enginepch.h"
-#include "Common/Core/Application.h"
+#include "Foundation/Core/Application.h"
 
-#include "Common/Event/Event.h"
-#include "Common/Event/WindowEvent.h"
+#include "Foundation/Event/Event.h"
+#include "Foundation/Event/WindowEvent.h"
 
-#include "Common/Core/Timer.h"
-#include "Common/Core/Timestep.h"
+#include "Foundation/Core/Timer.h"
+#include "Foundation/Core/Timestep.h"
 
-#include "Common/Renderer/Renderer.h"
+//#include "Foundation/Renderer/Renderer.h"
 
 namespace pixc {
 
@@ -25,7 +25,7 @@ Application::Application(const std::string& name, const int width,
                          const int height)
 {
     // Define the pointer to the application
-    CORE_ASSERT(!s_Instance, "Application '{0}' already exists!", name);
+    PIXEL_CORE_ASSERT(!s_Instance, "Application '{0}' already exists!", name);
     s_Instance = this;
     
     // Create the application window
@@ -34,7 +34,7 @@ Application::Application(const std::string& name, const int width,
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     
     // Initialize the renderer
-    Renderer::Init();
+    //Renderer::Init();
 }
 
 /**
@@ -146,9 +146,10 @@ bool Application::OnWindowResize(WindowResizeEvent &e)
  */
 bool Application::OnWindowClose(WindowCloseEvent &e)
 {
+    
     // Close the application
     m_Running = false;
-    CORE_INFO(e);
+    PIXEL_CORE_INFO(e.GetDescription());
     
     return true;
 }
