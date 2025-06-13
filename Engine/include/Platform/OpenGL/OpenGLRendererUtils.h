@@ -1,8 +1,14 @@
 #pragma once
 
-#include "Common/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/RendererUtils.h"
 
 #include <GL/glew.h>
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * Utility functions related to OpenGL rendering operations.
@@ -32,7 +38,7 @@ inline GLenum ToOpenGLType(DataType dataType)
         case DataType::Mat2:  return GL_FLOAT;
         case DataType::Mat3:  return GL_FLOAT;
         case DataType::Mat4:  return GL_FLOAT;
-        
+            
     }
     
     CORE_ASSERT(false, "Unknown data type!");
@@ -66,7 +72,7 @@ inline DataType ToDataType(GLenum glType)
         case GL_SAMPLER_3D:
         case GL_SAMPLER_CUBE:
         case GL_SAMPLER_2D_SHADOW:
-                            return DataType::Int;
+            return DataType::Int;
     }
     
     CORE_ASSERT(false, "Unknown OpenGL data type!");
@@ -167,3 +173,4 @@ inline GLenum ToOpenGLDepthFunc(DepthFunction depth)
 } // namespace gl
 } // namespace graphics
 } // namespace utils
+} // namespace pixc

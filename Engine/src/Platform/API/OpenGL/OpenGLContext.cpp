@@ -4,15 +4,17 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+namespace pixc {
+
 /**
  *  Constructs an OpenGL context for rendering.
  *
  *  @param windowHandle The GLFW window handle to associate with this context.
  */
 OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
-    : GraphicsContext(), m_WindowHandle(windowHandle)
+: GraphicsContext(), m_WindowHandle(windowHandle)
 {
-    CORE_ASSERT(windowHandle, "Window handle is null!");
+    PIXEL_CORE_ASSERT(windowHandle, "Window handle is null!");
 }
 
 /**
@@ -27,15 +29,15 @@ void OpenGLContext::Init()
 {
     // Make the window's context current
     glfwMakeContextCurrent(m_WindowHandle);
-
+    
     // Initialize GLEW
-    CORE_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW!");
-
+    PIXEL_CORE_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW!");
+    
     // Display the OpenGL general information
-    CORE_INFO("Using OpenGL:");
-    CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
-    CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
-    CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
+    PIXEL_CORE_INFO("Using OpenGL:");
+    PIXEL_CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
+    PIXEL_CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
+    PIXEL_CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
 }
 
 /**
@@ -77,3 +79,5 @@ void OpenGLContext::SwapBuffers()
 {
     glfwSwapBuffers(m_WindowHandle);
 }
+
+} // namespace pixc

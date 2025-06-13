@@ -4,12 +4,15 @@
 #include "Foundation/Renderer/GraphicsContext.h"
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
+
 #ifdef __APPLE__
 #include "Platform/Metal/MetalRendererAPI.h"
 #endif
 
+namespace pixc {
+
 // Define static variables
-RendererAPI::API RendererAPI::s_API = RendererAPI::API::Metal;
+RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
 /**
  * Creates a new Renderer API instance based on the selected API.
@@ -21,18 +24,20 @@ std::unique_ptr<RendererAPI> RendererAPI::Create()
     switch (s_API)
     {
         case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+            PIXEL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
-        
+            
         case RendererAPI::API::OpenGL:
             return std::make_unique<OpenGLRendererAPI>();
-        
+            
 #ifdef __APPLE__
         case RendererAPI::API::Metal:
             return std::make_unique<MetalRendererAPI>();
 #endif
     }
     
-    CORE_ASSERT(false, "Unknown Renderer API!");
+    PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");
     return nullptr;
 }
+
+} // namespace pixc

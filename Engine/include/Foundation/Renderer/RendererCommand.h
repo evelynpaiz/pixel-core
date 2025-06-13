@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/RendererAPI.h"
+#include "Foundation/Renderer/RendererAPI.h"
 
 #include <glm/glm.hpp>
 #include <optional>
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * A static class that provides an interface to the rendering API.
@@ -21,30 +27,30 @@ public:
     
     // Render
     // ----------------------------------------
-    static void SetRenderTarget(const RenderTargetBuffers& targets = {});
-    static void SetRenderTarget(const glm::vec4& color, 
-                                const RenderTargetBuffers& targets = {});
-    
-    static void SetRenderTarget(const std::shared_ptr<FrameBuffer>& framebuffer,
-                                const std::optional<RenderTargetBuffers>& targets = std::nullopt);
-    static void SetRenderTarget(const glm::vec4& color,
-                                const std::shared_ptr<FrameBuffer>& framebuffer,
-                                const std::optional<RenderTargetBuffers>& targets = std::nullopt);
-    
-    static void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
-    
+    /*
+     static void SetRenderTarget(const RenderTargetBuffers& targets = {});
+     static void SetRenderTarget(const glm::vec4& color,
+     const RenderTargetBuffers& targets = {});
+     
+     static void SetRenderTarget(const std::shared_ptr<FrameBuffer>& framebuffer,
+     const std::optional<RenderTargetBuffers>& targets = std::nullopt);
+     static void SetRenderTarget(const glm::vec4& color,
+     const std::shared_ptr<FrameBuffer>& framebuffer,
+     const std::optional<RenderTargetBuffers>& targets = std::nullopt);
+     
+     static void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
+     */
     // Draw
     // ----------------------------------------
-    
-    static void Draw(const std::shared_ptr<Drawable>& drawable,
-                     const PrimitiveType &primitive = PrimitiveType::Triangle);
+    //static void Draw(const std::shared_ptr<Drawable>& drawable,
+    //                 const PrimitiveType &primitive = PrimitiveType::Triangle);
     
     // Setter(s)
     // ----------------------------------------
-    static void SetViewport(unsigned int x, unsigned int y, 
-                            unsigned int width, unsigned int height);
+    //static void SetViewport(unsigned int x, unsigned int y,
+    //                        unsigned int width, unsigned int height);
     
-    static void SetDepthTesting(const bool enabled);
+    //static void SetDepthTesting(const bool enabled);
     
     // Renderer variables
     // ----------------------------------------
@@ -52,3 +58,5 @@ private:
     ///< Rendering API.
     static std::unique_ptr<RendererAPI> s_API;
 };
+
+} // namespace pixc

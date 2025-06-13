@@ -2,7 +2,13 @@
 
 #include "Foundation/Renderer/RendererAPI.h"
 
-#include "Platform/Metal/MetalContext.h"
+//#include "Platform/Metal/MetalContext.h"
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * Concrete implementation of the RendererAPI interface for Metal.
@@ -26,6 +32,7 @@ public:
     
     // Render
     // ----------------------------------------
+    /*
     void SetRenderTarget(const RenderTargetBuffers& targets = {}) override;
     void SetRenderTarget(const glm::vec4& color,
                          const RenderTargetBuffers& targets = {}) override;
@@ -37,22 +44,25 @@ public:
                          const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
     void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer) override;
+     */
     
     // Draw
     // ----------------------------------------
-    void Draw(const std::shared_ptr<Drawable>& drawable,
-              const PrimitiveType &primitive = PrimitiveType::Triangle) override;
+    //void Draw(const std::shared_ptr<Drawable>& drawable,
+    //          const PrimitiveType &primitive = PrimitiveType::Triangle) override;
     
     // Setter(s)
     // ----------------------------------------
-    void SetViewport(unsigned int x, unsigned int y,
-                     unsigned int width, unsigned int height) override;
+    //void SetViewport(unsigned int x, unsigned int y,
+    //                 unsigned int width, unsigned int height) override;
     
-    void SetDepthTesting(const bool enabled) override;
+    //void SetDepthTesting(const bool enabled) override;
     
     // Renderer API variables
     // ----------------------------------------
 private:
     ///< Metal context.
-    MetalContext* m_Context;
+    //MetalContext* m_Context;
 };
+
+} // namespace pixc

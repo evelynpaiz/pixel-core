@@ -3,6 +3,12 @@
 #include <glm/glm.hpp>
 
 /**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
  * Enumeration representing different types of primitives for rendering.
  */
 enum class PrimitiveType
@@ -29,3 +35,5 @@ enum class DepthFunction
 {
     Always, Never, Less, Equal, LEqual, Greater, NotEqual, GEqual,
 };
+
+} // namespace pixc

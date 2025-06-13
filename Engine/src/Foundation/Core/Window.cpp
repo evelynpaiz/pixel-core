@@ -222,7 +222,7 @@ Window::~Window()
 void Window::OnUpdate() const
 {
     // Swap front and back buffers
-    //m_Context->SwapBuffers();
+    m_Context->SwapBuffers();
     
     // Poll for and process events
     glfwPollEvents();
@@ -233,7 +233,7 @@ void Window::OnUpdate() const
  */
 void Window::OnResize(const unsigned int width, const unsigned int height) const
 {
-    //m_Context->UpdateScreenbufferSize(width, height);
+    m_Context->UpdateScreenbufferSize(width, height);
 }
 
 /**
@@ -244,7 +244,7 @@ void Window::OnResize(const unsigned int width, const unsigned int height) const
  */
 void Window::SetVerticalSync(bool enabled)
 {
-    //m_Context->SetVerticalSync(enabled);
+    m_Context->SetVerticalSync(enabled);
     m_Data.VerticalSync = enabled;
 }
 
@@ -274,8 +274,8 @@ void Window::Init()
     ++g_WindowCount;
     
     // Initialize the rendering context
-    //m_Context = GraphicsContext::Create(m_Window);
-    //m_Context->Init();
+    m_Context = GraphicsContext::Create(m_Window);
+    m_Context->Init();
     
     // Set a vertical synchronization
     SetVerticalSync(true);
@@ -300,7 +300,7 @@ void Window::Init()
     m_Data.Width = static_cast<unsigned int>(width);
     m_Data.Height = static_cast<unsigned int>(height);
     
-    //m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
+    m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
     
     // Show window created message
     PIXEL_CORE_INFO("Creating '{0}' window ({1} x {2})", m_Data.Title,

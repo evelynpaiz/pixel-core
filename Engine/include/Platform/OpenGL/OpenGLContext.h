@@ -5,6 +5,12 @@
 struct GLFWwindow;
 
 /**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
  *  Manages an OpenGL graphics context.
  *
  *  The `OpenGLContext` class is responsible for initializing, managing, and interacting
@@ -16,7 +22,7 @@ public:
     // Constructor(s)
     // ----------------------------------------
     OpenGLContext(GLFWwindow* windowHandle);
-
+    
     // Initialization
     // ----------------------------------------
     void Init() override;
@@ -36,3 +42,5 @@ private:
     ///< Native window (GLFW).
     GLFWwindow* m_WindowHandle;
 };
+
+} // namespace pixc

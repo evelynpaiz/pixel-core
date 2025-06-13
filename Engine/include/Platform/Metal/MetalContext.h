@@ -7,6 +7,12 @@
 
 struct GLFWwindow;
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
 struct MetalRenderState;
 
 /**
@@ -22,7 +28,7 @@ public:
     // Constructor(s)
     // ----------------------------------------
     MetalContext(GLFWwindow* windowHandle);
-
+    
     // Initialization
     // ----------------------------------------
     virtual void Init() override;
@@ -50,11 +56,9 @@ public:
     
     // Render
     // ----------------------------------------
-    /*
-    void SetRenderTarget(const glm::vec4& color,
-                         const RenderTargetBuffers& targets,
-                         const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
-     */
+    //void SetRenderTarget(const glm::vec4& color,
+    //                     const RenderTargetBuffers& targets,
+    //                     const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
     void EndEncoding();
     
     // Draw
@@ -81,3 +85,5 @@ private:
     struct MetalState;
     std::shared_ptr<MetalState> m_State;
 };
+
+} // namespace pixc

@@ -7,7 +7,7 @@
 #include "Foundation/Core/Timer.h"
 #include "Foundation/Core/Timestep.h"
 
-//#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
 
 namespace pixc {
 
@@ -28,13 +28,16 @@ Application::Application(const std::string& name, const int width,
     PIXEL_CORE_ASSERT(!s_Instance, "Application '{0}' already exists!", name);
     s_Instance = this;
     
+    // Delay startup 1 sec to avoid window duplication (Xcode bug)
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    
     // Create the application window
     m_Window = std::make_unique<Window>(name, width, height);
     // Define the event callback function for the application
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     
     // Initialize the renderer
-    //Renderer::Init();
+    Renderer::Init();
 }
 
 /**

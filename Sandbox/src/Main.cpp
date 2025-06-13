@@ -26,11 +26,12 @@
  */
 int main()
 {
-    // Initialize the logging system
-    pixc::Log::Init();
-    
+    // TODO: remove
     MTL::Device* pDevice = MTL::CreateSystemDefaultDevice();
     pDevice->release();
+    
+    // Initialize the logging system
+    pixc::Log::Init();
     
     // Create the application
     auto application = std::make_unique<ViewerApp>("3D Viewer", 800, 600);

@@ -6,12 +6,14 @@
 #define GLFW_EXPOSE_NATIVE_COCOA
 #include <GLFW/glfw3native.h>
 
-#include "Common/Renderer/Texture/Texture.h"
-#include "Platform/Metal/Texture/MetalTexture.h"
-#include "Platform/Metal/Buffer/MetalFrameBuffer.h"
+//#include "Common/Renderer/Texture/Texture.h"
+//#include "Platform/Metal/Texture/MetalTexture.h"
+//#include "Platform/Metal/Buffer/MetalFrameBuffer.h"
 
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
+
+namespace pixc {
 
 /**
  * Holds core Metal objects related to the device and command queues.
@@ -66,7 +68,7 @@ struct MetalScreenTarget
 /**
  * Holds the core Metal objects required for rendering.
  */
-struct MetalContext::MetalState 
+struct MetalContext::MetalState
 {
     ///< Resources associated with the Metal device.
     MetalDeviceResources DeviceResources;
@@ -82,19 +84,19 @@ struct MetalContext::MetalState
  *  @param windowHandle The GLFW window handle to associate with this context.
  */
 MetalContext::MetalContext(GLFWwindow* windowHandle)
-    : GraphicsContext(), m_WindowHandle(windowHandle)
+: GraphicsContext(), m_WindowHandle(windowHandle)
 {
-    CORE_ASSERT(windowHandle, "Window handle is null!");
+    PIXEL_CORE_ASSERT(windowHandle, "Window handle is null!");
 }
 
 /**
  * Initializes the Metal rendering context.
  */
-void MetalContext::Init() 
+void MetalContext::Init()
 {
     // Initialize the Metal state object for managing Metal resources
     m_State = std::make_shared<MetalState>();
-
+    
     // Initialize device resources
     InitializeMetalDeviceResources();
     // Initialize the screen rendering target
@@ -102,9 +104,10 @@ void MetalContext::Init()
     
     // Create the rendering states
     CreateDepthStencilState();
+    
     // Clear the buffer for the next frame
-    SetRenderTarget(glm::vec4(0.0f), RenderTargetBuffers());
-    SwapBuffers();
+    //SetRenderTarget(glm::vec4(0.0f), RenderTargetBuffers());
+    //SwapBuffers();
 }
 
 /**
@@ -179,7 +182,7 @@ void MetalContext::SetVerticalSync(bool enabled)
 {
     // Make sure the swap chain has been initialized
     if (!m_State->ScreenTarget.SwapChain) {
-        CORE_WARN("MetalContext::SetVerticalSync() called before swap chain initialization!");
+        PIXEL_CORE_WARN("MetalContext::SetVerticalSync() called before swap chain initialization!");
         return;
     }
     
@@ -232,7 +235,7 @@ void MetalContext::UpdateViewport(unsigned int x, unsigned int y,
 void MetalContext::EnableDepthStencilState()
 {
     [m_State->RenderState.Encoder
-        setDepthStencilState:m_State->RenderState.DepthStencilState];
+     setDepthStencilState:m_State->RenderState.DepthStencilState];
 }
 /**
  * Sets the render target and configures the render pass descriptor.
@@ -241,7 +244,7 @@ void MetalContext::EnableDepthStencilState()
  * @param targets The render target buffers to clear (used for screen rendering).
  * @param framebuffer The `FrameBuffer` to render to (if not rendering to the screen).
  *                    If `nullptr`, rendering is targeted to the screen.
- */
+ 
 void MetalContext::SetRenderTarget(const glm::vec4& color,
                                    const RenderTargetBuffers& targets,
                                    const std::shared_ptr<FrameBuffer>& framebuffer)
@@ -273,7 +276,7 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
         {
             // Get the color attachment texture from the framebuffer
             auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(
-                 framebuffer->GetColorAttachment((unsigned int)i));
+                                                                                 framebuffer->GetColorAttachment((unsigned int)i));
             
             attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
         }
@@ -298,7 +301,7 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
         {
             // Get the depth attachment texture from the framebuffer
             std::shared_ptr<MetalTexture> framebufferAttachment =
-                std::dynamic_pointer_cast<MetalTexture>(framebuffer->GetDepthAttachment());
+            std::dynamic_pointer_cast<MetalTexture>(framebuffer->GetDepthAttachment());
             
             attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
         }
@@ -316,10 +319,11 @@ void MetalContext::SetRenderTarget(const glm::vec4& color,
     
     // Define a new command encoder
     m_State->RenderState.Encoder = [m_State->RenderState.CommandBuffer
-                                        renderCommandEncoderWithDescriptor:descriptor];
+                                    renderCommandEncoderWithDescriptor:descriptor];
     // Set the viewport information
     [m_State->RenderState.Encoder setViewport:m_State->RenderState.Viewport];
 }
+ */
 
 /**
  * Finalizes the current rendering pass by ending encoding.
@@ -352,7 +356,7 @@ void MetalContext::SwapBuffers()
     
     // Commit the command buffer (this submits all the commands to the GPU)
     [m_State->RenderState.CommandBuffer commit];
-            
+    
     // Nullify the command buffer after committing to prepare for the next frame
     m_State->RenderState.CommandBuffer = nil;
 }
@@ -364,18 +368,18 @@ void MetalContext::InitializeMetalDeviceResources()
 {
     // Get the default system Metal device (GPU)
     m_State->DeviceResources.Device = MTLCreateSystemDefaultDevice();
-    CORE_ASSERT(m_State->DeviceResources.Device, "Metal initialization failed: Could not get default Metal device!");
-
+    PIXEL_CORE_ASSERT(m_State->DeviceResources.Device, "Metal initialization failed: Could not get default Metal device!");
+    
     // Create the command queue(s) for submitting rendering commands to the GPU
     m_State->DeviceResources.RenderQueue = [m_State->DeviceResources.Device newCommandQueue];
     m_State->DeviceResources.ResourceQueue = [m_State->DeviceResources.Device newCommandQueue];
-    CORE_ASSERT(m_State->DeviceResources.RenderQueue && m_State->DeviceResources.ResourceQueue,
+    PIXEL_CORE_ASSERT(m_State->DeviceResources.RenderQueue && m_State->DeviceResources.ResourceQueue,
                 "Metal initialization failed: Could not create command queue(s)!");
     
     // Display the Metal general information
-    CORE_INFO("Using Metal:");
+    PIXEL_CORE_INFO("Using Metal:");
     NSString *deviceName = [m_State->DeviceResources.Device name];
-    CORE_INFO("  Device: {0}", std::string([deviceName UTF8String]));
+    PIXEL_CORE_INFO("  Device: {0}", std::string([deviceName UTF8String]));
     
     // Create the command buffer and encoder
     m_State->RenderState.CommandBuffer = [m_State->DeviceResources.RenderQueue commandBuffer];
@@ -392,10 +396,10 @@ void MetalContext::InitializeScreenTarget()
     m_State->ScreenTarget.SwapChain.device = m_State->DeviceResources.Device;
     // Set the swap chain to opaque (no alpha blending)
     m_State->ScreenTarget.SwapChain.opaque = YES;
-
+    
     // Get the NSWindow associated with the GLFW window handle for platform integration
     NSWindow* parentWindow = (NSWindow*)glfwGetCocoaWindow(m_WindowHandle);
-
+    
     // Set up the swap chain as the layer for the window's content view
     parentWindow.contentView.layer = m_State->ScreenTarget.SwapChain;
     parentWindow.contentView.wantsLayer = YES;
@@ -440,7 +444,7 @@ void MetalContext::CreateScreenDepthTexture()
     descriptor.usage =  MTLTextureUsageShaderWrite | MTLTextureUsageRenderTarget;
     
     m_State->ScreenTarget.DepthAttachment = [m_State->DeviceResources.Device
-                                                newTextureWithDescriptor:descriptor];
+                                             newTextureWithDescriptor:descriptor];
     [descriptor release];
 }
 
@@ -453,6 +457,8 @@ void MetalContext::CreateDepthStencilState()
     descriptor.depthCompareFunction = MTLCompareFunctionLess;
     descriptor.depthWriteEnabled = YES;
     m_State->RenderState.DepthStencilState = [m_State->DeviceResources.Device
-                                                newDepthStencilStateWithDescriptor:descriptor];
+                                              newDepthStencilStateWithDescriptor:descriptor];
     [descriptor release];
 }
+
+} // namespace pixc
