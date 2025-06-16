@@ -8,14 +8,6 @@
 #include "Foundation/Core/Log.h"
 #include "Foundation/Core/Library.h"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#define NS_PRIVATE_IMPLEMENTATION
-#define CA_PRIVATE_IMPLEMENTATION
-#define MTL_PRIVATE_IMPLEMENTATION
-#include <Metal/Metal.hpp>
-
 /**
  * Entry point of the application.
  *
@@ -26,10 +18,6 @@
  */
 int main()
 {
-    // TODO: remove
-    MTL::Device* pDevice = MTL::CreateSystemDefaultDevice();
-    pDevice->release();
-    
     // Initialize the logging system
     pixc::Log::Init();
     

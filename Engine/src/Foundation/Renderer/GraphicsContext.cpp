@@ -35,17 +35,17 @@ std::unique_ptr<GraphicsContext> GraphicsContext::Create(void *window)
 {
      switch (Renderer::GetAPI())
      {
-     case RendererAPI::API::None:
-     PIXEL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
-     return nullptr;
-     
-     case RendererAPI::API::OpenGL:
-     return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window));
-     
-     #ifdef __APPLE__
-     case RendererAPI::API::Metal:
-     return std::make_unique<MetalContext>(static_cast<GLFWwindow*>(window));
-     #endif
+         case RendererAPI::API::None:
+         PIXEL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+         return nullptr;
+         
+         case RendererAPI::API::OpenGL:
+         return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window));
+         
+         #ifdef __APPLE__
+         case RendererAPI::API::Metal:
+         return std::make_unique<MetalContext>(static_cast<GLFWwindow*>(window));
+         #endif
      }
      
      PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");
@@ -60,18 +60,18 @@ void GraphicsContext::SetWindowHints()
      // Define the window hint for the context creation
      switch (Renderer::GetAPI())
      {
-     case RendererAPI::API::None:
-     return;
-     
-     case RendererAPI::API::OpenGL:
-     OpenGLContext::SetWindowHints();
-     return;
-     
-     #ifdef __APPLE__
-     case RendererAPI::API::Metal:
-     MetalContext::SetWindowHints();
-     return;
-     #endif
+         case RendererAPI::API::None:
+         return;
+         
+         case RendererAPI::API::OpenGL:
+         OpenGLContext::SetWindowHints();
+         return;
+         
+         #ifdef __APPLE__
+         case RendererAPI::API::Metal:
+         MetalContext::SetWindowHints();
+         return;
+         #endif
      }
      
      PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");

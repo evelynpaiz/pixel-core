@@ -265,7 +265,7 @@ void Window::Init()
     }
     
     // Define the window hints for on the graphics context
-    //GraphicsContext::SetWindowHints();
+    GraphicsContext::SetWindowHints();
     
     // Create a windowed mode window and its OpenGL context
     m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height,

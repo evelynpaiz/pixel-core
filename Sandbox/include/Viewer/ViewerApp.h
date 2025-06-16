@@ -3,6 +3,8 @@
 #include "Foundation/Core/Base.h"
 #include "Foundation/Core/Application.h"
 
+#include "Foundation/Layer/Gui/GuiLayer.h"
+
 /*
 #include "Engine.h"
 
@@ -34,7 +36,7 @@ public:
 private:
     ///< 3D viewer (rendering layer).
     //std::shared_ptr<Simple> m_Viewer;
-    //std::shared_ptr<GuiLayer> m_Gui;
+    std::shared_ptr<pixc::GuiLayer> m_Gui;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

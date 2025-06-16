@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/Layer/Layer.h"
+#include "Foundation/Layer/Gui/GuiBackend.h"
 
 struct ImGuiContext;
 
@@ -22,7 +23,7 @@ namespace pixc {
  */
 class GuiLayer : public Layer
 {
-    public:
+public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     GuiLayer(const std::string& name = "GUI Layer");
@@ -45,26 +46,30 @@ class GuiLayer : public Layer
     /// @param block Block the dispatching of the events.
     void BlockEvents(bool block) { m_BlockEvents = block; }
     
-    protected:
+protected:
     // GUI
     // ----------------------------------------
     void GUIStats(Timestep ts);
     
     // Setter(s)
     // ----------------------------------------
+    virtual void SetGeneralFlags();
     virtual void SetStyle();
     
     // GUI layer variables
     // ----------------------------------------
-    private:
-    ///< GUI context (using ImGui)
+private:
+    ///< Pointer to the active ImGui context.
     ImGuiContext *m_GuiContext = nullptr;
+    ///< Platform-specific ImGui renderer backend.
+    std::unique_ptr<GuiBackend> m_Backend;
+    
     ///< Dispatch the event to this layers only.
     bool m_BlockEvents = true;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
-    public:
+public:
     DISABLE_COPY_AND_MOVE(GuiLayer);
 };
 

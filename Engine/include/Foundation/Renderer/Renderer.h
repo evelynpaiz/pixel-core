@@ -71,7 +71,7 @@ public:
     // ----------------------------------------
     /**
      * Represents the information related to the statistics of the rendering.
-     
+     */
     struct RenderingStatistics
     {
         ///< Number or rendering passes.
@@ -82,7 +82,7 @@ public:
     
     static void ResetStats();
     static RenderingStatistics GetStats();
-    */
+
     
     // Renderer Structures
     // ----------------------------------------

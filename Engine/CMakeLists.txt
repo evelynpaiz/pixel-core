@@ -9,13 +9,12 @@ file(
 
     src/Foundation/Core/*.cpp
     src/Foundation/Input/*.cpp
+    src/Foundation/Layer/*.cpp
 
     src/Foundation/Renderer/GraphicsContext.cpp
     src/Foundation/Renderer/RendererAPI.cpp
     src/Foundation/Renderer/RendererCommand.cpp
     src/Foundation/Renderer/Renderer.cpp
-
-    src/Foundation/Layer/LayerStack.cpp
 )
 
 # Find platform-specific source files
@@ -37,6 +36,7 @@ file(
     src/${PLATFORM_OS_DIR}/*.cpp
     src/${PLATFORM_OS_DIR}/*.mm
 
+    src/${PLATFORM_API_OPENGL_DIR}/Gui/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLContext.cpp
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLRendererAPI.cpp
 
@@ -55,26 +55,29 @@ file(
     include/Foundation/Event/*.h
     include/Foundation/Input/*.h
 
-    include/Foundation/Layer/Layer.h
-    include/Foundation/Layer/LayerStack.h
+    include/Foundation/Layer/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h
     include/Foundation/Renderer/RendererCommand.h
     include/Foundation/Renderer/Renderer.h
 
+    include/Platform/OpenGL/Gui/*.h
     include/Platform/OpenGL/OpenGLContext.h
     include/Platform/OpenGL/OpenGLRendererAPI.h
 )
 
 # Add platform-specific sources and headers
-if (DEFINED PLATFORM_API_METAL_DIR)
+if (APPLE)
     list(APPEND platform_sources
+        src/${PLATFORM_API_METAL_DIR}/Gui/MetalGuiBackend.mm
         src/${PLATFORM_API_METAL_DIR}/MetalContext.mm
         src/${PLATFORM_API_METAL_DIR}/MetalRendererAPI.mm
+        
     )
 
     list(APPEND public_headers
+        include/Platform/Metal/Gui/MetalGuiBackend.h
         include/Platform/Metal/MetalContext.h
         include/Platform/Metal/MetalRendererAPI.h
     )
@@ -98,8 +101,8 @@ set_target_properties(Engine PROPERTIES
 
 # Link external libraries
 target_link_libraries(Engine 
-    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm
-#   stb::stb assimp::assimp imgui::imgui
+    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui
+#   stb::stb assimp::assimp
 )
 
 # Link metal if apple device is used

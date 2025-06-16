@@ -11,10 +11,12 @@
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 // Define the renderer variable(s)
 //std::unique_ptr<Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
 
-//static Renderer::RenderingStatistics g_Stats;
+static Renderer::RenderingStatistics g_Stats;
 /*
 static const glm::mat4 g_TextureMatrix = glm::mat4(
     0.5f, 0.0f, 0.0f, 0.0f,
@@ -23,8 +25,6 @@ static const glm::mat4 g_TextureMatrix = glm::mat4(
     0.5f, 0.5f, 0.5f, 1.0f
 );
 */
-
-namespace pixc {
 
 /**
  * Initialize the renderer.
@@ -190,20 +190,20 @@ void Renderer::SetCubeMapSeamless(const bool enabled)
  * This function resets the stored rendering statistics, including information about
  * the number of draw calls, vertices rendered, and other rendering-related data.
  * After calling this function, the statistics will be reset to zero values.
- 
+ */
 void Renderer::ResetStats()
 {
     memset(&g_Stats, 0, sizeof(RenderingStatistics));
 }
- */
+
 /**
  * Get the current rendering statistics.
  *
  * @return The rendering statistics structure containing performance metrics.
-
+ */
 Renderer::RenderingStatistics Renderer::GetStats()
 {
     return g_Stats;
 }
- */
+
 } // namespace pixc

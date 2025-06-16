@@ -1,34 +1,26 @@
 #include "enginepch.h"
-#include "Foundation/Layer/GuiLayer.h"
-
-#include "Foundation/Core/Application.h"
-#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Layer/Gui/GuiLayer.h"
 
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 
-// TODO: Add support for metal using a graphic interphase layer.
-//#ifdef __APPLE__
-//#define IMGUI_IMPL_METAL_CPP
-//#include <backends/imgui_impl_metal.h>
-
-// TODO: Test that metal cpp is properly working using:
-//#define NS_PRIVATE_IMPLEMENTATION
-//#define MTL_PRIVATE_IMPLEMENTATION
-//#include "Metal/Metal.hpp"
-//#endif
+#include "Foundation/Core/Application.h"
+#include "Foundation/Renderer/Renderer.h"
 
 namespace pixc {
 
 /**
  * @brief Define a GUI layer.
+ *
+ *@param name Name of the GUI layer.
  */
-GuiLayer::GuiLayer(const std::string& name)
-: Layer(name)
-{}
+GuiLayer::GuiLayer(const std::string& name) : Layer(name)
+{
+    // Initialize the platform-specific ImGui backend
+    m_Backend = GuiBackend::Create();
+}
 
 /**
  * @brief Attach (add) the GUI layer to the rendering engine.
@@ -40,33 +32,12 @@ void GuiLayer::OnAttach()
     m_GuiContext = ImGui::CreateContext();
     
     // Define imgui flags
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // enable keyboard controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // enable docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // enable multi-viewport
-    
-    // Define the current window
-    Application &app = Application::Get();
-    GLFWwindow *window = static_cast<GLFWwindow *>(app.GetWindow().GetNativeWindow());
-    
+    SetGeneralFlags();
     // Set the style of the graphics interface
     SetStyle();
     
-    // Initialize based on the graphics API
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            break;
-        case RendererAPI::API::OpenGL:
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init("#version 330");
-            break;
-        case RendererAPI::API::Metal:
-            break;
-        default:
-            CORE_ASSERT(false, "Unknown Renderer API!");
-    }
+    // Initialize the graphics backend
+    m_Backend->Init();
 }
 
 /**
@@ -75,20 +46,7 @@ void GuiLayer::OnAttach()
 void GuiLayer::OnDetach()
 {
     // Shut down the appropriate ImGui backend based on the active graphics API
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            break;
-        case RendererAPI::API::OpenGL:
-            ImGui_ImplOpenGL3_Shutdown();
-            break;
-        case RendererAPI::API::Metal:
-            //ImGui_ImplMetal_Shutdown();
-            break;
-        default:
-            CORE_ASSERT(false, "Unknown Renderer API!");
-    }
+    m_Backend->Shutdown();
     
     // Shut down the GLFW platform backend and destroy the ImGui context
     ImGui_ImplGlfw_Shutdown();
@@ -131,23 +89,7 @@ void GuiLayer::OnUpdate(Timestep ts)
  */
 void GuiLayer::Begin()
 {
-    switch (Renderer::GetAPI())
-    {
-        // Prepare a new ImGui frame based on the active graphics API
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            break;
-        case RendererAPI::API::OpenGL:
-            ImGui_ImplOpenGL3_NewFrame();
-            break;
-        case RendererAPI::API::Metal:
-            // TODO: send the render pass descriptor
-            //ImGui_ImplMetal_NewFrame();
-            break;
-        default:
-            CORE_ASSERT(false, "Unknown Renderer API!");
-    }
-    
+    m_Backend->BeginFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
@@ -165,19 +107,7 @@ void GuiLayer::End()
     
     // Render
     ImGui::Render();
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            break;
-        case RendererAPI::API::OpenGL:
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            break;
-        case RendererAPI::API::Metal:
-            break;
-        default:
-            CORE_ASSERT(false, "Unknown Renderer API!");
-    }
+    m_Backend->EndFrame();
     
     // Update the context used to rendered
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -210,6 +140,18 @@ void GuiLayer::GUIStats(Timestep ts)
     ImGui::Text("Draw Calls: %d", stats.drawCalls);
     
     ImGui::End();
+}
+
+/**
+ * @brief Define the general flags of imgui.
+ */
+void GuiLayer::SetGeneralFlags()
+{
+    ImGuiIO &io = ImGui::GetIO();
+    
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // enable keyboard controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // enable docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // enable multi-viewport
 }
 
 /**
