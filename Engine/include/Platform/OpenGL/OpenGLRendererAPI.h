@@ -28,8 +28,17 @@ public:
     // ----------------------------------------
     void Init() override;
     
+    // Getter(s)
+    // ----------------------------------------
+    static bool IsRendering() { return s_IsRendering; }
+    
     // Render
     // ----------------------------------------
+    void SetClearColor(const glm::vec4& color) override;
+    
+    void BeginRenderPass() override;
+    void EndRenderPass() override;
+    
     /*
      void SetRenderTarget(const RenderTargetBuffers& targets) override;
      void SetRenderTarget(const glm::vec4& color,
@@ -60,6 +69,12 @@ private:
     //void Clear(const RenderTargetBuffers& targets);
     //void Clear(const glm::vec4& color,
     //           const RenderTargetBuffers& targets);
+    
+    // OpenGL API variables
+    // ----------------------------------------
+private:
+    ///< Rendering flag.
+    static bool s_IsRendering;
 };
 
 } // namespace pixc

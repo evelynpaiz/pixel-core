@@ -11,7 +11,7 @@ struct GLFWwindow;
 namespace pixc {
 
 /**
- *  Manages an OpenGL graphics context.
+ *  @brief Manages an OpenGL graphics context.
  *
  *  The `OpenGLContext` class is responsible for initializing, managing, and interacting
  *  with an OpenGL rendering context. It uses GLFW to interface with the windowing system.
@@ -36,7 +36,7 @@ public:
     // ----------------------------------------
     void SwapBuffers() override;
     
-    // Graphics context variables
+    // OpenGL context variables
     // ----------------------------------------
 private:
     ///< Native window (GLFW).

@@ -12,6 +12,7 @@
 
 #include "Foundation/Core/Application.h"
 #include "Platform/Metal/MetalContext.h"
+#include "Platform/Metal/MetalRendererAPI.h"
 
 namespace pixc {
 
@@ -25,10 +26,12 @@ void MetalGuiBackend::Init()
     GLFWwindow *window = static_cast<GLFWwindow *>(app.GetWindow().GetNativeWindow());
     
     // Define the device that is currently in use
-    MetalContext* context = dynamic_cast<MetalContext*>(&GraphicsContext::Get());
-    PIXEL_CORE_ASSERT(context, "Graphic context is not Metal!");
+    MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
+    PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
+    m_Context = &context;
+    
     // Get the Metal device from the context
-    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(context->GetDevice());
+    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     
     // Initialize
     ImGui_ImplGlfw_InitForOther(window, true);
@@ -48,8 +51,23 @@ void MetalGuiBackend::Shutdown()
  */
 void MetalGuiBackend::BeginFrame()
 {
-    // TODO: create a function in context that will give back a generic pass descriptor
-    //ImGui_ImplMetal_NewFrame(renderPassDescriptor);
+    // Define command buffer if necessary
+    bool clear = m_Context->InitCommandBuffer();
+    
+    // Get the drawable
+    auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
+    
+    // Define render pass descriptor
+    MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+    descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+    descriptor.colorAttachments[0].texture = drawable.texture;
+    descriptor.colorAttachments[0].loadAction = clear ? MTLLoadActionClear : MTLLoadActionLoad;
+    descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+    
+    // Define render encoder
+    m_Context->InitCommandEncoder(descriptor, "ImGui");
+    // Define the imgui frame
+    ImGui_ImplMetal_NewFrame(descriptor);
 }
 
 /**
@@ -57,8 +75,12 @@ void MetalGuiBackend::BeginFrame()
  */
 void MetalGuiBackend::EndFrame()
 {
-    // TODO: get the proper command buffer and render encoder
-    //ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, renderEncoder);
+    // Get the command buffer and encoder used to render the frame
+    auto commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
+    auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+    
+    // Render the imgui data
+    ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, encoder);
 }
 
 } // namespace pixc

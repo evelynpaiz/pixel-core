@@ -27,6 +27,11 @@ public:
     
     // Render
     // ----------------------------------------
+    virtual void SetClearColor(const glm::vec4& color);
+    
+    static void BeginRenderPass();
+    static void EndRenderPass();
+    
     /*
      static void SetRenderTarget(const RenderTargetBuffers& targets = {});
      static void SetRenderTarget(const glm::vec4& color,

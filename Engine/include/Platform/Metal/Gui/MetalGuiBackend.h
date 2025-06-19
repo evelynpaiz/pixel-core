@@ -3,6 +3,8 @@
 #import "Foundation/Core/Base.h"
 #import "Foundation/Layer/Gui/GuiBackend.h"
 
+#include "Platform/Metal/MetalContext.h"
+
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
@@ -43,6 +45,12 @@ public:
     // ----------------------------------------
 public:
     DISABLE_COPY_AND_MOVE(MetalGuiBackend);
+    
+    // Backend variables
+    // ----------------------------------------
+private:
+    ///< Metal context.
+    MetalContext* m_Context;
 };
 
 } // namespace pixc

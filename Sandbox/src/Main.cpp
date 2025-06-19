@@ -1,12 +1,6 @@
-#ifdef __APPLE__
-    #define GL_SILENCE_DEPRECATION
-#endif
-
-//#include "Engine.h"
 #include "Viewer/ViewerApp.h"
 
 #include "Foundation/Core/Log.h"
-#include "Foundation/Core/Library.h"
 
 /**
  * Entry point of the application.

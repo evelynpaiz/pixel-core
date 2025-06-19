@@ -12,16 +12,88 @@
 namespace pixc {
 
 /**
- * Initializes the Metal rendering API.
+ * @brief Holds Metal pipeline configuration states.
+ */
+struct MetalPipelineState
+{
+    ///< The current render pipeline state.
+    id<MTLRenderPipelineState> RenderPipelineState;
+    ///< The current depth-stencil state.
+    id<MTLDepthStencilState> DepthStencilState;
+};
+
+/**
+ * @brief Represents the rendering target resources.
+ */
+struct MetalRenderTarget
+{
+    ///< The color attachment texture (often from the drawable).
+    id<MTLTexture> ColorAttachment;
+    ///< The depth attachment texture.
+    id<MTLTexture> DepthAttachment;
+};
+
+/**
+ * @brief Holds the core Metal objects required for rendering within the MetalRendererAPI.
+ */
+struct MetalRendererAPI::MetalRendererState
+{
+    ///< Pipeline and depth-stencil state configuration.
+    MetalPipelineState PipelineState;
+    ///< Render target resources.
+    MetalRenderTarget RenderTarget;
+    
+    ///< Viewport desccriptor.
+    MTLViewport Viewport;
+    ///< Clear color.
+    MTLClearColor ClearColor;
+};
+
+/**
+ * @brief Initializes the Metal rendering API.
  *
  * This method handles the Metal-specific initialization procedures.
  */
 void MetalRendererAPI::Init()
 {
     // Get the Metal graphics context and save it
-    //MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
-    //CORE_ASSERT(&context, "Graphics context is not Metal!");
-    //m_Context = &context;
+    MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
+    PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
+    m_Context = &context;
+    
+    // Initialize the Metal state object for managing Metal resources
+    m_State = std::make_shared<MetalRendererState>();
+    
+    // Get the surface to output the render result if rendering to screen
+    auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
+    m_State->RenderTarget.ColorAttachment = drawable.texture;
+}
+
+/**
+ * @brief Define the color to clear the color buffer.
+ *
+ * @param color The color to use.
+ */
+void MetalRendererAPI::SetClearColor(const glm::vec4& color)
+{
+    // Set the clear color
+    m_State->ClearColor = MTLClearColorMake(color.r, color.g, color.b, color.a);
+}
+
+/**
+ * Initialize a new rendering pass.
+ */
+void MetalRendererAPI::BeginRenderPass()
+{
+    m_Context->InitCommandBuffer();
+}
+
+/**
+ * Finalize the current rendering pass.
+ */
+void MetalRendererAPI::EndRenderPass()
+{
+    m_Context->EndEncoding();
 }
 
 /**

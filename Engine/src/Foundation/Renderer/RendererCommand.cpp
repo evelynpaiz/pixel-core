@@ -6,11 +6,37 @@ namespace pixc {
 std::unique_ptr<RendererAPI> RendererCommand::s_API = RendererAPI::Create();
 
 /**
- * Initialize the renderer command manager by initializing the graphics API.
+ * @brief Initialize the renderer command manager by initializing the graphics API.
  */
 void RendererCommand::Init()
 {
     s_API->Init();
+}
+
+/**
+ * @brief Define the color to clear the color buffer.
+ *
+ * @param color The color to use.
+ */
+void RendererCommand::SetClearColor(const glm::vec4 &color)
+{
+    s_API->SetClearColor(color);
+}
+
+/**
+ * @brief Initialize a new rendering pass.
+ */
+void RendererCommand::BeginRenderPass()
+{
+    s_API->BeginRenderPass();
+}
+
+/**
+ * @brief Finalize the current rendering pass.
+ */
+void RendererCommand::EndRenderPass()
+{
+   s_API->EndRenderPass();
 }
 
 /**

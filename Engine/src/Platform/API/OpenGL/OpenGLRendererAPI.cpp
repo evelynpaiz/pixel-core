@@ -1,21 +1,50 @@
 #include "enginepch.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
-//#include "Platform/OpenGL/OpenGLRendererUtils.h"
-
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+#endif
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+//#include "Platform/OpenGL/OpenGLRendererUtils.h"
+
 namespace pixc {
 
+bool OpenGLRendererAPI::s_IsRendering = false;
+
 /**
- * Initializes the OpenGL rendering API.
+ * @brief Initializes the OpenGL rendering API.
  *
  * This method handles the OpenGL-specific initialization procedures.
  */
 void OpenGLRendererAPI::Init()
 {}
 
+/**
+ * @brief Define the color to clear the color buffer.
+ *
+ * @param color The color to use.
+ */
+void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
+{
+    glClearColor(color.r, color.g, color.b, color.a);
+}
+
+/**
+ * Initialize a new rendering pass.
+ */
+void OpenGLRendererAPI::BeginRenderPass()
+{
+    if (!s_IsRendering)
+        s_IsRendering = true;
+}
+
+/**
+ * Finalize the current rendering pass.
+ */
+void OpenGLRendererAPI::EndRenderPass()
+{}
 
 /**
  * Clears the specified rendering buffers.

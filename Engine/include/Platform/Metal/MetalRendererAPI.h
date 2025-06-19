@@ -2,7 +2,7 @@
 
 #include "Foundation/Renderer/RendererAPI.h"
 
-//#include "Platform/Metal/MetalContext.h"
+#include "Platform/Metal/MetalContext.h"
 
 /**
  * @namespace pixc
@@ -32,6 +32,11 @@ public:
     
     // Render
     // ----------------------------------------
+    void SetClearColor(const glm::vec4& color) override;
+    
+    void BeginRenderPass() override;
+    void EndRenderPass() override;
+    
     /*
     void SetRenderTarget(const RenderTargetBuffers& targets = {}) override;
     void SetRenderTarget(const glm::vec4& color,
@@ -62,7 +67,11 @@ public:
     // ----------------------------------------
 private:
     ///< Metal context.
-    //MetalContext* m_Context;
+    MetalContext* m_Context;
+    
+    ///< Holds the core Metal objects required for rendering.
+    struct MetalRendererState;
+    std::shared_ptr<MetalRendererState> m_State;
 };
 
 } // namespace pixc

@@ -1,6 +1,9 @@
 #include "enginepch.h"
 #include "Platform/OpenGL/Gui/OpenGLGuiBackend.h"
 
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+#endif
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
@@ -8,6 +11,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include "Foundation/Core/Application.h"
+#include "Platform/OpenGL/OpenGLRendererAPI.h"
 
 namespace pixc {
 
@@ -38,6 +42,10 @@ void OpenGLGuiBackend::Shutdown()
  */
 void OpenGLGuiBackend::BeginFrame()
 {
+    // TODO: do not use opengl commands directly here
+    if(!OpenGLRendererAPI::IsRendering())
+        glClear(GL_COLOR_BUFFER_BIT);
+    
     ImGui_ImplOpenGL3_NewFrame();
 }
 

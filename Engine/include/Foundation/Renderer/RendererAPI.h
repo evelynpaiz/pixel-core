@@ -49,6 +49,20 @@ public:
     virtual void Init() = 0;
     static std::unique_ptr<RendererAPI> Create();
     
+    // Getter(s)
+    // ----------------------------------------
+    /// @brief Retrieves the currently active rendering API.
+    /// @return The active rendering API.
+    static API GetAPI() { return s_API; }
+    
+    // Render
+    // ----------------------------------------
+    virtual void SetClearColor(const glm::vec4& color) = 0;
+    
+    // TODO: Define the rendering pass methods with a framebuffer.
+    virtual void BeginRenderPass() = 0;
+    virtual void EndRenderPass() = 0;
+    
     // Clear
     // ----------------------------------------
     /*
@@ -82,11 +96,6 @@ public:
      
      virtual void SetDepthTesting(const bool enabled) = 0;
      */
-    // Getter(s)
-    // ----------------------------------------
-    /// @brief Retrieves the currently active rendering API.
-    /// @return The active rendering API.
-    static API GetAPI() { return s_API; }
     
 protected:
     // Constructor(s)

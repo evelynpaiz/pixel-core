@@ -2,9 +2,6 @@
 
 #include "Foundation/Renderer/GraphicsContext.h"
 
-//#include "Foundation/Renderer/Buffer/Buffer.h"
-//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
-
 struct GLFWwindow;
 
 /**
@@ -13,14 +10,12 @@ struct GLFWwindow;
  */
 namespace pixc {
 
-struct MetalRenderState;
-
 /**
- *  Manages a Metal graphics context.
+ *  @brief Manages a Metal graphics context.
  *
  *  The `MetalContext` class is responsible for initializing, managing, and interacting
  *  with a Metal rendering context. It uses GLFW to interface with the windowing system
- *   and interacts with Metal for rendering on Apple platforms.
+ *  and interacts with Metal for rendering on Apple platforms.
  */
 class MetalContext : public GraphicsContext
 {
@@ -31,7 +26,7 @@ public:
     
     // Initialization
     // ----------------------------------------
-    virtual void Init() override;
+    void Init() override;
     
     // Getter(s)
     // ----------------------------------------
@@ -41,41 +36,39 @@ public:
     void* GetResourceQueue() const;
     
     void* GetCommandBuffer() const;
-    void* GetEncoder() const;
+    void* GetCommandEncoder() const;
+    
+    void* GetDrawable() const;
     
     // Setter(s)
     // ----------------------------------------
     static void SetWindowHints();
     void SetVerticalSync(bool enabled) override;
     
-    void UpdateScreenbufferSize(unsigned int width, unsigned int height) override;
-    void UpdateViewport(unsigned int x, unsigned int y,
-                        unsigned int width, unsigned int height);
-    
-    void EnableDepthStencilState();
-    
-    // Render
-    // ----------------------------------------
-    //void SetRenderTarget(const glm::vec4& color,
-    //                     const RenderTargetBuffers& targets,
-    //                     const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
-    void EndEncoding();
-    
-    // Draw
+    // Buffers
     // ----------------------------------------
     void SwapBuffers() override;
+    
+    // Friend class definition(s)
+    // ----------------------------------------
+    friend class MetalRendererAPI;
+    friend class MetalGuiBackend;
     
 private:
     // Initialization
     // ----------------------------------------
-    void InitializeMetalDeviceResources();
-    void InitializeScreenTarget();
+    void InitDevice();
+    void InitSwapChain();
     
-    void CreateScreenDepthTexture();
+    bool InitCommandBuffer();
+    void InitCommandEncoder(const void* descriptor,
+                            const std::string &name = "");
     
-    void CreateDepthStencilState();
+    // Render
+    // ----------------------------------------
+    void EndEncoding();
     
-    // Graphics context variables
+    // Metal context variables
     // ----------------------------------------
 private:
     ///< Native window (GLFW).
