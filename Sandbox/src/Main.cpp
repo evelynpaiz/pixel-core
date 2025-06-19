@@ -1,6 +1,6 @@
 #include "Viewer/ViewerApp.h"
 
-#include "Foundation/Core/Log.h"
+#include <pixc.h>
 
 /**
  * Entry point of the application.

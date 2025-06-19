@@ -51,6 +51,8 @@ file(
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 #   include/*.h
 
+    include/pixc.h
+
     include/Foundation/Core/*.h
     include/Foundation/Event/*.h
     include/Foundation/Input/*.h
@@ -84,39 +86,39 @@ if (APPLE)
 endif()
 
 # Define the engine library
-add_library(Engine STATIC ${sources} ${platform_sources} ${public_headers})
-add_library(Renderer::Engine ALIAS Engine)
+add_library(pixc STATIC ${sources} ${platform_sources} ${public_headers})
+add_library(pixc::Engine ALIAS pixc)
 
 # Define the include directories for this target
 target_include_directories(
-    Engine
+    pixc
     PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
 )
 
 # Define properties for the target
-set_target_properties(Engine PROPERTIES 
+set_target_properties(pixc PROPERTIES 
     PUBLIC_HEADER "${public_headers}"
 )
 
 # Link external libraries
-target_link_libraries(Engine 
+target_link_libraries(pixc 
     spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui
 #   stb::stb assimp::assimp
 )
 
 # Link metal if apple device is used
 if (APPLE)
-    target_link_libraries(Engine
+    target_link_libraries(pixc
         ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL} Metal::Cpp
     )
 endif()
 
 # Define pre-compiled header
-target_precompile_headers(Engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
+target_precompile_headers(pixc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
 
 # Add pre-processing flag
-target_compile_definitions(Engine PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
+target_compile_definitions(pixc PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
 
 # Define solution tree organization
 source_group(

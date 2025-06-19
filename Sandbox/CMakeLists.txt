@@ -15,6 +15,8 @@ file(
 
 # Define the executable
 add_executable(Sandbox ${sources})
+add_executable(pixc::Sandbox ALIAS Sandbox)
+
 #add_dependencies(Sandbox Resources)
 
 # Define include directories
@@ -25,7 +27,7 @@ target_include_directories(
 )
 
 # Link external libraries
-target_link_libraries(Sandbox PRIVATE Renderer::Engine)
+target_link_libraries(Sandbox PRIVATE pixc::Engine)
 
 # Define the target properties
 get_filename_component(renderer_dir "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)

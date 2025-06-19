@@ -1,17 +1,8 @@
 #pragma once
 
-#include "Foundation/Core/Base.h"
-#include "Foundation/Core/Application.h"
+#include <pixc.h>
+#include <glm/glm.hpp>
 
-#include "Foundation/Layer/Gui/GuiLayer.h"
-
-/*
-#include "Engine.h"
-
-#include "Viewer/Simple.h"
-#include "Viewer/Viewer.h"
-#include "Viewer/ViewerGui.h"
-*/
 /**
  * @brief Handles a 3D viewer application.
  *
