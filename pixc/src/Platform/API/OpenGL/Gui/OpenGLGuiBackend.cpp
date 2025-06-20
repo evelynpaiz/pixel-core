@@ -44,7 +44,11 @@ void OpenGLGuiBackend::BeginFrame()
 {
     // TODO: do not use opengl commands directly here
     if(!OpenGLRendererAPI::IsRendering())
+    {
+        glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT);
+        
+    }
     
     ImGui_ImplOpenGL3_NewFrame();
 }

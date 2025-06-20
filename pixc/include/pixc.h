@@ -39,6 +39,7 @@
 #include "Foundation/Layer/Layer.h"
 
 #include "Foundation/Layer/Gui/GuiLayer.h"
+#include "Foundation/Layer/Rendering/RenderingLayer.h"
 
 //#include "Foundation/Layer/DrawUtils.h"
 

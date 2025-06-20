@@ -233,7 +233,7 @@ void Window::OnUpdate() const
  */
 void Window::OnResize(const unsigned int width, const unsigned int height) const
 {
-    m_Context->UpdateScreenbufferSize(width, height);
+    m_Context->UpdateBufferSize(width, height);
 }
 
 /**
@@ -300,7 +300,7 @@ void Window::Init()
     m_Data.Width = static_cast<unsigned int>(width);
     m_Data.Height = static_cast<unsigned int>(height);
     
-    m_Context->UpdateScreenbufferSize(m_Data.Width, m_Data.Height);
+    m_Context->UpdateBufferSize(m_Data.Width, m_Data.Height);
     
     // Show window created message
     PIXEL_CORE_INFO("Creating '{0}' window ({1} x {2})", m_Data.Title,

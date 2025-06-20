@@ -25,12 +25,19 @@ public:
     // ----------------------------------------
     static void Init();
     
+    // Setter(s)
+    // ----------------------------------------
+    static void SetClearColor(const glm::vec4& color);
+    
+    static void SetViewport(const unsigned int x, const unsigned int y,
+                            const unsigned int width, const unsigned int height);
+    
     // Render
     // ----------------------------------------
-    virtual void SetClearColor(const glm::vec4& color);
-    
     static void BeginRenderPass();
     static void EndRenderPass();
+    
+    static void Clear();
     
     /*
      static void SetRenderTarget(const RenderTargetBuffers& targets = {});
@@ -52,8 +59,6 @@ public:
     
     // Setter(s)
     // ----------------------------------------
-    //static void SetViewport(unsigned int x, unsigned int y,
-    //                        unsigned int width, unsigned int height);
     
     //static void SetDepthTesting(const bool enabled);
     

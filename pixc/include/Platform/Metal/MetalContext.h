@@ -39,11 +39,16 @@ public:
     void* GetCommandEncoder() const;
     
     void* GetDrawable() const;
+    glm::vec2 GetDrawableSize() const;
+    
     
     // Setter(s)
     // ----------------------------------------
     static void SetWindowHints();
     void SetVerticalSync(bool enabled) override;
+    
+    void UpdateBufferSize(const unsigned int width,
+                          const unsigned int height) override;
     
     // Buffers
     // ----------------------------------------
@@ -63,6 +68,10 @@ private:
     bool InitCommandBuffer();
     void InitCommandEncoder(const void* descriptor,
                             const std::string &name = "");
+    
+    // Setter(s)
+    // ----------------------------------------
+    void UpdateViewport(const void* descriptor);
     
     // Render
     // ----------------------------------------

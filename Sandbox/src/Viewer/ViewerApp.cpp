@@ -10,12 +10,12 @@
 ViewerApp::ViewerApp(const std::string &name, const int width, const int height)
     : Application(name, width, height)
 {
-    // Push the viewer layer to the layer stack
-    //m_Viewer = std::make_shared<Simple>(GetWindow().GetWidth(), GetWindow().GetHeight());
+    // Define a rendering and gui layer
+    m_Renderer = std::make_shared<pixc::RenderingLayer>(GetWindow().GetWidth(), GetWindow().GetHeight());
     m_Gui = std::make_shared<pixc::GuiLayer>();
     
-    // TODO: Add support of imgui with metal
-    //PushLayer(m_Viewer);
+    // Push the layers to the stack
+    PushLayer(m_Renderer);
     PushOverlay(m_Gui);
 }
 
@@ -24,7 +24,7 @@ ViewerApp::ViewerApp(const std::string &name, const int width, const int height)
  */
 ViewerApp::~ViewerApp()
 {
-    // TODO: Add support of imgui with metal
-    //PopLayer(m_Viewer);
+    // Pop the layers from the stack before closing the application
+    PopLayer(m_Renderer);
     PopOverlay(m_Gui);
 }

@@ -145,6 +145,17 @@ void* MetalContext::GetDrawable() const
 }
 
 /**
+ * Retrieves the current drawable size.
+ *
+ * @return A vector with the width and height of the drawable.
+ */
+glm::vec2 MetalContext::GetDrawableSize() const
+{
+    auto size = m_State->SwapChain.Layer.drawableSize;
+    return glm::vec2(size.width, size.height);
+}
+
+/**
  *  Sets the window hints required for a Metal context.
  *
  *  This is a static function that should be called *before*
@@ -244,7 +255,7 @@ void MetalContext::InitSwapChain()
     int width, height;
     glfwGetFramebufferSize(m_WindowHandle, &width, &height);
     // TODO: verify
-    UpdateScreenbufferSize(width, height);
+    UpdateBufferSize(width, height);
     
     // Get the surface to output the render result in the screen
     m_State->SwapChain.Drawable = [m_State->SwapChain.Layer nextDrawable];
@@ -294,6 +305,34 @@ void MetalContext::EndEncoding()
     // End encoding in the command encoder
     [m_State->Frame.Encoder endEncoding];
     m_State->Frame.Encoder = nil;
+}
+
+/**
+ * Set the size of the drawable screen buffer.
+ *
+ * @param width The width of the buffer.
+ * @param height The height of the buffer.
+ */
+void MetalContext::UpdateBufferSize(const unsigned int width,
+                                    const unsigned int height)
+{
+    // TODO: to be checked! (maybe the viewport needs to be updated too)
+    m_State->SwapChain.Layer.drawableSize = CGSizeMake(width, height);
+}
+
+/**
+ * Set the viewport for rendering.
+ *
+ * @param descriptor Pointer to the metal viewport descriptor.
+ */
+void MetalContext::UpdateViewport(const void* descriptor)
+{
+    // Get the viewport descriptor
+    auto viewport = reinterpret_cast<const MTLViewport *>(descriptor);
+    
+    // Update the drawable and the encoder if necessary
+    if (m_State->Frame.Encoder)
+        [m_State->Frame.Encoder setViewport:*viewport];
 }
 
 } // namespace pixc

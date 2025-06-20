@@ -1,7 +1,6 @@
 #pragma once
 
 #include <pixc.h>
-#include <glm/glm.hpp>
 
 /**
  * @brief Handles a 3D viewer application.
@@ -26,7 +25,7 @@ public:
     // ----------------------------------------
 private:
     ///< 3D viewer (rendering layer).
-    //std::shared_ptr<Simple> m_Viewer;
+    std::shared_ptr<pixc::RenderingLayer> m_Renderer;
     std::shared_ptr<pixc::GuiLayer> m_Gui;
     
     // Disable the copying or moving of this resource

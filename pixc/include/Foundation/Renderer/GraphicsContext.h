@@ -40,8 +40,8 @@ public:
     static void SetWindowHints();
     virtual void SetVerticalSync(bool enabled) = 0;
     
-    virtual void UpdateScreenbufferSize(unsigned int width, unsigned int height)
-    {}
+    virtual void UpdateBufferSize(const unsigned int width,
+                                  const unsigned int height) = 0;
     
     // Buffers
     // ----------------------------------------

@@ -32,6 +32,20 @@ void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 }
 
 /**
+* Set the viewport for rendering.
+*
+* @param x The x-coordinate of the lower-left corner of the viewport.
+* @param y The y-coordinate of the lower-left corner of the viewport.
+* @param width The width of the viewport.
+* @param height The height of the viewport.
+*/
+void OpenGLRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
+                                    const unsigned int width, const unsigned int height)
+{
+   glViewport(x, y, width, height);
+}
+
+/**
  * Initialize a new rendering pass.
  */
 void OpenGLRendererAPI::BeginRenderPass()
@@ -45,6 +59,15 @@ void OpenGLRendererAPI::BeginRenderPass()
  */
 void OpenGLRendererAPI::EndRenderPass()
 {}
+
+/**
+ * Clear the buffers to preset values.
+ */
+void OpenGLRendererAPI::Clear()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    // glClear(utils::OpenGL::BufferStateToOpenGLMask(buffersActive)); 
+}
 
 /**
  * Clears the specified rendering buffers.
@@ -134,20 +157,7 @@ void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
     glDrawElements(utils::graphics::gl::ToOpenGLPrimitive(primitive),
                    drawable->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
- */
-/**
- * Set the viewport for rendering.
- *
- * @param x The x-coordinate of the lower-left corner of the viewport.
- * @param y The y-coordinate of the lower-left corner of the viewport.
- * @param width The width of the viewport.
- * @param height The height of the viewport.
 
-void OpenGLRendererAPI::SetViewport(unsigned int x, unsigned int y,
-                                    unsigned int width, unsigned int height)
-{
-    glViewport(x, y, width, height);
-}
  */
 /**
  * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.

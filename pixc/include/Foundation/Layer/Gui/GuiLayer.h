@@ -27,6 +27,8 @@ public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     GuiLayer(const std::string& name = "GUI Layer");
+    /// @brief Delete the gui layer.
+    virtual ~GuiLayer() = default;
     
     // Layer handlers
     // ----------------------------------------
@@ -40,7 +42,7 @@ public:
     void Begin();
     void End();
     
-    // Event handler
+    // Events handler(s)
     // ----------------------------------------
     /// @brief Dispatch the events only to this layer.
     /// @param block Block the dispatching of the events.

@@ -30,12 +30,19 @@ public:
     // ----------------------------------------
     void Init() override;
     
-    // Render
+    // Setter(s)
     // ----------------------------------------
     void SetClearColor(const glm::vec4& color) override;
     
+    void SetViewport(const unsigned int x, const unsigned int y,
+                     const unsigned int width, const unsigned int height) override;
+    
+    // Render
+    // ----------------------------------------
     void BeginRenderPass() override;
     void EndRenderPass() override;
+    
+    void Clear() override;
     
     /*
     void SetRenderTarget(const RenderTargetBuffers& targets = {}) override;
@@ -58,9 +65,6 @@ public:
     
     // Setter(s)
     // ----------------------------------------
-    //void SetViewport(unsigned int x, unsigned int y,
-    //                 unsigned int width, unsigned int height) override;
-    
     //void SetDepthTesting(const bool enabled) override;
     
     // Renderer API variables

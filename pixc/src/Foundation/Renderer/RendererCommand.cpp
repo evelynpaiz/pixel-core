@@ -24,6 +24,20 @@ void RendererCommand::SetClearColor(const glm::vec4 &color)
 }
 
 /**
+ * Set the viewport for rendering.
+ *
+ * @param x The x-coordinate of the lower-left corner of the viewport.
+ * @param y The y-coordinate of the lower-left corner of the viewport.
+ * @param width The width of the viewport.
+ * @param height The height of the viewport.
+ */
+void RendererCommand::SetViewport(const unsigned int x, const unsigned int y,
+                                  const unsigned int width, const unsigned int height)
+{
+    s_API->SetViewport(x, y, width, height);
+}
+
+/**
  * @brief Initialize a new rendering pass.
  */
 void RendererCommand::BeginRenderPass()
@@ -37,6 +51,14 @@ void RendererCommand::BeginRenderPass()
 void RendererCommand::EndRenderPass()
 {
    s_API->EndRenderPass();
+}
+
+/**
+ * Clear the buffers to preset values.
+ */
+void RendererCommand::Clear()
+{
+    s_API->Clear();
 }
 
 /**
@@ -107,20 +129,7 @@ void RendererCommand::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuf
     s_API->EndRenderPass(framebuffer);
 }
  */
-/**
- * Set the viewport for rendering.
- *
- * @param x The x-coordinate of the lower-left corner of the viewport.
- * @param y The y-coordinate of the lower-left corner of the viewport.
- * @param width The width of the viewport.
- * @param height The height of the viewport.
 
-void RendererCommand::SetViewport(unsigned int x, unsigned int y,
-                                  unsigned int width, unsigned int height)
-{
-    s_API->SetViewport(x, y, width, height);
-}
- */
 /**
  * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
  *

@@ -60,13 +60,13 @@ void GuiLayer::OnDetach()
  */
 void GuiLayer::OnEvent(Event& e)
 {
-    // Do not handle the event if there is no blocking of the dispatchment
-    // to other layers
+    // If event blocking is disabled, exit early and allow other layers to handle the event
     if (!m_BlockEvents)
         return;
-    
-    // Handle the event
+        
+    // Forward input handling state to ImGui
     ImGuiIO& io = ImGui::GetIO();
+    // Mark the event as handled if ImGui wants to capture mouse or keyboard input
     e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
     e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 }

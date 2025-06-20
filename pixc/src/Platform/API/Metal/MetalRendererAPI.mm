@@ -81,6 +81,33 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
 }
 
 /**
+ * Set the viewport for rendering.
+ *
+ * @param x The x-coordinate of the lower-left corner of the viewport.
+ * @param y The y-coordinate of the lower-left corner of the viewport.
+ * @param width The width of the viewport.
+ * @param height The height of the viewport.
+ */
+ void MetalRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
+                                    const unsigned int width, const unsigned int height)
+ {
+     // Get the size of the current drawable
+     glm::vec2 drawableSize = m_Context->GetDrawableSize();
+     
+     // Define the new size of the viewport
+     m_State->Viewport.originX = static_cast<double>(x);
+     m_State->Viewport.originY = static_cast<double>(drawableSize.y - (y + height));
+     m_State->Viewport.width = static_cast<double>(width);
+     m_State->Viewport.height = static_cast<double>(height);
+     
+     m_State->Viewport.znear = 0.0f;
+     m_State->Viewport.zfar = 1.0f;
+     
+     // Update the viewport size in the graphics context
+     m_Context->UpdateViewport(&m_State->Viewport);
+ }
+
+/**
  * Initialize a new rendering pass.
  */
 void MetalRendererAPI::BeginRenderPass()
@@ -94,6 +121,26 @@ void MetalRendererAPI::BeginRenderPass()
 void MetalRendererAPI::EndRenderPass()
 {
     m_Context->EndEncoding();
+}
+
+/**
+ * Clear the buffers to preset values.
+ */
+void MetalRendererAPI::Clear()
+{
+    // Create the render pass descriptor
+    MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+    
+    // Configure color attachment
+    auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
+    
+    descriptor.colorAttachments[0].clearColor = m_State->ClearColor;
+    descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
+    descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+    descriptor.colorAttachments[0].texture = drawable.texture;
+    
+    // Define a new command encoder
+    m_Context->InitCommandEncoder(descriptor);
 }
 
 /**
@@ -182,20 +229,7 @@ void MetalRendererAPI::EndRenderPass()
  indexBufferOffset:0];
  }
  */
-/**
- * Set the viewport for rendering.
- *
- * @param x The x-coordinate of the lower-left corner of the viewport.
- * @param y The y-coordinate of the lower-left corner of the viewport.
- * @param width The width of the viewport.
- * @param height The height of the viewport.
- 
- void MetalRendererAPI::SetViewport(unsigned int x, unsigned int y,
- unsigned int width, unsigned int height)
- {
- m_Context->UpdateViewport(x, y, width, height);
- }
- */
+
 /**
  * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
  *

@@ -30,7 +30,7 @@
             }                                                                   \
         } while (false)
 #else
-    #define CORE_ASSERT(x, ...)                                                 \
+    #define PIXEL_CORE_ASSERT(x, ...)                                           \
         do                                                                      \
         {                                                                       \
             if (!(x))                                                           \

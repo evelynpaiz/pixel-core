@@ -55,13 +55,20 @@ public:
     /// @return The active rendering API.
     static API GetAPI() { return s_API; }
     
-    // Render
+    // Setter(s)
     // ----------------------------------------
     virtual void SetClearColor(const glm::vec4& color) = 0;
     
+    virtual void SetViewport(const unsigned int x, const unsigned int y,
+                             const unsigned int width, const unsigned int height) = 0;
+    
+    // Render
+    // ----------------------------------------
     // TODO: Define the rendering pass methods with a framebuffer.
     virtual void BeginRenderPass() = 0;
     virtual void EndRenderPass() = 0;
+    
+    virtual void Clear() = 0;
     
     // Clear
     // ----------------------------------------

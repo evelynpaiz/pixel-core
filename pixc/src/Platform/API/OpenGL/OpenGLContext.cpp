@@ -73,6 +73,19 @@ void OpenGLContext::SetVerticalSync(bool enabled)
 }
 
 /**
+ * Set the size of the drawable screen buffer.
+ *
+ * @param width The width of the buffer.
+ * @param height The height of the buffer.
+ */
+void OpenGLContext::UpdateBufferSize(const unsigned int width,
+                                    const unsigned int height)
+{
+    // TODO: to be checked!
+    glViewport(0, 0, width, height);
+}
+
+/**
  *  Swaps the front and back buffers. This presents the rendered frame to the screen.
  */
 void OpenGLContext::SwapBuffers()
