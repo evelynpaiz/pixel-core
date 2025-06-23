@@ -110,7 +110,7 @@ target_link_libraries(pixc
 # Link metal if apple device is used
 if (APPLE)
     target_link_libraries(pixc
-        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL} Metal::Cpp
+        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
     )
 endif()
 

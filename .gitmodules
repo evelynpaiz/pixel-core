@@ -1,9 +1,6 @@
 [submodule "3rdparty/spdlog"]
 	path = 3rdparty/spdlog
 	url = https://github.com/evelynpaiz/spdlog.git
-[submodule "3rdparty/metal-cpp"]
-	path = 3rdparty/metal-cpp
-	url = https://github.com/bkaradzic/metal-cpp.git
 [submodule "3rdparty/glfw"]
 	path = 3rdparty/glfw
 	url = https://github.com/evelynpaiz/glfw.git

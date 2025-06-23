@@ -18,16 +18,6 @@ add_library(glfw::glfw ALIAS glfw)
 
 set_target_properties(glfw PROPERTIES FOLDER "")
 
-## Metal
-if(APPLE)
-    add_library(metalcpp INTERFACE)
-    target_include_directories(metalcpp
-        INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/metal-cpp/
-    )
-    add_library(Metal::Cpp ALIAS metalcpp)
-endif()
-
 ## GLEW
 set(GLEW_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(GLEW_INSTALL OFF CACHE BOOL "" FORCE)
@@ -85,7 +75,7 @@ target_include_directories(imgui
 target_link_libraries(imgui OpenGL::GL glfw::glfw)
 if (APPLE)
     target_link_libraries(imgui
-        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL} Metal::Cpp
+        ${APPLE_FWK_FOUNDATION} ${APPLE_FWK_QUARTZ_CORE} ${APPLE_FWK_METAL}
     )
 endif()
 
