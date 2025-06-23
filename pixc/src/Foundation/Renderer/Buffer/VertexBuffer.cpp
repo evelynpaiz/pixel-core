@@ -1,7 +1,8 @@
-#include "enginepch.h"
-#include "Common/Renderer/Buffer/VertexBuffer.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Buffer/VertexBuffer.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
 
 #include "Platform/OpenGL/Buffer/OpenGLVertexBuffer.h"
 #include "Platform/Metal/Buffer/MetalVertexBuffer.h"
@@ -21,7 +22,7 @@ namespace pixc {
 std::shared_ptr<VertexBuffer> VertexBuffer::Create(const void* vertices, const uint32_t size,
                                                    const uint32_t count)
 {
-    CREATE_RENDERER_OBJECT(VertexBuffer, vertices, size, count)
+    CREATE_RENDERER_OBJECT(std::make_shared, VertexBuffer, vertices, size, count)
 }
 
 } // namespace pixc

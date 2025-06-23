@@ -1,6 +1,6 @@
 #pragma once
 
-#import "Foundation/Core/Base.h"
+#include "Foundation/Core/ClassUtils.h"
 
 /**
  * @namespace pixc

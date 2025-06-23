@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Buffer/OpenGLVertexArray.h"
 
 #include "Platform/OpenGL/OpenGLRendererUtils.h"
@@ -49,7 +49,7 @@ void OpenGLVertexArray::SetVertexAttributes(const std::shared_ptr<VertexBuffer>&
                                             unsigned int& index)
 {
     // Check if the vertex buffer has a layout defined
-    CORE_ASSERT(!vbo->GetLayout().IsEmpty(), "Vertex buffer has no layout!");
+    PIXEL_CORE_ASSERT(!vbo->GetLayout().IsEmpty(), "Vertex buffer has no layout!");
     
     // Bind the vertex array and the vertex buffer
     Bind();

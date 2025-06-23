@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Foundation/Core/ClassUtils.h"
+
 #include "Foundation/Layer/Layer.h"
 #include "Foundation/Layer/Gui/GuiBackend.h"
 

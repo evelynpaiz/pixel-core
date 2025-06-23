@@ -10,15 +10,15 @@ file(GLOB_RECURSE shaders_glsl RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} shaders/*.gl
 file(GLOB_RECURSE shaders_metal RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} shaders/*.h shaders/*.metal)
 set(shaders ${shaders_glsl} ${shaders_metal})
 
-set(resources ${common} ${textures} ${models} ${shaders})
+set(resources_files ${common} ${textures} ${models} ${shaders})
 
 # Define the resources library
-add_library(Resources INTERFACE ${resources})
+add_library(resources INTERFACE ${resources_files})
 
 # Define solution tree organization
 source_group(
     TREE ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES ${resources}
+    FILES ${resources_files}
 )
 
 # NOTE: Use the following to copy the resources to the binary directory

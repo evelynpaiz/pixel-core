@@ -1,8 +1,8 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/Shader/MetalShader.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
-#include "Platform/Metal/Texture/MetalTexture.h"
+//#include "Platform/Metal/Texture/MetalTexture.h"
 
 #include <Metal/Metal.h>
 
@@ -33,7 +33,7 @@ MetalShader::MetalShader(const std::string& name, const std::filesystem::path& f
 {
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
-    CORE_ASSERT(&context, "Graphics context is not Metal!");
+    PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
     m_Context = &context;
     
     // Initialize
@@ -196,7 +196,7 @@ void MetalShader::SetMat4(const std::string& name, const glm::mat4& value)
  * @param texture The texture map.
  * @param name Uniform name.
  * @param slot The texture slot.
- */
+
 void MetalShader::SetTexture(const std::string &name,
                              const std::shared_ptr<Texture>& texture,
                              int slot)
@@ -242,7 +242,7 @@ void MetalShader::SetTexture(const std::string &name,
         }
     }
 }
-
+ */
 /**
  * @brief Compiles the shader source code for Metal.
  *
@@ -260,7 +260,7 @@ void MetalShader::CompileShader(const std::filesystem::path& filePath)
     // Compile the shader source code into a Metal library
     NSError* error = nil;
     m_ShaderSource->Library = [device newLibraryWithSource:sourceCode options:nil error:&error];
-    CORE_ASSERT(!error, "Failed to compiled shader!");
+    PIXEL_CORE_ASSERT(!error, "Failed to compiled shader!");
     
     // Define the shader functions
     m_ShaderSource->VertexFunction = [m_ShaderSource->Library newFunctionWithName:@"vertex_main"];
@@ -268,8 +268,8 @@ void MetalShader::CompileShader(const std::filesystem::path& filePath)
     
     // Note: Metal Shaders need to have a function called "vertex_main"
     // for the vertex shader and "fragment_main" for the fragment shader
-    CORE_ASSERT(m_ShaderSource->VertexFunction, "Failed to create vertex shader function 'vertex_main'!");
-    CORE_ASSERT(m_ShaderSource->FragmentFunction, "Failed to create fragment shader function 'fragment_main'!");
+    PIXEL_CORE_ASSERT(m_ShaderSource->VertexFunction, "Failed to create vertex shader function 'vertex_main'!");
+    PIXEL_CORE_ASSERT(m_ShaderSource->FragmentFunction, "Failed to create fragment shader function 'fragment_main'!");
 }
 
 /**
@@ -327,7 +327,7 @@ void MetalShader::ProcessTextureArgument(const char* name, int32_t index,
         }
         else
         {
-            CORE_WARN("Texture uniform {0} repeated with different binding indices!", name);
+            PIXEL_CORE_WARN("Texture uniform {0} repeated with different binding indices!", name);
             return;
         }
     }
@@ -361,7 +361,7 @@ void MetalShader::ProcessBufferArgument(void *arg, const char *name,
         }
         else
         {
-            CORE_WARN("Uniform {0} repeated with different binding indices!", name);
+            PIXEL_CORE_WARN("Uniform {0} repeated with different binding indices!", name);
             return;
         }
     }
@@ -433,7 +433,7 @@ void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
             break;
         }
         default:
-            CORE_ASSERT(true, "Metal argument type not supported!");
+            PIXEL_CORE_ASSERT(true, "Metal argument type not supported!");
     }
 }
 
@@ -468,7 +468,7 @@ void MetalShader::ExtractShaderResources(void* descriptor)
      options:option
      reflection:&reflection
      error:&error];
-    CORE_ASSERT(!error, "Error creating a reflection of the shader program!");
+    PIXEL_CORE_ASSERT(!error, "Error creating a reflection of the shader program!");
     
     // Process vertex and fragment uniforms
     for (id<MTLBinding> argument in reflection.vertexBindings)
@@ -489,7 +489,7 @@ void MetalShader::UpdateUniformBuffers()
     // Get the Metal device and command encoder
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     id<MTLRenderCommandEncoder> encoder =
-    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
+    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
     
     // Iterate through each uniform
     for (auto& [uniform, layout]: m_Uniforms)
@@ -519,7 +519,7 @@ void MetalShader::UpdateUniformBuffers()
             auto& member = layout.Get(name);
             
             // Prevent buffer overflows
-            CORE_ASSERT(member.Offset + member.Size <= stride, "Uniform data overflow!");
+            PIXEL_CORE_ASSERT(member.Offset + member.Size <= stride, "Uniform data overflow!");
             
             // Copy member data into the correct location within the buffer
             memcpy(content + member.Offset, member.Data, member.Size);
@@ -537,7 +537,7 @@ void MetalShader::UpdateUniformBuffers()
                     [encoder setFragmentBuffer:uniformBuffer offset:0 atIndex:index];
                     break;
                 default:
-                    CORE_WARN("Unsupported shader type for uniform: {}", uniform);
+                    PIXEL_CORE_WARN("Unsupported shader type for uniform: {}", uniform);
                     break;
             }
         }

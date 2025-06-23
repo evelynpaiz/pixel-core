@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
 
 #include "Platform/OpenGL/OpenGLRendererUtils.h"
@@ -182,7 +182,7 @@ void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
  * @param texture The texture map.
  * @param name Uniform name.
  * @param slot The texture slot.
- */
+
 void OpenGLShader::SetTexture(const std::string &name,
                               const std::shared_ptr<Texture>& texture,
                               int slot)
@@ -193,7 +193,7 @@ void OpenGLShader::SetTexture(const std::string &name,
     texture->BindToTextureUnit(slot);
     SetInt(name, slot);
 }
-
+ */
 /**
  * @brief Compile the shader from its input file source.
  *
@@ -234,8 +234,8 @@ unsigned int OpenGLShader::CompileShader(unsigned int type, const std::string& s
             break;
         }
 
-        CORE_ERROR("Failed to compile " + shaderType + " shader!");
-        CORE_ASSERT(result == GL_TRUE, message);
+        PIXEL_CORE_ERROR("Failed to compile " + shaderType + " shader!");
+        PIXEL_CORE_ASSERT(result == GL_TRUE, message);
         glDeleteShader(id);
         return 0;
     }

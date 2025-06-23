@@ -9,7 +9,7 @@
 namespace pixc {
 
 /**
- * Enumeration representing different types of primitives for rendering.
+ * @brief Enumeration representing different types of primitives for rendering.
  */
 enum class PrimitiveType
 {
@@ -21,7 +21,7 @@ enum class PrimitiveType
 };
 
 /**
- * Enumeration representing face culling options.
+ * @brief Enumeration representing face culling options.
  */
 enum class FaceCulling
 {
@@ -29,7 +29,7 @@ enum class FaceCulling
 };
 
 /**
- * Enumeration representing the different depth testing functions.
+ * @brief Enumeration representing the different depth testing functions.
  */
 enum class DepthFunction
 {

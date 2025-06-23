@@ -1,10 +1,13 @@
-#include "enginepch.h"
-#include "Common/Renderer/Shader/Shader.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Shader/Shader.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
 
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
+#ifdef __APPLE__
 #include "Platform/Metal/Shader/MetalShader.h"
+#endif
 
 namespace pixc {
 
@@ -24,7 +27,7 @@ namespace pixc {
 std::shared_ptr<Shader> Shader::Create(const std::string &name,
                                        const std::filesystem::path &filePath)
 {
-    CREATE_RENDERER_OBJECT(Shader, name, GetFullFilePath(filePath))
+    CREATE_RENDERER_OBJECT(std::make_shared, Shader, name, GetFullFilePath(filePath))
 }
 
 
@@ -38,7 +41,7 @@ std::shared_ptr<Shader> Shader::Create(const std::string &name,
  */
 std::shared_ptr<Shader> Shader::Create(const std::filesystem::path &filePath)
 {
-    CREATE_RENDERER_OBJECT(Shader, GetFullFilePath(filePath))
+    CREATE_RENDERER_OBJECT(std::make_shared, Shader, GetFullFilePath(filePath))
 }
 
 /**
@@ -51,7 +54,7 @@ std::shared_ptr<Shader> Shader::Create(const std::filesystem::path &filePath)
 std::string Shader::ReadFile(const std::filesystem::path& filePath)
 {
     std::ifstream fileStream(filePath);
-    CORE_ASSERT(fileStream.is_open(), "Failed to open file: " + filePath.string());
+    PIXEL_CORE_ASSERT(fileStream.is_open(), "Failed to open file: " + filePath.string());
     
     std::stringstream buffer;
     buffer << fileStream.rdbuf();
@@ -71,7 +74,7 @@ bool Shader::IsUniform(const std::string& name) const
     if (m_Uniforms.Exists(group, member))
         return true;
     
-    CORE_WARN("Uniform " + name + " doesn't exist!");
+    PIXEL_CORE_WARN("Uniform " + name + " doesn't exist!");
     return false;
 }
 
@@ -105,14 +108,14 @@ std::filesystem::path Shader::GetFullFilePath(const std::filesystem::path& fileP
 #endif
             
         default:
-            CORE_ASSERT(false, "Unknown Renderer API!");
+            PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");
             return filePath;
     }
     
     // Update the extension of the file path if necessary
     if (filePath.extension() != extension)
     {
-        CORE_ASSERT(filePath.extension().empty(), "Shader extension not supported for the current graphics API");
+        PIXEL_CORE_ASSERT(filePath.extension().empty(), "Shader extension not supported for the current graphics API");
         fullFilePath += extension;
     }
     

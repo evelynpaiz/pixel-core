@@ -1,20 +1,13 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Foundation/Renderer/Renderer.h"
 
 #include "Foundation/Renderer/RendererCommand.h"
 //#include "Foundation/Renderer/Material/LightedMaterial.h"
 
-//#include "Platform/OpenGL/Buffer/OpenGLVertexArray.h"
-
-// TODO: remove opengl definitions
-//#include "Platform/OpenGL/OpenGLRendererUtils.h"
-
-#include <GL/glew.h>
-
 namespace pixc {
 
 // Define the renderer variable(s)
-//std::unique_ptr<Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
+std::unique_ptr<Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
 
 static Renderer::RenderingStatistics g_Stats;
 /*
@@ -35,10 +28,8 @@ void Renderer::Init()
 }
 
 /**
- * Start the rendering of a scene by defining its general parameters.
- *
- * @param camera Rendering camera.
-
+ * @brief Start the rendering of a scene by defining its general parameters.
+ */
 void Renderer::BeginScene()
 {
     s_SceneData->ViewPosition = glm::vec3(0.0);
@@ -46,7 +37,28 @@ void Renderer::BeginScene()
     s_SceneData->ViewMatrix = glm::mat4(1.0f);
     s_SceneData->ProjectionMatrix = glm::mat4(1.0f);
 }
+
+/**
+ * End the rendering of a scene.
  */
+void Renderer::EndScene()
+{
+    g_Stats.renderPasses++;
+}
+
+/**
+ * Render primitives from a drawable object using the specified primitive type.
+ *
+ * @param drawable The drawable object containing the data for rendering.
+ * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
+ */
+void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveType &primitive)
+{
+    // Render the geometry
+    RendererCommand::Draw(drawable, primitive);
+    // Add the drawing count
+    g_Stats.drawCalls++;
+}
 
 /**
  * Start the rendering of a scene by defining its general parameters.
@@ -77,28 +89,7 @@ void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
     s_SceneData->ProjectionMatrix = projection;
 }
  */
-/**
- * End the rendering of a scene.
 
-void Renderer::EndScene()
-{
-    g_Stats.renderPasses++;
-}
- */
-/**
- * Render primitives from a drawable object using the specified primitive type.
- *
- * @param drawable The drawable object containing the data for rendering.
- * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
-
-void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveType &primitive)
-{
-    // Render the geometry
-    RendererCommand::Draw(drawable, primitive);
-    // Add the drawing count
-    g_Stats.drawCalls++;
-}
- */
 /**
  * Render primitives from a drawable object using the specified primitive type.
  *

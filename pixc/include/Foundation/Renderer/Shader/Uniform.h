@@ -1,12 +1,19 @@
 #pragma once
 
-#include "Common/Core/Library.h"
-#include "Common/Renderer/Buffer/Data.h"
+#include "Foundation/Core/Library.h"
+
+#include "Foundation/Renderer/Buffer/Data.h"
 
 #include <glm/glm.hpp>
 
 /**
- * Defines the types of shaders available.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Defines the types of shaders available.
  */
 enum class ShaderType
 {
@@ -14,7 +21,7 @@ enum class ShaderType
 };
 
 /**
- * Represents a texture element used in a shader.
+ * @brief Represents a texture element used in a shader.
  */
 struct TextureElement
 {
@@ -46,7 +53,7 @@ struct TextureElement
 };
 
 /**
- * Represents a uniform element within a uniform layout.
+ * @brief Represents a uniform element within a uniform layout.
  *
  * This struct extends `DataElement` to include information specific to uniform variables,
  * such as their location (offset) within a uniform buffer and a flag indicating whether the data
@@ -68,12 +75,12 @@ struct UniformElement : public DataElement
     /// @brief Creates a uniform element with a specific data type.
     /// @param type Data type of the uniform element.
     UniformElement(DataType type)
-        : DataElement(type)
+    : DataElement(type)
     {}
 };
 
 /**
- * Represents a layout for uniform data used in a shader.
+ * @brief Represents a layout for uniform data used in a shader.
  *
  * This class specializes `DataLayout` to manage a collection of `UniformElement`
  * objects. It provides functionality for storing the uniform data, calculating offsets, determining
@@ -85,12 +92,12 @@ class UniformLayout : public DataLayout<UniformElement>
 public:
     // Constructor/ Destructor
     // ----------------------------------------
-    /// @brief Creates an empty uniform layout. 
+    /// @brief Creates an empty uniform layout.
     UniformLayout() : DataLayout("Uniform element") {}
     /// @brief Creates a buffer layout from an initializer list of uniform elements.
     /// @param elements A list containing the elements to be added to the layout.
     UniformLayout(const std::initializer_list<std::pair<std::string, UniformElement>>& elements)
-            : DataLayout(elements, "Uniform element")
+    : DataLayout(elements, "Uniform element")
     {}
     /// @brief Delete the defined layout.
     ~UniformLayout() override = default;
@@ -137,7 +144,7 @@ private:
 };
 
 /**
- * A library for managing uniform layouts in a shader.
+ * @brief A library for managing uniform layouts in a shader.
  *
  * This class extends `Library<UniformLayout>` to provide a specialized container
  * for organizing and accessing uniform layouts associated with a shader. It allows you to
@@ -167,9 +174,9 @@ public:
                      const UniformElement& object)
     {
         std::string message = GetTypeName() + " '" +
-            utils::MergeStrings(group, member) + "' already exists!";
-        CORE_ASSERT(!Exists(group, member), message);
-
+        utils::MergeStrings(group, member) + "' already exists!";
+        PIXEL_CORE_ASSERT(!Exists(group, member), message);
+        
         m_Objects[group].Add(member, object);
     }
     
@@ -184,12 +191,12 @@ public:
                         const std::string& member)
     {
         std::string message = GetTypeName() + " '" +
-            utils::MergeStrings(group, member) + "' not found!";
-        CORE_ASSERT(Exists(group, member), message);
+        utils::MergeStrings(group, member) + "' not found!";
+        PIXEL_CORE_ASSERT(Exists(group, member), message);
         
         return m_Objects[group].Get(member);
     }
-
+    
     /// @brief Retrieves an object from the library by its group and object names (const version).
     /// @param group The name of the group to associate with the object.
     /// @param member The name of the member of a group.
@@ -199,8 +206,8 @@ public:
                               const std::string& member) const
     {
         std::string message = GetTypeName() + " '" +
-            utils::MergeStrings(group, member) + "' not found!";
-        CORE_ASSERT(Exists(group, member), message);
+        utils::MergeStrings(group, member) + "' not found!";
+        PIXEL_CORE_ASSERT(Exists(group, member), message);
         return m_Objects.at(group).Get(member);
     }
     
@@ -217,3 +224,5 @@ public:
         return groupIt->second.Exists(member);
     }
 };
+
+} // namespace pixc

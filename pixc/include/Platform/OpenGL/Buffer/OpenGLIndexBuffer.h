@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/IndexBuffer.h"
+#include "Foundation/Renderer/Buffer/IndexBuffer.h"
 
 /**
  * @namespace pixc

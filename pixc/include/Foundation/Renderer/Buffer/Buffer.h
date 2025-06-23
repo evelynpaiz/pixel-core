@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/Data.h"
+#include "Foundation/Renderer/Buffer/Data.h"
 
 /**
- * Specialized data layout for vertex buffer attributes.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Specialized data layout for vertex buffer attributes.
  *
  * This class derives from `DataLayout<DataElement>` and is specifically
  * designed for defining the arrangement and format of vertex attributes within a
@@ -26,7 +32,7 @@ public:
     /// @brief Creates a buffer layout from an initializer list of buffer elements.
     /// @param elements A list containing the elements to be added to the layout.
     BufferLayout(const std::initializer_list<std::pair<std::string, DataElement>>& elements)
-            : DataLayout(elements, "Buffer element")
+        : DataLayout(elements, "Buffer element")
     {}
     /// @brief Delete the defined layout.
     ~BufferLayout() override = default;
@@ -61,3 +67,5 @@ struct RenderTargetBuffers
     bool depthBufferActive;     ///< Indicates whether the depth buffer is active.
     bool stencilBufferActive;   ///< Indicates whether the stencil buffer is active.
 };
+
+} // namespace pixc

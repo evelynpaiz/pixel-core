@@ -27,7 +27,7 @@ include(Dependencies.cmake)
 option(RENDERER_BUILD_EXAMPLES "Build the sandbox (example) executable" ON)
 
 # Own libraries and executables
-#add_subdirectory(resources)
+add_subdirectory(resources)
 add_subdirectory(pixc)
 
 if (RENDERER_BUILD_EXAMPLES)

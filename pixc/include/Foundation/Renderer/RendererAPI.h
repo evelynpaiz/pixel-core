@@ -1,10 +1,10 @@
 #pragma once
 
-//#include "Foundation/Renderer/Drawable/Drawable.h"
+#include "Foundation/Renderer/RendererUtils.h"
+
+#include "Foundation/Renderer/Drawable/Drawable.h"
 //#include "Foundation/Renderer/Material/Material.h"
 //#include "Foundation/Renderer/Buffer/FrameBuffer.h"
-
-//#include "Foundation/Renderer/RendererUtils.h"
 
 #include <glm/glm.hpp>
 
@@ -70,6 +70,9 @@ public:
     
     virtual void Clear() = 0;
     
+    virtual void Draw(const std::shared_ptr<Drawable>& drawable,
+                      const PrimitiveType &primitive = PrimitiveType::Triangle) = 0;
+    
     // Clear
     // ----------------------------------------
     /*
@@ -90,11 +93,6 @@ public:
      if (framebuffer)
      framebuffer->Unbind();
      }
-     
-     // Draw
-     // ----------------------------------------
-     virtual void Draw(const std::shared_ptr<Drawable>& drawable,
-     const PrimitiveType &primitive = PrimitiveType::Triangle) = 0;
      
      // Setter(s)
      // ----------------------------------------

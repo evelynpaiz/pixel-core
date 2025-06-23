@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/Drawable/Drawable.h"
+#include "Foundation/Renderer/Drawable/Drawable.h"
 
 #include "Platform/Metal/MetalContext.h"
 

@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Core/Library.h"
+#include "Foundation/Core/Library.h"
 
 #include <type_traits>
 #include <glm/glm.hpp>
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * Enumeration of data types.
@@ -19,6 +25,11 @@ enum class DataType
     Mat2, Mat3, Mat4
 };
 
+
+/**
+ * @namespace utils::data
+ * @brief Utility functions and data structures for data processing and handling.
+ */
 namespace utils { namespace data {
 
 /**
@@ -29,7 +40,7 @@ namespace utils { namespace data {
  * @return The `DataType` enum value that matches the provided type `T`.
  */
 template <typename T>
-inline constexpr DataType GetDataType() 
+inline constexpr DataType GetDataType()
 {
     if constexpr (std::is_same_v<T, bool>)           { return DataType::Bool; }
     else if constexpr (std::is_same_v<T, int>)       { return DataType::Int; }
@@ -42,9 +53,9 @@ inline constexpr DataType GetDataType()
     else if constexpr (std::is_same_v<T, glm::mat2>) { return DataType::Mat2; }
     else if constexpr (std::is_same_v<T, glm::mat3>) { return DataType::Mat3; }
     else if constexpr (std::is_same_v<T, glm::mat4>) { return DataType::Mat4; }
-    else 
+    else
     {
-        CORE_ASSERT(false, "Unknown data type!");
+        PIXEL_CORE_ASSERT(false, "Unknown data type!");
         return DataType::None;
     }
 }
@@ -72,7 +83,7 @@ inline unsigned int GetDataSize(DataType dataType)
         case DataType::Mat4:  return 4 * 4 * 4;
     }
     
-    CORE_ASSERT(false, "Unknown data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown data type!");
     return 0;
 }
 
@@ -102,7 +113,7 @@ inline unsigned int GetComponentCount(DataType dataType)
         case DataType::Mat4:  return 4;
     }
     
-    CORE_ASSERT(false, "Unknown data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown data type!");
     return 0;
 }
 
@@ -139,7 +150,7 @@ struct DataElement
     /// @brief Creates a data element with a specific data type.
     /// @param type Data type of the element.
     DataElement(DataType type)
-        : Type(type), Size(utils::data::GetDataSize(type))
+    : Type(type), Size(utils::data::GetDataSize(type))
     {}
     /// @brief Delete the data element.
     virtual ~DataElement()
@@ -181,7 +192,7 @@ public:
     /// @param name  An optional name for the elements contained in the layout (default: "Data element").
     DataLayout(const std::initializer_list<std::pair<std::string, Element>>& elements,
                const std::string& name = "Data element")
-            : Library<Element>(name)
+    : Library<Element>(name)
     {
         for (const auto& [name, value] : elements)
             Add(name, value);
@@ -241,3 +252,5 @@ private:
     ///< Insertion order of the elements.
     std::vector<std::string> m_Order;
 };
+
+} // namespace pixc

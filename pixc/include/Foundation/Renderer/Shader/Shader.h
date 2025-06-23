@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/Buffer.h"
-#include "Common/Renderer/Shader/Uniform.h"
+#include "Foundation/Core/ClassUtils.h"
 
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Buffer/Buffer.h"
+#include "Foundation/Renderer/Shader/Uniform.h"
+
+//#include "Foundation/Renderer/Texture/Texture.h"
 
 #include <glm/glm.hpp>
 
@@ -59,11 +61,11 @@ public:
     virtual void SetMat2(const std::string& name, const glm::mat2& value) = 0;
     virtual void SetMat3(const std::string& name, const glm::mat3& value) = 0;
     virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
-    
+    /*
     virtual void SetTexture(const std::string &name,
                             const std::shared_ptr<Texture>& texture,
                             int slot) = 0;
-    
+    */
     // Parsing
     // ----------------------------------------
     std::string ReadFile(const std::filesystem::path& filePath);
@@ -75,7 +77,7 @@ protected:
     /// @param name The name for the shader.
     /// @param filePath Path to the source file.
     Shader(const std::string& name, const std::filesystem::path& filePath)
-    : m_Name(name), m_FilePath(filePath)
+        : m_Name(name), m_FilePath(filePath)
     {}
     
     // Getter(s)
@@ -91,7 +93,7 @@ protected:
     UniformElement& SetUniformData(const std::string& name, const T& value)
     {
         // Check if the uniform is defined in the shader
-        CORE_ASSERT(IsUniform(name), "Uniform '" + name + "' not found!");
+        PIXEL_CORE_ASSERT(IsUniform(name), "Uniform '" + name + "' not found!");
         
         // Get the uniform from the buffer of uniforms
         auto [group, member] = utils::SplitString(name);
@@ -102,7 +104,7 @@ protected:
         // Verify that the type of data is the same
         if (uniform.Type != utils::data::GetDataType<T>())
         {
-            CORE_WARN("Uniform '{0}' type mismatch!", name);
+            PIXEL_CORE_WARN("Uniform '{0}' type mismatch!", name);
             return uniform;
         }
         

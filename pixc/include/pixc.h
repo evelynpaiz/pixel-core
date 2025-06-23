@@ -3,7 +3,6 @@
 // --------------------------------------------
 // Core
 // --------------------------------------------
-#include "Foundation/Core/Base.h"
 #include "Foundation/Core/Assert.h"
 #include "Foundation/Core/Log.h"
 #include "Foundation/Core/Library.h"

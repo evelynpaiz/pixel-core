@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Buffer/OpenGLIndexBuffer.h"
 
 #include <GL/glew.h>
@@ -13,7 +13,7 @@ namespace pixc {
  */
 OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t *indices,
                                      const uint32_t count)
-: IndexBuffer(count)
+    : IndexBuffer(count)
 {
     glGenBuffers(1, &m_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);

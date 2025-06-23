@@ -11,12 +11,13 @@
 namespace pixc {
 
 /**
- * Utility functions related to OpenGL rendering operations.
+ * @namespace utils::graphics::gl
+ * @brief Utility functions related to OpenGL rendering operations.
  */
 namespace utils { namespace graphics { namespace gl
 {
 /**
- * Convert the data type to its corresponding OpenGL type.
+ * @brief Convert the data type to its corresponding OpenGL type.
  *
  * @param dataType The type of data.
  *
@@ -41,12 +42,12 @@ inline GLenum ToOpenGLType(DataType dataType)
             
     }
     
-    CORE_ASSERT(false, "Unknown data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown data type!");
     return 0;
 }
 
 /**
- * Convert an OpenGL type to its corresponding data type.
+ * @brief Convert an OpenGL type to its corresponding data type.
  *
  * @param glType The OpenGL data type.
  *
@@ -75,12 +76,12 @@ inline DataType ToDataType(GLenum glType)
             return DataType::Int;
     }
     
-    CORE_ASSERT(false, "Unknown OpenGL data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown OpenGL data type!");
     return DataType::None;
 }
 
 /**
- * Convert the buffers state to its corresponding OpenGL clear mask.
+ * @brief Convert the buffers state to its corresponding OpenGL clear mask.
  *
  * @param targets Active rendering targets.
  *
@@ -101,7 +102,7 @@ inline GLbitfield ToOpenGLClearMask(const RenderTargetBuffers& targets) {
 }
 
 /**
- * Convert a primitive to the corresponding OpenGL primitive type.
+ * @brief Convert a primitive to the corresponding OpenGL primitive type.
  *
  * @param primitiveType The primitive value to be converted.
  * @return The corresponding OpenGL primitive type as a GLenum.
@@ -117,12 +118,12 @@ inline GLenum ToOpenGLPrimitive(PrimitiveType primitiveType)
         case PrimitiveType::TriangleStrip: return GL_TRIANGLE_STRIP;
     }
     
-    CORE_ASSERT(false, "Unknown primitive type!");
+    PIXEL_CORE_ASSERT(false, "Unknown primitive type!");
     return 0;
 }
 
 /**
- * Convert the face culling mode to its corresponding OpenGL mode.
+ * @brief Convert the face culling mode to its corresponding OpenGL mode.
  *
  * @param culling The face culling mode to be converted.
  *
@@ -139,12 +140,12 @@ inline GLenum ToOpenGLCulling(FaceCulling culling)
         case FaceCulling::FrontAndBack: return GL_FRONT_AND_BACK;
     }
     
-    CORE_ASSERT(false, "Unknown face culling mode!");
+    PIXEL_CORE_ASSERT(false, "Unknown face culling mode!");
     return 0;
 }
 
 /**
- * Convert the depth function to its corresponding OpenGL function.
+ * @brief Convert the depth function to its corresponding OpenGL function.
  *
  * @param depth The depth function mode to be converted.
  *
@@ -166,7 +167,7 @@ inline GLenum ToOpenGLDepthFunc(DepthFunction depth)
         case DepthFunction::GEqual:   return GL_GEQUAL;
     }
     
-    CORE_ASSERT(false, "Unknown depth function!");
+    PIXEL_CORE_ASSERT(false, "Unknown depth function!");
     return 0;
 }
 

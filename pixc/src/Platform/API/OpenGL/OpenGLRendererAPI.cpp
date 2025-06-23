@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
 #ifdef __APPLE__
@@ -7,7 +7,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-//#include "Platform/OpenGL/OpenGLRendererUtils.h"
+#include "Platform/OpenGL/OpenGLRendererUtils.h"
 
 namespace pixc {
 
@@ -67,6 +67,21 @@ void OpenGLRendererAPI::Clear()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     // glClear(utils::OpenGL::BufferStateToOpenGLMask(buffersActive)); 
+}
+
+/**
+ * Render primitives from array data using the specified vertex array.
+ *
+ * @param drawable The Vertex Array containing the vertex and index buffers for rendering.
+ * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
+ */
+void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
+                             const PrimitiveType &primitive)
+{
+    drawable->Bind();
+    drawable->GetIndexBuffer()->Bind();
+    glDrawElements(utils::graphics::gl::ToOpenGLPrimitive(primitive),
+                   drawable->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 /**
@@ -143,22 +158,7 @@ void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
     Clear(color, targets);
 }
  */
-/**
- * Render primitives from array data using the specified vertex array.
- *
- * @param drawable The Vertex Array containing the vertex and index buffers for rendering.
- * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
 
-void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
-                             const PrimitiveType &primitive)
-{
-    drawable->Bind();
-    drawable->GetIndexBuffer()->Bind();
-    glDrawElements(utils::graphics::gl::ToOpenGLPrimitive(primitive),
-                   drawable->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-}
-
- */
 /**
  * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
  *

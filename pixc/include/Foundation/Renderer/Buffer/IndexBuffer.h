@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Foundation/Core/ClassUtils.h"
+
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.

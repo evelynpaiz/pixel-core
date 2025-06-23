@@ -1,13 +1,24 @@
 #pragma once
 
-#include "Common/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/RendererUtils.h"
 
 #include <Metal/Metal.h>
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @namespace utils::graphics::gl
+ * @brief Utility functions related to Metal rendering operations.
+ */
 namespace utils { namespace graphics { namespace mtl
 {
+
 /**
- * Convert the data type to its corresponding Metal format.
+ * @brief Convert the data type to its corresponding Metal format.
  *
  * @param dataType The type of data.
  *
@@ -28,18 +39,18 @@ inline MTLVertexFormat ToMetalFormat(DataType dataType)
         case DataType::Vec3:  return MTLVertexFormatFloat3;
         case DataType::Vec4:  return MTLVertexFormatFloat4;
             
-        // Not supported by Metal
+            // Not supported by Metal
         case DataType::Mat2:  return MTLVertexFormatInvalid;
         case DataType::Mat3:  return MTLVertexFormatInvalid;
         case DataType::Mat4:  return MTLVertexFormatInvalid;
     }
     
-    CORE_ASSERT(false, "Unknown data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown data type!");
     return MTLVertexFormatInvalid;
 }
 
 /**
- * Convert a Metal data type to its corresponding data type.
+ * @brief Convert a Metal data type to its corresponding data type.
  *
  * @param mtlTyme The Metal data type.
  *
@@ -59,19 +70,22 @@ inline DataType ToDataType(MTLDataType mtlType)
         case MTLDataTypeFloat2x2:   return DataType::Mat2;
         case MTLDataTypeFloat3x3:   return DataType::Mat3;
         case MTLDataTypeFloat4x4:   return DataType::Mat4;
+        
+        default:
+            break;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) Metal data type!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) Metal data type!");
     return DataType::None;
 }
 
 /**
- * Convert a primitive to the corresponding Metal primitive type.
+ * @brief Convert a primitive to the corresponding Metal primitive type.
  *
  * @param primitiveType The primitive value to be converted.
  * @return The corresponding Metal primitive type as a GLenum.
  */
-inline MTLPrimitiveType ToMetalPrimitive(PrimitiveType primitiveType) 
+inline MTLPrimitiveType ToMetalPrimitive(PrimitiveType primitiveType)
 {
     switch (primitiveType)
     {
@@ -81,11 +95,12 @@ inline MTLPrimitiveType ToMetalPrimitive(PrimitiveType primitiveType)
         case PrimitiveType::Triangle:      return MTLPrimitiveTypeTriangle;
         case PrimitiveType::TriangleStrip: return MTLPrimitiveTypeTriangleStrip;
     }
-
-    CORE_ASSERT(false, "Unknown primitive type!");
+    
+    PIXEL_CORE_ASSERT(false, "Unknown primitive type!");
     return MTLPrimitiveTypeTriangle;
 }
 
 } // namespace mtl
 } // namespace graphics
 } // namespace utils
+} // namespace pixc

@@ -1,10 +1,10 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/MetalRendererAPI.h"
 
-//#include "Platform/Metal/MetalRendererUtils.h"
+#include "Platform/Metal/Buffer/MetalIndexBuffer.h"
+#include "Platform/Metal/Drawable/MetalDrawable.h"
 
-//#include "Platform/Metal/Drawable/MetalDrawable.h"
-//#include "Platform/Metal/Buffer/MetalIndexBuffer.h"
+#include "Platform/Metal/MetalRendererUtils.h"
 
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
@@ -81,7 +81,7 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
 }
 
 /**
- * Set the viewport for rendering.
+ * @brief Set the viewport for rendering.
  *
  * @param x The x-coordinate of the lower-left corner of the viewport.
  * @param y The y-coordinate of the lower-left corner of the viewport.
@@ -108,7 +108,7 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
  }
 
 /**
- * Initialize a new rendering pass.
+ * @brief Initialize a new rendering pass.
  */
 void MetalRendererAPI::BeginRenderPass()
 {
@@ -116,7 +116,7 @@ void MetalRendererAPI::BeginRenderPass()
 }
 
 /**
- * Finalize the current rendering pass.
+ * @brief Finalize the current rendering pass.
  */
 void MetalRendererAPI::EndRenderPass()
 {
@@ -124,7 +124,7 @@ void MetalRendererAPI::EndRenderPass()
 }
 
 /**
- * Clear the buffers to preset values.
+ * @brief Clear the buffers to preset values.
  */
 void MetalRendererAPI::Clear()
 {
@@ -141,6 +141,34 @@ void MetalRendererAPI::Clear()
     
     // Define a new command encoder
     m_Context->InitCommandEncoder(descriptor);
+}
+
+/**
+ * @brief Renders primitives from a drawable object using indexed drawing.
+ *
+ * @param drawable The drawable object containing the vertex and index buffers for rendering.
+ * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
+ */
+ void MetalRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
+                             const PrimitiveType &primitive)
+{
+    // Get the command encoder to encode rendering commands into the buffer
+    id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+
+    // Bind the drawable object
+    drawable->Bind();
+    // Draw primitives
+    auto metalIndexBuffer = std::dynamic_pointer_cast<MetalIndexBuffer>(drawable->GetIndexBuffer());
+    PIXEL_CORE_ASSERT(metalIndexBuffer, "Invalid buffer cast - not a Metal index buffer!");
+
+    id<MTLBuffer> indexBuffer = reinterpret_cast<id<MTLBuffer>>(metalIndexBuffer->GetBuffer());
+    [encoder
+        drawIndexedPrimitives:utils::graphics::mtl::ToMetalPrimitive(primitive)
+        indexCount:metalIndexBuffer->GetCount()
+        indexType:MTLIndexTypeUInt32
+        indexBuffer:indexBuffer
+        indexBufferOffset:0
+    ];
 }
 
 /**
@@ -200,33 +228,6 @@ void MetalRendererAPI::Clear()
  {
  m_Context->EndEncoding();
  RendererAPI::EndRenderPass(framebuffer);
- }
- */
-/**
- * Renders primitives from a drawable object using indexed drawing.
- *
- * @param drawable The drawable object containing the vertex and index buffers for rendering.
- * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
- 
- void MetalRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
- const PrimitiveType &primitive)
- {
- // Get the command encoder to encode rendering commands into the buffer
- id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
- 
- // Bind the drawable object
- drawable->Bind();
- // Draw primitives
- auto metalIndexBuffer = std::dynamic_pointer_cast<MetalIndexBuffer>(drawable->GetIndexBuffer());
- CORE_ASSERT(metalIndexBuffer, "Invalid buffer cast - not a Metal index buffer!");
- 
- id<MTLBuffer> indexBuffer = reinterpret_cast<id<MTLBuffer>>(metalIndexBuffer->GetBuffer());
- [encoder
- drawIndexedPrimitives:utils::graphics::mtl::ToMetalPrimitive(primitive)
- indexCount:metalIndexBuffer->GetCount()
- indexType:MTLIndexTypeUInt32
- indexBuffer:indexBuffer
- indexBufferOffset:0];
  }
  */
 

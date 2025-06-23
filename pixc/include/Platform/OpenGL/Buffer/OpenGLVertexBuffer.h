@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/VertexBuffer.h"
+#include "Foundation/Renderer/Buffer/VertexBuffer.h"
 
 /**
  * @namespace pixc

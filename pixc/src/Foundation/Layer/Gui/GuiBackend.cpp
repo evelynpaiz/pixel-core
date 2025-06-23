@@ -1,10 +1,13 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Foundation/Layer/Gui/GuiBackend.h"
 
-#include "Platform/OpenGL/Gui/OpenGLGuiBackend.h"
-#include "Platform/Metal/Gui/MetalGuiBackend.h"
-
 #include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
+
+#include "Platform/OpenGL/Gui/OpenGLGuiBackend.h"
+#ifdef __APPLE__
+#include "Platform/Metal/Gui/MetalGuiBackend.h"
+#endif
 
 namespace pixc {
 
@@ -17,24 +20,7 @@ namespace pixc {
  */
 std::unique_ptr<GuiBackend> GuiBackend::Create()
 {
-    
-    switch (Renderer::GetAPI())
-    {
-        case RendererAPI::API::None:
-            PIXEL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
-            return nullptr;
-        
-        case RendererAPI::API::OpenGL:
-            return std::make_unique<OpenGLGuiBackend>();
-        
-        #ifdef __APPLE__
-        case RendererAPI::API::Metal:
-            return std::make_unique<MetalGuiBackend>();
-        #endif
-    }
-    
-    PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");
-    return nullptr;
+    CREATE_RENDERER_OBJECT(std::make_unique, GuiBackend)
 }
 
 } // namespace pixc

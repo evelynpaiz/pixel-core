@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/Buffer/MetalVertexBuffer.h"
 
 #include "Platform/Metal/MetalContext.h"
@@ -16,11 +16,11 @@ namespace pixc {
  */
 MetalVertexBuffer::MetalVertexBuffer(const void *vertices, const uint32_t size,
                                      const uint32_t count)
-: VertexBuffer(count)
+    : VertexBuffer(count)
 {
     // Get the Metal graphics context
     MetalContext* context = dynamic_cast<MetalContext*>(&GraphicsContext::Get());
-    CORE_ASSERT(context, "Graphic context is not Metal!");
+    PIXEL_CORE_ASSERT(context, "Graphic context is not Metal!");
     // Get the Metal device from the context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(context->GetDevice());
     

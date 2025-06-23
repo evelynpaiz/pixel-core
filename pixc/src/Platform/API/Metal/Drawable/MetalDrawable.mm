@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/Drawable/MetalDrawable.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
@@ -33,7 +33,7 @@ MetalDrawable::MetalDrawable() : Drawable()
 {
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
-    CORE_ASSERT(&context, "Graphics context is not Metal!");
+    PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
     m_Context = &context;
     
     // Initalize the drawing state
@@ -60,7 +60,7 @@ MetalDrawable::~MetalDrawable()
 void MetalDrawable::Bind() const
 {
     // Get the command encoder to encode rendering commands into the buffer
-    id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
+    id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
     
     // Define the state of the pipeline if not yet defined
     if (!m_State->PipelineState)
@@ -72,7 +72,7 @@ void MetalDrawable::Bind() const
     for (size_t i = 0; i < m_VertexBuffers.size(); ++i)
     {
         auto metalVertexBuffer = std::dynamic_pointer_cast<MetalVertexBuffer>(m_VertexBuffers[i]);
-        CORE_ASSERT(metalVertexBuffer, "Invalid buffer cast - not a Metal index buffer!");
+        PIXEL_CORE_ASSERT(metalVertexBuffer, "Invalid buffer cast - not a Metal index buffer!");
         
         id<MTLBuffer> vertexBuffer = reinterpret_cast<id<MTLBuffer>>(metalVertexBuffer->GetBuffer());
         [encoder
@@ -83,7 +83,7 @@ void MetalDrawable::Bind() const
     
     // Define the uniforms in the command encoder
     auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
-    CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
+    PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
     metalShader->UpdateUniformBuffers();
 }
 
@@ -93,14 +93,14 @@ void MetalDrawable::Bind() const
 void MetalDrawable::SetPipelineState() const
 {
     // Check that a shader has been defined in the drawable object
-    CORE_ASSERT(m_Shader, "Shader needs to be defined in drawable object for Metal API!");
+    PIXEL_CORE_ASSERT(m_Shader, "Shader needs to be defined in drawable object for Metal API!");
     
     // Get the Metal device from the context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     
     // Dynamic cast the shader to a Metal shader
     auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
-    CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
+    PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
     
     // Get Metal functions
     id<MTLFunction> vertexFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetVertexFunction());
@@ -118,7 +118,7 @@ void MetalDrawable::SetPipelineState() const
     // Define the pipeline state
     NSError* error = nil;
     m_State->PipelineState = [device newRenderPipelineStateWithDescriptor:m_State->PipelineDescriptor error:&error];
-    CORE_ASSERT(!error, "Failed to define the pipeline state!");
+    PIXEL_CORE_ASSERT(!error, "Failed to define the pipeline state!");
     
     // If shader information has not been defined, define it
     metalShader->ExtractShaderResources(reinterpret_cast<void*>(m_State->PipelineDescriptor));
@@ -132,11 +132,11 @@ void MetalDrawable::SetPipelineState() const
 void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo)
 {
     // Check if the vertex buffer has a layout defined
-    CORE_ASSERT(!vbo->GetLayout().IsEmpty(), "Vertex buffer has no layout!");
+    PIXEL_CORE_ASSERT(!vbo->GetLayout().IsEmpty(), "Vertex buffer has no layout!");
     
     // Get the index of the vertex buffer
     int indexVertexBuffer = GetVertexBufferIndex(vbo);
-    CORE_ASSERT(indexVertexBuffer >= 0, "Vertex buffer not defined inside the drawable!");
+    PIXEL_CORE_ASSERT(indexVertexBuffer >= 0, "Vertex buffer not defined inside the drawable!");
     
     // Describe the vertex
     const auto& layout = vbo->GetLayout();

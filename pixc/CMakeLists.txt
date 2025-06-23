@@ -11,10 +11,17 @@ file(
     src/Foundation/Input/*.cpp
     src/Foundation/Layer/*.cpp
 
+    src/Foundation/Renderer/Shader/*.cpp
+
     src/Foundation/Renderer/GraphicsContext.cpp
     src/Foundation/Renderer/RendererAPI.cpp
     src/Foundation/Renderer/RendererCommand.cpp
     src/Foundation/Renderer/Renderer.cpp
+
+    src/Foundation/Renderer/Buffer/IndexBuffer.cpp
+    src/Foundation/Renderer/Buffer/VertexBuffer.cpp
+
+    src/Foundation/Renderer/Drawable/Drawable.cpp
 )
 
 # Find platform-specific source files
@@ -36,9 +43,16 @@ file(
     src/${PLATFORM_OS_DIR}/*.cpp
     src/${PLATFORM_OS_DIR}/*.mm
 
+    src/${PLATFORM_API_OPENGL_DIR}/Shader/*.cpp
+    src/${PLATFORM_API_OPENGL_DIR}/Drawable/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Gui/*.cpp
+
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLContext.cpp
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLRendererAPI.cpp
+
+    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLIndexBuffer.cpp
+    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLVertexBuffer.cpp
+    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLVertexArray.cpp
 
 #    src/${PLATFORM_API_OPENGL_DIR}/*.cpp
 #    src/${PLATFORM_API_OPENGL_DIR}/*.mm
@@ -56,17 +70,36 @@ file(
     include/Foundation/Core/*.h
     include/Foundation/Event/*.h
     include/Foundation/Input/*.h
-
     include/Foundation/Layer/*.h
+
+    include/Foundation/Renderer/Shader/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h
     include/Foundation/Renderer/RendererCommand.h
     include/Foundation/Renderer/Renderer.h
 
+    include/Foundation/Renderer/FactoryUtils.h
+    include/Foundation/Renderer/RendererUtils.h
+
+    include/Foundation/Renderer/Buffer/Data.h
+    include/Foundation/Renderer/Buffer/Buffer.h
+    include/Foundation/Renderer/Buffer/IndexBuffer.h
+    include/Foundation/Renderer/Buffer/VertexBuffer.h
+
+    include/Foundation/Renderer/Drawable/Drawable.h
+
     include/Platform/OpenGL/Gui/*.h
+    include/Platform/OpenGL/Shader/*h
+    include/Platform/OpenGL/Drawable/*.h
+
     include/Platform/OpenGL/OpenGLContext.h
     include/Platform/OpenGL/OpenGLRendererAPI.h
+    include/Platform/OpenGL/OpenGLRendererUtils.h
+
+    include/Platform/OpenGL/Buffer/OpenGLIndexBuffer.h
+    include/Platform/OpenGL/Buffer/OpenGLVertexBuffer.h
+    include/Platform/OpenGL/Buffer/OpenGLVertexArray.h
 )
 
 # Add platform-specific sources and headers
@@ -75,13 +108,27 @@ if (APPLE)
         src/${PLATFORM_API_METAL_DIR}/Gui/MetalGuiBackend.mm
         src/${PLATFORM_API_METAL_DIR}/MetalContext.mm
         src/${PLATFORM_API_METAL_DIR}/MetalRendererAPI.mm
-        
+
+        src/${PLATFORM_API_METAL_DIR}/Shader/MetalShader.mm
+
+        src/${PLATFORM_API_METAL_DIR}/Buffer/MetalIndexBuffer.mm
+        src/${PLATFORM_API_METAL_DIR}/Buffer/MetalVertexBuffer.mm
+
+        src/${PLATFORM_API_METAL_DIR}/Drawable/MetalDrawable.mm
     )
 
     list(APPEND public_headers
         include/Platform/Metal/Gui/MetalGuiBackend.h
         include/Platform/Metal/MetalContext.h
         include/Platform/Metal/MetalRendererAPI.h
+        include/Platform/Metal/MetalRendererUtils.h
+
+        include/Platform/Metal/Shader/MetalShader.h
+
+        include/Platform/Metal/Buffer/MetalIndexBuffer.h
+        include/Platform/Metal/Buffer/MetalVertexBuffer.h
+
+        include/Platform/Metal/Drawable/MetalDrawable.h
     )
 endif()
 
@@ -115,7 +162,7 @@ if (APPLE)
 endif()
 
 # Define pre-compiled header
-target_precompile_headers(pixc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/enginepch.h)
+target_precompile_headers(pixc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/pixcpch.h)
 
 # Add pre-processing flag
 target_compile_definitions(pixc PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)

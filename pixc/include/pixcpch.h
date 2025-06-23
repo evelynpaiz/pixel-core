@@ -21,6 +21,6 @@
 #include <unordered_map>
 
 // Logging
-#include "Foundation/Core/Base.h"
 #include "Foundation/Core/Log.h"
+// Macros
 #include "Foundation/Core/Assert.h"

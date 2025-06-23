@@ -1,10 +1,13 @@
-#include "enginepch.h"
-#include "Common/Renderer/Drawable/Drawable.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Drawable/Drawable.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
 
 #include "Platform/OpenGL/Drawable/OpenGLDrawable.h"
+#ifdef __APPLE__
 #include "Platform/Metal/Drawable/MetalDrawable.h"
+#endif
 
 namespace pixc {
 
@@ -16,7 +19,7 @@ namespace pixc {
  */
 std::shared_ptr<Drawable> Drawable::Create()
 {
-    CREATE_RENDERER_OBJECT(Drawable)
+    CREATE_RENDERER_OBJECT(std::make_shared, Drawable)
 }
 
 } // namespace pixc

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/VertexBuffer.h"
-#include "Common/Renderer/Buffer/IndexBuffer.h"
+#include "Foundation/Core/ClassUtils.h"
 
-#include "Common/Renderer/Shader/Shader.h"
+#include "Foundation/Renderer/Buffer/VertexBuffer.h"
+#include "Foundation/Renderer/Buffer/IndexBuffer.h"
+
+#include "Foundation/Renderer/Shader/Shader.h"
 
 /**
  * @namespace pixc
@@ -67,7 +69,7 @@ public:
                        const BufferLayout &layout)
     {
         // Verify that the size of the data is not higher than supported
-        CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(VertexData)) >= vertices.size(),
+        PIXEL_CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(VertexData)) >= vertices.size(),
                     "Potential integer overflow in vertex buffer size calculation!");
         unsigned int size = static_cast<unsigned int>(vertices.size());
         
@@ -85,7 +87,7 @@ public:
     void SetIndexData(const std::vector<unsigned int> &indices)
     {
         // Verify that the size of the data is not higher than supported
-        CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)) >= indices.size(),
+        PIXEL_CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)) >= indices.size(),
                     "Potential integer overflow in index buffer size calculation!");
         unsigned int size = static_cast<unsigned int>(indices.size());
         

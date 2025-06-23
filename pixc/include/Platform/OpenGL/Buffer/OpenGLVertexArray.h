@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/VertexBuffer.h"
+#include "Foundation/Renderer/Buffer/VertexBuffer.h"
 
 /**
  * @namespace pixc
@@ -9,7 +9,7 @@
 namespace pixc {
 
 /**
- * Represents a vertex array that describes how vertex attributes are stored in vertex buffer(s).
+ * @brief Represents a vertex array that describes how vertex attributes are stored in vertex buffer(s).
  *
  * The `OpenGLVertexArray` class manages the overall state and bindings related to vertex
  * attributes. It allows for adding multiple vertex buffers and setting an index buffer. Use this class

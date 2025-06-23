@@ -1,10 +1,13 @@
-#include "enginepch.h"
-#include "Common/Renderer/Buffer/IndexBuffer.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Buffer/IndexBuffer.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
 
 #include "Platform/OpenGL/Buffer/OpenGLIndexBuffer.h"
+#ifdef __APPLE__
 #include "Platform/Metal/Buffer/MetalIndexBuffer.h"
+#endif
 
 namespace pixc {
 
@@ -20,7 +23,7 @@ namespace pixc {
 std::shared_ptr<IndexBuffer> IndexBuffer::Create(const uint32_t *indices,
                                                  const uint32_t count)
 {
-    CREATE_RENDERER_OBJECT(IndexBuffer, indices, count)
+    CREATE_RENDERER_OBJECT(std::make_shared, IndexBuffer, indices, count)
 }
 
 } // namespace pixc

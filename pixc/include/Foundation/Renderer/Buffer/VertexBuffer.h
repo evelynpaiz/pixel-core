@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/Buffer.h"
+#include "Foundation/Core/ClassUtils.h"
+
+#include "Foundation/Renderer/Buffer/Buffer.h"
 
 /**
  * @namespace pixc

@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Foundation/Renderer/RendererCommand.h"
 
 namespace pixc {
@@ -24,7 +24,7 @@ void RendererCommand::SetClearColor(const glm::vec4 &color)
 }
 
 /**
- * Set the viewport for rendering.
+ * @brief Set the viewport for rendering.
  *
  * @param x The x-coordinate of the lower-left corner of the viewport.
  * @param y The y-coordinate of the lower-left corner of the viewport.
@@ -54,11 +54,23 @@ void RendererCommand::EndRenderPass()
 }
 
 /**
- * Clear the buffers to preset values.
+ * @brief Clear the buffers to preset values.
  */
 void RendererCommand::Clear()
 {
     s_API->Clear();
+}
+
+/**
+ * @brief Render primitives from a drawable object using the specified primitive type.
+ *
+ * @param drawable The drawable object containing the data for rendering.
+ * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
+ */
+void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
+                           const PrimitiveType &primitive)
+{
+    s_API->Draw(drawable, primitive);
 }
 
 /**
@@ -109,18 +121,7 @@ void RendererCommand::SetRenderTarget(const glm::vec4& color,
                            framebuffer);
 }
  */
-/**
- * Render primitives from a drawable object using the specified primitive type.
- *
- * @param drawable The drawable object containing the data for rendering.
- * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
 
-void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
-                           const PrimitiveType &primitive)
-{
-    s_API->Draw(drawable, primitive);
-}
- */
 /**
  * Finalize the current rendering pass.
 

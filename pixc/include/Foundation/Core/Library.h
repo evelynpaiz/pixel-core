@@ -84,7 +84,7 @@ public:
     {
         bool exists = Exists(name);
         if (exists)
-            CORE_WARN("{0} already exists!", GetTypeName());
+            PIXEL_CORE_WARN("{0} already exists!", GetTypeName());
         else
             m_Objects[name] = object;
     }
@@ -100,7 +100,7 @@ public:
     {
         bool exists = Exists(name);
         if (!exists)
-            CORE_WARN("{0} not found!", GetTypeName());
+            PIXEL_CORE_WARN("{0} not found!", GetTypeName());
         
         return m_Objects.at(name);
     }
@@ -113,7 +113,7 @@ public:
     {
         bool exists = Exists(name);
         if (!exists)
-            CORE_WARN("{0} not found!", GetTypeName());
+            PIXEL_CORE_WARN("{0} not found!", GetTypeName());
         
         return m_Objects[name];
     }

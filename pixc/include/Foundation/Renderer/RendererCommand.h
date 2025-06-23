@@ -39,6 +39,9 @@ public:
     
     static void Clear();
     
+    static void Draw(const std::shared_ptr<Drawable>& drawable,
+                     const PrimitiveType &primitive = PrimitiveType::Triangle);
+    
     /*
      static void SetRenderTarget(const RenderTargetBuffers& targets = {});
      static void SetRenderTarget(const glm::vec4& color,
@@ -52,14 +55,9 @@ public:
      
      static void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
      */
-    // Draw
-    // ----------------------------------------
-    //static void Draw(const std::shared_ptr<Drawable>& drawable,
-    //                 const PrimitiveType &primitive = PrimitiveType::Triangle);
     
     // Setter(s)
     // ----------------------------------------
-    
     //static void SetDepthTesting(const bool enabled);
     
     // Renderer variables

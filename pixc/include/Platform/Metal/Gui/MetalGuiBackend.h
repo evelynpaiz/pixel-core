@@ -1,6 +1,5 @@
 #pragma once
 
-#import "Foundation/Core/Base.h"
 #import "Foundation/Layer/Gui/GuiBackend.h"
 
 #include "Platform/Metal/MetalContext.h"

@@ -4,6 +4,8 @@
 #include <sstream>
 #include <spdlog/fmt/fmt.h>
 
+#include "Foundation/Core/ClassUtils.h"
+
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
