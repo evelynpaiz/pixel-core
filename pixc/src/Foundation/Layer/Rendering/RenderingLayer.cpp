@@ -25,6 +25,17 @@ RenderingLayer::RenderingLayer(int width, int height,
  */
 void RenderingLayer::OnAttach()
 {
+    // Define the shader to be used
+    m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColor.metal");
+    
+    m_Shader->Bind();
+    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.8f, 0.0f, 0.3f, 1.0f));
+    
+    m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
+    m_Shader->SetMat4("u_Transform.View", glm::mat4(1.0f));
+    m_Shader->SetMat4("u_Transform.Projection", glm::mat4(1.0f));
+    m_Shader->Unbind();
+    
     // Create the drawable that will be rendered
     m_Drawable = Drawable::Create();
     
@@ -51,20 +62,7 @@ void RenderingLayer::OnAttach()
     };
     
     m_Drawable->AddVertexData(vertices, layout);
-    
-    // Define the shader to be used
-    m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColor.Metal");
     m_Drawable->SetShader(m_Shader);
-    
-    m_Shader->Bind();
-    
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.8f, 0.0f, 0.3f, 1.0f));
-    
-    m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
-    m_Shader->SetMat4("u_Transform.View", glm::mat4(1.0f));
-    m_Shader->SetMat4("u_Transform.Projection", glm::mat4(1.0f));
-    
-    m_Shader->Unbind();
 }
 
 /**
@@ -85,6 +83,8 @@ void RenderingLayer::OnUpdate(Timestep ts)
     Renderer::BeginScene();
     
     m_Shader->Bind();
+    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.3f, 0.0f, 0.8f, 1.0f));
+    
     Renderer::Draw(m_Drawable);
     m_Shader->Unbind();
     

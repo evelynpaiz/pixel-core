@@ -58,6 +58,10 @@ public:
                     int slot) override;
     */
 private:
+    // Getter(s)
+    // ----------------------------------------
+    void* GetShaderVertexDescriptor();
+    
     // Compilation
     // ----------------------------------------
     void CompileShader(const std::filesystem::path& filePath);
@@ -71,9 +75,12 @@ private:
     void ProcessBufferArgument(void* arg, const char* name,
                                int32_t index, ShaderType type);
     
-    void ExtractShaderResources(void* descriptor);
+    void ExtractShaderResources() override;
     
-    void UpdateUniformBuffers();
+    void InitUniformBuffers();
+    void BindUniformBuffers();
+    void UpdateUniformBuffer(const std::string& name);
+    
     friend class MetalDrawable;
     
     // Shader variables

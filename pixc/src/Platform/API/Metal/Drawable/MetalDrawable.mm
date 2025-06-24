@@ -76,15 +76,16 @@ void MetalDrawable::Bind() const
         
         id<MTLBuffer> vertexBuffer = reinterpret_cast<id<MTLBuffer>>(metalVertexBuffer->GetBuffer());
         [encoder
-         setVertexBuffer:vertexBuffer
-         offset:0
-         atIndex:static_cast<NSUInteger>(i)];
+            setVertexBuffer:vertexBuffer
+            offset:0
+            atIndex:static_cast<NSUInteger>(i)
+        ];
     }
     
     // Define the uniforms in the command encoder
     auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
     PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
-    metalShader->UpdateUniformBuffers();
+    metalShader->BindUniformBuffers();
 }
 
 /**
@@ -119,9 +120,6 @@ void MetalDrawable::SetPipelineState() const
     NSError* error = nil;
     m_State->PipelineState = [device newRenderPipelineStateWithDescriptor:m_State->PipelineDescriptor error:&error];
     PIXEL_CORE_ASSERT(!error, "Failed to define the pipeline state!");
-    
-    // If shader information has not been defined, define it
-    metalShader->ExtractShaderResources(reinterpret_cast<void*>(m_State->PipelineDescriptor));
 }
 
 /**

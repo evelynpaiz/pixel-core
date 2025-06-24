@@ -20,6 +20,9 @@ struct MetalShader::MetalShaderSource
     id<MTLFunction> VertexFunction;
     ///< Compiled Metal fragment function.
     id<MTLFunction> FragmentFunction;
+    
+    ///< Uniforms buffer.
+    std::vector<id<MTLBuffer>> UniformBuffer;
 };
 
 /**
@@ -29,7 +32,7 @@ struct MetalShader::MetalShaderSource
  * @param filePath Path to the source file.
  */
 MetalShader::MetalShader(const std::string& name, const std::filesystem::path& filePath)
-: Shader(name, filePath)
+    : Shader(name, filePath)
 {
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
@@ -40,6 +43,10 @@ MetalShader::MetalShader(const std::string& name, const std::filesystem::path& f
     m_ShaderSource = std::make_shared<MetalShaderSource>();
     // Compile the source file and define the shader functions
     CompileShader(filePath);
+    
+    // Define the shader attributes and uniforms
+    ExtractShaderResources();
+    InitUniformBuffers();
 }
 
 /**
@@ -48,7 +55,7 @@ MetalShader::MetalShader(const std::string& name, const std::filesystem::path& f
  * @param filePath Path to the source file.
  */
 MetalShader::MetalShader(const std::filesystem::path& filePath)
-: MetalShader(filePath.stem().string(), filePath)
+    : MetalShader(filePath.stem().string(), filePath)
 {}
 
 /**
@@ -99,7 +106,12 @@ void* MetalShader::GetFragmentFunction() const
  */
 void MetalShader::SetBool(const std::string& name, bool value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -110,7 +122,12 @@ void MetalShader::SetBool(const std::string& name, bool value)
  */
 void MetalShader::SetInt(const std::string& name, int value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -121,7 +138,12 @@ void MetalShader::SetInt(const std::string& name, int value)
  */
 void MetalShader::SetFloat(const std::string& name, float value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -132,7 +154,12 @@ void MetalShader::SetFloat(const std::string& name, float value)
  */
 void MetalShader::SetVec2(const std::string& name, const glm::vec2& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -143,7 +170,12 @@ void MetalShader::SetVec2(const std::string& name, const glm::vec2& value)
  */
 void MetalShader::SetVec3(const std::string& name, const glm::vec3& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -154,7 +186,12 @@ void MetalShader::SetVec3(const std::string& name, const glm::vec3& value)
  */
 void MetalShader::SetVec4(const std::string& name, const glm::vec4& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -165,7 +202,12 @@ void MetalShader::SetVec4(const std::string& name, const glm::vec4& value)
  */
 void MetalShader::SetMat2(const std::string& name, const glm::mat2& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -176,7 +218,12 @@ void MetalShader::SetMat2(const std::string& name, const glm::mat2& value)
  */
 void MetalShader::SetMat3(const std::string& name, const glm::mat3& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -187,7 +234,12 @@ void MetalShader::SetMat3(const std::string& name, const glm::mat3& value)
  */
 void MetalShader::SetMat4(const std::string& name, const glm::mat4& value)
 {
-    SetUniformData(name, value);
+    auto& uniform = SetUniformData(name, value);
+    if (uniform.Update)
+    {
+        UpdateUniformBuffer(name);
+        uniform.Update = false;
+    }
 }
 
 /**
@@ -243,6 +295,50 @@ void MetalShader::SetTexture(const std::string &name,
     }
 }
  */
+
+/**
+ * @brief Returns a shared MTLVertexDescriptor used for shader reflection.
+ *
+ * The descriptor is created once and reused for the lifetime of the application.
+ *
+ * @return A pointer to the shared MTLVertexDescriptor instance.
+ */
+void* MetalShader::GetShaderVertexDescriptor()
+{
+    // Static descriptor, initialized only once
+    static MTLVertexDescriptor* descriptor = nil;
+    
+    if (descriptor)
+        return descriptor;
+    
+    // Initialize the vertex descriptor
+    descriptor = [[MTLVertexDescriptor alloc] init];
+    
+    // Define a dummy buffer layout with a single attribute (position vector)
+    BufferLayout layout = {
+        { "a_Position", DataType::Vec4 },
+    };
+    
+    // Fill in attribute descriptions
+    int index = 0;
+    for (const auto& name : layout.GetBufferOrder())
+    {
+        // Define the vertex attribute
+        auto& element = layout.Get(name);
+        auto *attribute = descriptor.attributes[index];
+        attribute.format = utils::graphics::mtl::ToMetalFormat(element.Type);
+        attribute.offset = element.Offset;
+        attribute.bufferIndex = index;
+        index++;
+    }
+    
+    // Set layout properties
+    auto *layouts = descriptor.layouts[0];
+    layouts.stride = layout.GetStride();
+    
+    return descriptor;
+}
+
 /**
  * @brief Compiles the shader source code for Metal.
  *
@@ -445,7 +541,7 @@ void MetalShader::ProcessShaderArgument(void* arg, ShaderType type)
  * @post  `m_Attributes` will contain information about the active attributes.
  * @post  `m_Uniforms` will contain information about the active uniforms.
  */
-void MetalShader::ExtractShaderResources(void* descriptor)
+void MetalShader::ExtractShaderResources()
 {
     // Return early if the data has been already set
     if (!m_Attributes.IsEmpty() || !m_Uniforms.IsEmpty())
@@ -454,9 +550,12 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     // Get the Metal device from the context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     
-    // Get the Metal pipeline descriptor
-    MTLRenderPipelineDescriptor* pipelineDescriptor =
-    reinterpret_cast<MTLRenderPipelineDescriptor*>(descriptor);
+    // Define a Metal pipeline descriptor
+    MTLRenderPipelineDescriptor* pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+    pipelineDescriptor.vertexFunction = m_ShaderSource->VertexFunction;
+    pipelineDescriptor.fragmentFunction = m_ShaderSource->FragmentFunction;
+    pipelineDescriptor.vertexDescriptor = reinterpret_cast<MTLVertexDescriptor*>(GetShaderVertexDescriptor());
+    pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
     
     // Obtain shader reflection information
     NSError *error = nil;
@@ -464,10 +563,11 @@ void MetalShader::ExtractShaderResources(void* descriptor)
     MTLPipelineOption option = MTLPipelineOptionBindingInfo | MTLPipelineOptionBufferTypeInfo;
     
     [device
-     newRenderPipelineStateWithDescriptor:pipelineDescriptor
-     options:option
-     reflection:&reflection
-     error:&error];
+        newRenderPipelineStateWithDescriptor:pipelineDescriptor
+        options:option
+        reflection:&reflection
+        error:&error
+    ];
     PIXEL_CORE_ASSERT(!error, "Error creating a reflection of the shader program!");
     
     // Process vertex and fragment uniforms
@@ -475,66 +575,73 @@ void MetalShader::ExtractShaderResources(void* descriptor)
         ProcessShaderArgument(reinterpret_cast<void*>(argument), ShaderType::VERTEX);
     for (id<MTLBinding> argument in reflection.fragmentBindings)
         ProcessShaderArgument(reinterpret_cast<void*>(argument), ShaderType::FRAGMENT);
+    
+    // Release the pipeline descriptor
+    [pipelineDescriptor release];
 }
 
 /**
- * @brief Updates and binds uniform buffers for the shader.
+ * @brief Initializes Metal uniform buffers for each uniform block in the shader.
  *
  * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
  *        objects and that the `DataElement` objects within the layouts have
  *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
  */
-void MetalShader::UpdateUniformBuffers()
+void MetalShader::InitUniformBuffers()
 {
-    // Get the Metal device and command encoder
+    // Retrieve the Metal device from the rendering context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-    id<MTLRenderCommandEncoder> encoder =
-    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
-    
-    // Iterate through each uniform
-    for (auto& [uniform, layout]: m_Uniforms)
+    // Iterate over each uniform block layout defined for the shader
+    for (auto& [uniform, layout] : m_Uniforms)
     {
-        uint32_t stride = layout.GetStride();   // Total size of the uniform data
-        int32_t index = layout.GetIndex();      // Binding index for the uniform buffer
+        // Determine the required buffer size for this uniform layout
+        uint32_t stride = layout.GetStride();
+        // Create a new Metal buffer for this uniform block
+        id<MTLBuffer> buffer = [device
+                                    newBufferWithLength:stride
+                                    options:MTLResourceStorageModeShared
+        ];
+        // Store the buffer in the shader source's uniform buffer list
+        m_ShaderSource->UniformBuffer.emplace_back(buffer);
+        // Link the buffer to the uniform
+        layout.SetBufferOfData(reinterpret_cast<void*>(buffer));
+    }
+}
+
+/**
+ * @brief Binds all uniform buffers to the GPU pipeline.
+ *
+ * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
+ *        objects and that the `DataElement` objects within the layouts have
+ *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
+ */
+void MetalShader::BindUniformBuffers()
+{
+    // Get the current command encoder
+    id<MTLRenderCommandEncoder> encoder =
+            reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+    
+    // Iterate over all uniform groups and their layouts stored
+    for (const auto& [uniform, layout] : m_Uniforms)
+    {
+        // Retrieve the binding index specified in the layout, which indicates
+        // the slot the buffer should be bound to in the shader
+        int32_t index = layout.GetIndex();
         
-        // Get or create the Metal uniform buffer
-        id<MTLBuffer> uniformBuffer;
-        void* buffer = layout.GetBufferOfData();
-        if (!buffer)
-        {
-            // Create a new uniform buffer if one doesn't exist
-            uniformBuffer = [device
-                             newBufferWithLength:stride
-                             options:MTLResourceStorageModeShared];
-            buffer = reinterpret_cast<void*>(uniformBuffer);
-        }
-        else
-            // If the buffer already exists, retrieve the object
-            uniformBuffer = reinterpret_cast<id<MTLBuffer>>(buffer);
-        
-        // Copy uniform data from individual members into the buffer
-        char* content = reinterpret_cast<char*>(uniformBuffer.contents);
-        for (auto& name: layout.GetBufferOrder())
-        {
-            auto& member = layout.Get(name);
-            
-            // Prevent buffer overflows
-            PIXEL_CORE_ASSERT(member.Offset + member.Size <= stride, "Uniform data overflow!");
-            
-            // Copy member data into the correct location within the buffer
-            memcpy(content + member.Offset, member.Data, member.Size);
-        }
-        
-        // Bind the Uniform Buffer to the Correct Shader Stage
+        // Get the Metal buffer associated with the current uniform group by index
+        id<MTLBuffer> buffer = reinterpret_cast<id<MTLBuffer>>(layout.GetBufferOfData());
+
+        // Iterate over all shader stages that use this uniform layout (e.g., vertex, fragment, etc.)
         for (const auto& type : layout.GetShaderType())
         {
+            // Bind the buffer to the appropriate shader stage at the specified index
             switch (type)
             {
                 case ShaderType::VERTEX:
-                    [encoder setVertexBuffer:uniformBuffer offset:0 atIndex:index];
+                    [encoder setVertexBuffer:buffer offset:0 atIndex:index];
                     break;
                 case ShaderType::FRAGMENT:
-                    [encoder setFragmentBuffer:uniformBuffer offset:0 atIndex:index];
+                    [encoder setFragmentBuffer:buffer offset:0 atIndex:index];
                     break;
                 default:
                     PIXEL_CORE_WARN("Unsupported shader type for uniform: {}", uniform);
@@ -542,6 +649,42 @@ void MetalShader::UpdateUniformBuffers()
             }
         }
     }
+}
+
+/**
+ * @brief Updates a specific uniform buffer if any of its members have changed.
+ *
+ *@param name The name of the uniform to be updated.
+ *
+ * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
+ *        objects and that the `DataElement` objects within the layouts have
+ *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
+ */
+void MetalShader::UpdateUniformBuffer(const std::string& name)
+{
+    // Ensure the uniform with the given name exists in the shader
+    PIXEL_CORE_ASSERT(IsUniform(name), "Uniform '" + name + "' not found!");
+
+    // Split the full uniform name into the group and member parts
+    auto [groupName, memberName] = utils::SplitString(name);
+    
+    // Retrieve the layout object for the uniform group from the uniform library
+    auto& layout = m_Uniforms.Library<UniformLayout>::Get(groupName);
+    
+    // Get the total size (stride) of this uniform group’s buffer layout
+    uint32_t stride = layout.GetStride();
+    
+    // Get the Metal buffer that stores the raw uniform data for this group
+    id<MTLBuffer> buffer = reinterpret_cast<id<MTLBuffer>>(layout.GetBufferOfData());
+    // Obtain a writable pointer to the buffer's contents
+    char* content = reinterpret_cast<char*>(buffer.contents);
+    
+    // Retrieve the specific uniform member from the uniform library by group and member name
+    auto& uniform = m_Uniforms.Get(groupName, memberName);
+    // Ensure that copying this uniform’s data will not overflow the allocated buffer size
+    PIXEL_CORE_ASSERT(uniform.Offset + uniform.Size <= stride, "Uniform data overflow!");
+    // Copy the member’s raw data into the appropriate offset within the buffer’s contents
+    std::memcpy(content + uniform.Offset, uniform.Data, uniform.Size);
 }
 
 } // namespace pixc

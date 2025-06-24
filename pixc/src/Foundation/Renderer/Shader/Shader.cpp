@@ -103,7 +103,7 @@ std::filesystem::path Shader::GetFullFilePath(const std::filesystem::path& fileP
             
 #ifdef __APPLE__
         case RendererAPI::API::Metal:
-            extension = ".Metal";
+            extension = ".metal";
             break;
 #endif
             

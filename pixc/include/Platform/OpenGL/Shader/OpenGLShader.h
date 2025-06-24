@@ -87,7 +87,7 @@ private:
     
     // Attributes(s) & Uniform(s)
     // ----------------------------------------
-    void ExtractShaderResources();
+    void ExtractShaderResources() override;
     // Parsing
     // ----------------------------------------
     OpenGLShaderSource ParseShader(const std::filesystem::path& filepath);

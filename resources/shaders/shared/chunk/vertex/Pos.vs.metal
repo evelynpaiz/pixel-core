@@ -17,7 +17,7 @@ struct VertexOut
 
 // Entry point of the vertex shader
 vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
-                          constant Transform &u_Transform [[ buffer(BufferIndex::Transformations) ]])
+                             constant Transform &u_Transform [[ buffer(BufferIndex::Transformations) ]])
 {
     // Transform the vertex position from object space to world space
     float4 worldPosition = u_Transform.Model * in.a_Position;

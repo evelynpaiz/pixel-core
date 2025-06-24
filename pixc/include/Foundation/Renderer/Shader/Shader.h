@@ -128,6 +128,10 @@ protected:
         return uniform;
     }
     
+    // Attributes(s) & Uniform(s)
+    // ----------------------------------------
+    virtual void ExtractShaderResources() = 0;
+    
     // Shader variables
     // ----------------------------------------
 protected:

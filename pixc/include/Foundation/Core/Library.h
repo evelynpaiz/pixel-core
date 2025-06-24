@@ -143,6 +143,13 @@ public:
     /// @return `true` if the library contains no elements, `false` otherwise.
     bool IsEmpty() const { return m_Objects.empty(); }
     
+    /// @brief Returns the number of objects stored in the library.
+    /// @return The size of the object collection.
+    size_t Size() const
+    {
+        return m_Objects.size();
+    }
+    
     // Iteration support
     // ----------------------------------------
     /// @brief Get the begin iterator for the library.

@@ -117,6 +117,10 @@ public:
             m_ShaderTypes.push_back(type);
     }
     
+    /// @brief Sets the pointer to the raw data buffer for this uniform layout.
+    /// @return A pointer to the data buffer, or `nullptr` if not yet allocated.
+    void SetBufferOfData(void* buffer) { m_Buffer = buffer; }
+    
     // Getter(s)
     // ----------------------------------------
     /// @brief Gets the binding index for this uniform layout.
