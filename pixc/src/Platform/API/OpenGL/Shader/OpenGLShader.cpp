@@ -67,12 +67,7 @@ void OpenGLShader::Unbind() const
  */
 void OpenGLShader::SetBool(const std::string& name, bool value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform1i(uniform.Location, (int)value);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform1i(uniform.Location, (int)value));
 }
 
 /**
@@ -83,12 +78,7 @@ void OpenGLShader::SetBool(const std::string& name, bool value)
  */
 void OpenGLShader::SetInt(const std::string& name, int value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform1i(uniform.Location, value);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform1i(uniform.Location, value));
 }
 
 /**
@@ -99,12 +89,7 @@ void OpenGLShader::SetInt(const std::string& name, int value)
  */
 void OpenGLShader::SetFloat(const std::string& name, float value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform1f(uniform.Location, value);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform1f(uniform.Location, value));
 }
 
 /**
@@ -115,12 +100,7 @@ void OpenGLShader::SetFloat(const std::string& name, float value)
  */
 void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform2fv(uniform.Location, 1, &value[0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform2fv(uniform.Location, 1, &value[0]));
 }
 
 /**
@@ -131,12 +111,7 @@ void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value)
  */
 void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform3fv(uniform.Location, 1, &value[0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform3fv(uniform.Location, 1, &value[0]));
 }
 
 /**
@@ -147,12 +122,7 @@ void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value)
  */
 void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniform4fv(uniform.Location, 1, &value[0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniform4fv(uniform.Location, 1, &value[0]));
 }
 
 /**
@@ -163,12 +133,7 @@ void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value)
  */
 void OpenGLShader::SetMat2(const std::string& name, const glm::mat2& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniformMatrix2fv(uniform.Location, 1, GL_FALSE, &value[0][0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniformMatrix2fv(uniform.Location, 1, GL_FALSE, &value[0][0]));
 }
 
 /**
@@ -179,12 +144,7 @@ void OpenGLShader::SetMat2(const std::string& name, const glm::mat2& value)
  */
 void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniformMatrix3fv(uniform.Location, 1, GL_FALSE, &value[0][0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniformMatrix3fv(uniform.Location, 1, GL_FALSE, &value[0][0]));
 }
 
 /**
@@ -195,12 +155,7 @@ void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& value)
  */
 void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &value[0][0]);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &value[0][0]));
 }
 
 /**

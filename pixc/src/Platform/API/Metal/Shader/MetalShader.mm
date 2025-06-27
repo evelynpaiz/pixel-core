@@ -106,12 +106,7 @@ void* MetalShader::GetFragmentFunction() const
  */
 void MetalShader::SetBool(const std::string& name, bool value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -122,12 +117,7 @@ void MetalShader::SetBool(const std::string& name, bool value)
  */
 void MetalShader::SetInt(const std::string& name, int value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -138,12 +128,7 @@ void MetalShader::SetInt(const std::string& name, int value)
  */
 void MetalShader::SetFloat(const std::string& name, float value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -154,12 +139,7 @@ void MetalShader::SetFloat(const std::string& name, float value)
  */
 void MetalShader::SetVec2(const std::string& name, const glm::vec2& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -170,12 +150,7 @@ void MetalShader::SetVec2(const std::string& name, const glm::vec2& value)
  */
 void MetalShader::SetVec3(const std::string& name, const glm::vec3& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -186,12 +161,7 @@ void MetalShader::SetVec3(const std::string& name, const glm::vec3& value)
  */
 void MetalShader::SetVec4(const std::string& name, const glm::vec4& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -202,12 +172,7 @@ void MetalShader::SetVec4(const std::string& name, const glm::vec4& value)
  */
 void MetalShader::SetMat2(const std::string& name, const glm::mat2& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -218,12 +183,7 @@ void MetalShader::SetMat2(const std::string& name, const glm::mat2& value)
  */
 void MetalShader::SetMat3(const std::string& name, const glm::mat3& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**
@@ -234,12 +194,7 @@ void MetalShader::SetMat3(const std::string& name, const glm::mat3& value)
  */
 void MetalShader::SetMat4(const std::string& name, const glm::mat4& value)
 {
-    auto& uniform = SetUniformData(name, value);
-    if (uniform.Update)
-    {
-        UpdateUniformBuffer(name);
-        uniform.Update = false;
-    }
+    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
 }
 
 /**

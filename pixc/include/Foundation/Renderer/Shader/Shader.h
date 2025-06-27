@@ -88,6 +88,9 @@ protected:
     // Setter(s)
     // ----------------------------------------
     /// @brief Sets the data for a uniform variable in the uniform buffer.
+    /// @tparam T The type of the uniform value (e.g., int, float, glm::vec3, etc.).
+    /// @param name The name of the uniform variable, possibly with a group prefix (e.g., "u_Material.Color").
+    /// @param value The new value to set.
     /// @return The location of the uniform variable in the shader.
     template <typename T>
     UniformElement& SetUniformData(const std::string& name, const T& value)
@@ -180,5 +183,18 @@ public:
     std::shared_ptr<Shader> Load(const std::string& name,
                                  const std::filesystem::path& filePath);
 };
+
+/// @brief Sets a uniform value and invokes a backend-specific update function if needed.
+/// @param name The name of the uniform.
+/// @param value The new value to assign.
+/// @param backendSetter The API-specific call to update the uniform (e.g., glUniform...).
+#define SET_UNIFORM(name, value, backendSetter)        \
+    do {                                               \
+        auto& uniform = SetUniformData(name, value);   \
+        if (uniform.Update) {                          \
+            backendSetter;                             \
+            uniform.Update = false;                    \
+        }                                              \
+    } while (0)
 
 } // namespace pixc

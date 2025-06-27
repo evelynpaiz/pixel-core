@@ -29,7 +29,7 @@ void RenderingLayer::OnAttach()
     m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColor.metal");
     
     m_Shader->Bind();
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.8f, 0.0f, 0.3f, 1.0f));
+    m_Shader->SetVec4("u_Color", glm::vec4(0.8f, 0.0f, 0.3f, 1.0f));
     
     m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
     m_Shader->SetMat4("u_Transform.View", glm::mat4(1.0f));
@@ -81,13 +81,7 @@ void RenderingLayer::OnUpdate(Timestep ts)
     RendererCommand::Clear();
     
     Renderer::BeginScene();
-    
-    m_Shader->Bind();
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.3f, 0.0f, 0.8f, 1.0f));
-    
     Renderer::Draw(m_Drawable);
-    m_Shader->Unbind();
-    
     Renderer::EndScene();
     
     RendererCommand::EndRenderPass();

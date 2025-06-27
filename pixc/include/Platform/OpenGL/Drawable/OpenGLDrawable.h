@@ -35,9 +35,25 @@ public:
     // Usage
     // ----------------------------------------
     /// @brief Binds the drawable by binding its vertex array.
-    void Bind() const override { m_VertexArray->Bind(); }
+    void Bind() const override
+    {
+        // Bind the vertex array, this sets up vertex attribute state
+        m_VertexArray->Bind();
+        // Bind the index buffer
+        m_IndexBuffer->Bind();
+        // Bind the shader program used for rendering
+        m_Shader->Bind();
+    }
     /// @brief Un-binds the drawable by un-binding its vertex array.
-    void Unbind() const override { m_VertexArray->Unbind(); }
+    void Unbind() const override
+    {
+        // Unbind the shader program first
+        m_Shader->Unbind();
+        // Unbind the index buffer
+        m_IndexBuffer->Unbind();
+        // Unbind the vertex array
+        m_VertexArray->Unbind();
+    }
     
 private:
     

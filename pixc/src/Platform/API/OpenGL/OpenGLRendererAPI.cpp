@@ -79,9 +79,9 @@ void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
                              const PrimitiveType &primitive)
 {
     drawable->Bind();
-    drawable->GetIndexBuffer()->Bind();
     glDrawElements(utils::graphics::gl::ToOpenGLPrimitive(primitive),
                    drawable->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+    drawable->Unbind();
 }
 
 /**

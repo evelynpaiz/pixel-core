@@ -156,7 +156,7 @@ void MetalRendererAPI::Clear()
     id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
 
     // Bind the drawable object
-    drawable->Bind();
+     drawable->Bind();
     // Draw primitives
     auto metalIndexBuffer = std::dynamic_pointer_cast<MetalIndexBuffer>(drawable->GetIndexBuffer());
     PIXEL_CORE_ASSERT(metalIndexBuffer, "Invalid buffer cast - not a Metal index buffer!");
