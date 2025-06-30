@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
 /**
- * Represents a one-dimensional texture.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a one-dimensional texture.
  *
  * The `Texture1D` class specializes the `Texture` base class to provide functionality for creating
  * and managing 1D textures. These textures consist of a single line of texel data.
@@ -39,7 +45,8 @@ public:
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
@@ -64,3 +71,4 @@ DEFINE_WHITE_TEXTURE(Texture1D)
 
 } // namespace Texturing
 } // namespace utils
+} // namespace pixc

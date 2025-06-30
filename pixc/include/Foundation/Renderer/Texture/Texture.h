@@ -1,6 +1,13 @@
 #pragma once
 
-#include "Common/Renderer/Texture/TextureUtils.h"
+#include "Foundation/Core/ClassUtils.h"
+#include "Foundation/Renderer/Texture/TextureUtils.h"
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * Specifications (properties) of a texture.
@@ -21,14 +28,14 @@ struct TextureSpecification
     /// @param type The type of the texture.
     /// @param format The texture format.
     TextureSpecification(const TextureType& type, const TextureFormat& format) :
-        Type(type), Format(format)
+    Type(type), Format(format)
     {}
     
     /// @brief Define a texture with a specific format.
     /// @param format The texture format.
     /// @param filter The texture sampling filter.
     TextureSpecification(const TextureFormat& format, const TextureFilter& filter) :
-        Format(format), Filter(filter)
+    Format(format), Filter(filter)
     {}
     
     // Setter(s)
@@ -151,7 +158,7 @@ protected:
     /// @param spec The texture specifications.
     Texture(const std::filesystem::path& path,
             const TextureSpecification& spec) :
-        m_Spec(spec), m_Path(path)
+    m_Spec(spec), m_Path(path)
     {}
     
     // Texture creation
@@ -181,12 +188,13 @@ public:
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
 /**
- * Helper struct for `TextureSpecification`.
+ * @brief Helper struct for `TextureSpecification`.
  *
  * @tparam T The texture type (e.g., `Texture2D`, `Texture3D`) that this
  *            specialization of `TextureHelper` will handle.
@@ -201,7 +209,7 @@ struct TextureHelper
 };
 
 /**
- * Generates a function to get a shared pointer to a cached white texture.
+ * @brief Generates a function to get a shared pointer to a cached white texture.
  *
  * @param TextureType The texture type (e.g., `Texture2D`, `Texture3D`).
  *
@@ -226,3 +234,4 @@ struct TextureHelper
 
 } // namespace textures
 } // namespace utils
+} // namespace pixc

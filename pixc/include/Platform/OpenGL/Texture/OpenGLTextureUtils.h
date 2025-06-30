@@ -3,9 +3,17 @@
 #include <GL/glew.h>
 
 /**
- * Utility functions related to texture operations.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @namespace utils::textures::gl
+ * @brief Utility functions related to texture operations in OpenGL.
  */
 namespace utils { namespace textures { namespace gl {
+
 /**
  * Converts a TextureType enumeration value to its corresponding OpenGL texture target.
  *
@@ -25,7 +33,7 @@ inline GLenum ToOpenGLTextureTarget(TextureType type)
         case TextureType::TEXTURECUBE:              return (GLenum)GL_TEXTURE_CUBE_MAP;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
     return 0;
 }
 
@@ -68,7 +76,7 @@ inline GLenum ToOpenGLBaseFormat(TextureFormat format)
         case TextureFormat::DEPTH24STENCIL8:    return GL_DEPTH24_STENCIL8;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
@@ -95,7 +103,7 @@ inline GLenum ToOpenGLInternalFormat(TextureFormat format)
         case TextureFormat::RG16F:              return GL_RG16F;
         case TextureFormat::RGB16F:             return GL_RGB16F;
         case TextureFormat::RGBA16F:            return GL_RGBA16F;
-        
+            
         case TextureFormat::R32F:               return GL_R32F;
         case TextureFormat::RG32F:              return GL_RG32F;
         case TextureFormat::RGB32F:             return GL_RGB32F;
@@ -113,7 +121,7 @@ inline GLenum ToOpenGLInternalFormat(TextureFormat format)
         case TextureFormat::DEPTH24STENCIL8:    return GL_DEPTH_STENCIL;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
@@ -157,7 +165,7 @@ inline GLenum ToOpenGLDataFormat(TextureFormat format)
         case TextureFormat::DEPTH32F:           return GL_FLOAT;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
@@ -202,7 +210,7 @@ inline GLenum ToOpenGLDepthAttachment(TextureFormat format)
         case TextureFormat::RGBA8UI:            break;
     }
     
-    CORE_ASSERT(false, "Format is not defined as a depth format!");
+    PIXEL_CORE_ASSERT(false, "Format is not defined as a depth format!");
     return false;
 }
 
@@ -226,7 +234,7 @@ inline GLenum ToOpenGLWrap(TextureWrap wrap)
         case TextureWrap::ClampToBorder:    return GL_CLAMP_TO_BORDER;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture wrap mode!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture wrap mode!");
     return 0;
 }
 
@@ -243,20 +251,21 @@ inline GLenum ToOpenGLFilter(TextureFilter filter, bool useMipmaps)
 {
     switch (filter)
     {
-        case TextureFilter::None:       
+        case TextureFilter::None:
             return 0;
         case TextureFilter::Nearest:
             return useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
         case TextureFilter::Linear:
             return useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
             
-        // TODO: support more options for texture filtering.
+            // TODO: support more options for texture filtering.
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
     return 0;
 }
 
 } // namespace gl
 } // namespace texturing
 } // namespace utils
+} // namespace pixc

@@ -1,48 +1,50 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture2D.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTextureUtils.h"
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 // --------------------------------------------
 // Texture (2D)
 // --------------------------------------------
 
 /**
- * Create a base 2D texture.
+ * @brief Create a base 2D texture.
  */
 OpenGLTexture2D::OpenGLTexture2D(uint8_t samples)
-    : Texture2D(samples), OpenGLTexture()
+: Texture2D(samples), OpenGLTexture()
 {
     m_Spec.Type = samples > 1 ? TextureType::TEXTURE2D_MULTISAMPLE : TextureType::TEXTURE2D;
 }
 
 /**
- * Create a 2D base texture with specific properties.
+ * @brief Create a 2D base texture with specific properties.
  *
  * @param spec The texture specifications.
  */
 OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& spec,
                                  uint8_t samples)
-    : Texture2D(spec, samples), OpenGLTexture()
+: Texture2D(spec, samples), OpenGLTexture()
 {
     m_Spec.Type = samples > 1 ? TextureType::TEXTURE2D_MULTISAMPLE : TextureType::TEXTURE2D;
 }
 
 /**
- * Create a 2D texture from input data.
+ * @brief Create a 2D texture from input data.
  *
  * @param data The data for the 2D texture.
  */
 OpenGLTexture2D::OpenGLTexture2D(const void *data, uint8_t samples)
-    : OpenGLTexture2D(samples)
+: OpenGLTexture2D(samples)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a 2D texture from input data and with specific properties.
+ * @brief Create a 2D texture from input data and with specific properties.
  *
  * @param data The data for the 2D texture.
  * @param spec The texture specifications.
@@ -50,20 +52,20 @@ OpenGLTexture2D::OpenGLTexture2D(const void *data, uint8_t samples)
 OpenGLTexture2D::OpenGLTexture2D(const void *data,
                                  const TextureSpecification& spec,
                                  uint8_t samples)
-    : OpenGLTexture2D(spec, samples)
+: OpenGLTexture2D(spec, samples)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a 2D texture from the input source file.
+ * @brief Create a 2D texture from the input source file.
  *
  * @param filePath Texture file path.
  * @param flip Fip the texture vertically.
  */
 OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filePath,
                                  bool flip)
-    : Texture2D(filePath, flip), OpenGLTexture()
+: Texture2D(filePath, flip), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE2D;
     
@@ -71,7 +73,7 @@ OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filePath,
 }
 
 /**
- * Create a 2D texture from the input source file.
+ * @brief Create a 2D texture from the input source file.
  *
  * @param filePath Texture file path.
  * @param spec The texture specifications.
@@ -79,7 +81,7 @@ OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filePath,
  */
 OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filePath,
                                  const TextureSpecification& spec, bool flip)
-    : Texture2D(filePath, spec, flip), OpenGLTexture()
+: Texture2D(filePath, spec, flip), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE2D;
     
@@ -87,14 +89,14 @@ OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filePath,
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The texture data. This can be nullptr if the texture is to be written.
  */
 void OpenGLTexture2D::CreateTexture(const void *data)
 {
     // Verify size of the 2D texture
-    CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
+    PIXEL_CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
     
     // Bind the texture
     Bind();
@@ -145,3 +147,5 @@ void OpenGLTexture2D::CreateTexture(const void *data)
     // Define the texture as loaded
     m_IsLoaded = true;
 }
+
+} // namespace pixc

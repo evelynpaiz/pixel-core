@@ -2,11 +2,13 @@
 
 #include "Foundation/Event/WindowEvent.h"
 
-//#include "Common/Renderer/Shader/Shader.h"
-//#include "Common/Renderer/Material/Material.h"
-
 #include "Foundation/Renderer/Renderer.h"
 #include "Foundation/Renderer/RendererCommand.h"
+
+#include "Foundation/Renderer/Texture/Texture2D.h"
+
+//#include "Foundation/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Shader/Shader.h"
 
 //#include <glm/gtc/matrix_transform.hpp>
 
@@ -26,10 +28,10 @@ RenderingLayer::RenderingLayer(int width, int height,
 void RenderingLayer::OnAttach()
 {
     // Define the shader to be used
-    m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColor.metal");
+    m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColorTexture.metal");
     
     m_Shader->Bind();
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(0.8f, 0.0f, 0.3f, 1.0f));
+    m_Shader->SetVec4("u_Material.Color", glm::vec4(1.0f));
     
     m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
     m_Shader->SetMat4("u_Transform.View", glm::mat4(1.0f));
@@ -50,15 +52,16 @@ void RenderingLayer::OnAttach()
     // Define the vertex data for the drawable
     std::vector<RenderingLayer::VertexData> vertices =
     {
-        // { position }
-        { {-0.5f, -0.5f, 0.0f, 1.0f} },     // bottom left (0)
-        { { 0.5f, -0.5f, 0.0f, 1.0f} },     // bottom right (1)
-        { { 0.5f,  0.5f, 0.0f, 1.0f} },     // top right (2)
-        { {-0.5f,  0.5f, 0.0f, 1.0f} }      // top left (3)
+        // { position, texture coords }
+        { {-0.5f, -0.5f, 0.0f, 1.0f}, {0.0f,  0.0f} },     // bottom left (0)
+        { { 0.5f, -0.5f, 0.0f, 1.0f}, {1.0f,  0.0f} },     // bottom right (1)
+        { { 0.5f,  0.5f, 0.0f, 1.0f}, {1.0f,  1.0f} },     // top right (2)
+        { {-0.5f,  0.5f, 0.0f, 1.0f}, {0.0f,  1.0f} }      // top left (3)
     };
     
     BufferLayout layout = {
         { "a_Position", DataType::Vec4 },
+        { "a_TextureCoord", DataType::Vec2 },
     };
     
     m_Drawable->AddVertexData(vertices, layout);
@@ -72,6 +75,10 @@ void RenderingLayer::OnAttach()
  */
 void RenderingLayer::OnUpdate(Timestep ts)
 {
+    // Define rendering texture(s)
+    static auto &white = utils::textures::WhiteTexture2D();
+    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg");
+    
     // Reset rendering statistics
     Renderer::ResetStats();
     
@@ -81,6 +88,11 @@ void RenderingLayer::OnUpdate(Timestep ts)
     RendererCommand::Clear();
     
     Renderer::BeginScene();
+    
+    m_Shader->Bind();
+    m_Shader->SetTexture("u_Material.TextureMap", container, 0);
+    m_Shader->Unbind();
+    
     Renderer::Draw(m_Drawable);
     Renderer::EndScene();
     

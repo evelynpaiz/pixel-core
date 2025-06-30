@@ -1,13 +1,21 @@
 #pragma once
 
-#import <Metal/Metal.h> 
+#import <Metal/Metal.h>
 
 /**
- * Utility functions related to texture operations.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @namespace utils::textures::gl
+ * @brief Utility functions related to texture operations in Metal.
  */
 namespace utils { namespace textures { namespace mtl {
+
 /**
- * Converts a TextureType enumeration value to its corresponding Metal texture type.
+ * @brief Converts a TextureType enumeration value to its corresponding Metal texture type.
  *
  * @param type The TextureType to convert.
  * @return The equivalent Metal texture type.
@@ -25,12 +33,12 @@ inline MTLTextureType ToMetalTextureType(TextureType type)
         case TextureType::TEXTURECUBE:              return MTLTextureTypeCube;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
     return (MTLTextureType)0;
 }
 
 /**
- * Convert the texture format to its corresponding Metal pixel format type.
+ * @brief Convert the texture format to its corresponding Metal pixel format type.
  *
  * @param format The texture format.
  *
@@ -71,12 +79,12 @@ inline MTLPixelFormat ToMetalPixelFormat(TextureFormat format)
         case TextureFormat::DEPTH24STENCIL8:  return MTLPixelFormatDepth24Unorm_Stencil8;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return MTLPixelFormatInvalid;
 }
 
 /**
- * Convert the texture wrap mode to its corresponding Metal type.
+ * @brief Convert the texture wrap mode to its corresponding Metal type.
  *
  * @param mode The texture wrapping mode.
  *
@@ -84,7 +92,7 @@ inline MTLPixelFormat ToMetalPixelFormat(TextureFormat format)
  *
  * @note If the input wrap mode is not recognized, the function will assert with an error.
  */
-inline MTLSamplerAddressMode ToMetalWrap(TextureWrap wrap) 
+inline MTLSamplerAddressMode ToMetalWrap(TextureWrap wrap)
 {
     switch (wrap)
     {
@@ -95,12 +103,12 @@ inline MTLSamplerAddressMode ToMetalWrap(TextureWrap wrap)
         case TextureWrap::ClampToBorder:    return MTLSamplerAddressModeClampToBorderColor;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture wrap mode!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture wrap mode!");
     return (MTLSamplerAddressMode)0;
 }
 
 /**
- * Convert the texture filter mode to its corresponding Metal type.
+ * @brief Convert the texture filter mode to its corresponding Metal type.
  *
  * @param mode The texture filtering mode.
  *
@@ -116,15 +124,15 @@ inline MTLSamplerMinMagFilter ToMetalFilter(TextureFilter filter)
         case TextureFilter::Nearest:    return MTLSamplerMinMagFilterNearest;
         case TextureFilter::Linear:     return MTLSamplerMinMagFilterLinear;
             
-        // TODO: support more options for texture filtering.
+            // TODO: support more options for texture filtering.
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
     return (MTLSamplerMinMagFilter)0;
 }
 
 /**
- *  Creates an MTLRegion based on a TextureSpecification.
+ *  @brief Creates an MTLRegion based on a TextureSpecification.
  *
  *  @param spec The TextureSpecification defining the texture's type and dimensions.
  *
@@ -140,20 +148,20 @@ inline MTLRegion GetMetalRegion(const TextureSpecification& spec)
         case TextureType::TEXTURE1D:
             return MTLRegionMake1D(0, spec.Width);
         case TextureType::TEXTURE2D:
-        case TextureType::TEXTURE2D_MULTISAMPLE:    
+        case TextureType::TEXTURE2D_MULTISAMPLE:
             return MTLRegionMake2D(0, 0, spec.Width, spec.Height);
-        case TextureType::TEXTURE3D:                
+        case TextureType::TEXTURE3D:
             return MTLRegionMake3D(0, 0, 0, spec.Width, spec.Height, spec.Depth);
         case TextureType::TEXTURECUBE:
             return MTLRegionMake2D(0, 0, spec.Width, spec.Height);
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture type!");
     return MTLRegionMake2D(0, 0, 0, 0);
 }
 
 /**
- * Define the number of channels in the texture based on its format.
+ * @brief Define the number of channels in the texture based on its format.
  *
  * @param format The texture format.
  *
@@ -175,7 +183,7 @@ inline unsigned int GetMetalChannelCount(TextureFormat format)
         case TextureFormat::DEPTH32:
         case TextureFormat::DEPTH32F:
         case TextureFormat::DEPTH24STENCIL8:    return 1;
-        
+            
         case TextureFormat::RG32F:
         case TextureFormat::RG16F:
         case TextureFormat::RG8:
@@ -194,10 +202,11 @@ inline unsigned int GetMetalChannelCount(TextureFormat format)
         case TextureFormat::None:               return 0;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
 } // namespace mtl
 } // namespace texturing
 } // namespace utils
+} // namespace pixc

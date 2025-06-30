@@ -11,6 +11,7 @@ file(
     src/Foundation/Input/*.cpp
     src/Foundation/Layer/*.cpp
 
+    src/Foundation/Renderer/Texture/*.cpp
     src/Foundation/Renderer/Shader/*.cpp
 
     src/Foundation/Renderer/GraphicsContext.cpp
@@ -43,6 +44,7 @@ file(
     src/${PLATFORM_OS_DIR}/*.cpp
     src/${PLATFORM_OS_DIR}/*.mm
 
+    src/${PLATFORM_API_OPENGL_DIR}/Texture/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Shader/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Drawable/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Gui/*.cpp
@@ -72,6 +74,7 @@ file(
     include/Foundation/Input/*.h
     include/Foundation/Layer/*.h
 
+    include/Foundation/Renderer/Texture/*.h
     include/Foundation/Renderer/Shader/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
@@ -89,9 +92,10 @@ file(
 
     include/Foundation/Renderer/Drawable/Drawable.h
 
-    include/Platform/OpenGL/Gui/*.h
+    include/Platform/OpenGL/Texture/*.h
     include/Platform/OpenGL/Shader/*h
     include/Platform/OpenGL/Drawable/*.h
+    include/Platform/OpenGL/Gui/*.h
 
     include/Platform/OpenGL/OpenGLContext.h
     include/Platform/OpenGL/OpenGLRendererAPI.h
@@ -114,6 +118,12 @@ if (APPLE)
         src/${PLATFORM_API_METAL_DIR}/Buffer/MetalIndexBuffer.mm
         src/${PLATFORM_API_METAL_DIR}/Buffer/MetalVertexBuffer.mm
 
+        src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture.mm
+        src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture1D.cpp
+        src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture2D.cpp
+        src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture3D.cpp
+        src/${PLATFORM_API_METAL_DIR}/Texture/MetalTextureCube.cpp
+
         src/${PLATFORM_API_METAL_DIR}/Drawable/MetalDrawable.mm
     )
 
@@ -123,10 +133,17 @@ if (APPLE)
         include/Platform/Metal/MetalRendererAPI.h
         include/Platform/Metal/MetalRendererUtils.h
 
-        include/Platform/Metal/Shader/MetalShader.h
-
         include/Platform/Metal/Buffer/MetalIndexBuffer.h
         include/Platform/Metal/Buffer/MetalVertexBuffer.h
+
+        include/Platform/Metal/Texture/MetalTextureUtils.h
+        include/Platform/Metal/Texture/MetalTexture.h
+        include/Platform/Metal/Texture/MetalTexture1D.h
+        include/Platform/Metal/Texture/MetalTexture2D.h
+        include/Platform/Metal/Texture/MetalTexture3D.h 
+        include/Platform/Metal/Texture/MetalTextureCube.h
+
+        include/Platform/Metal/Shader/MetalShader.h
 
         include/Platform/Metal/Drawable/MetalDrawable.h
     )

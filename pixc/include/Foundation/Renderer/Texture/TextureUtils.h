@@ -1,7 +1,13 @@
 #pragma once
 
 /**
- * Enumeration representing the types of textures.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Enumeration representing the types of textures.
  *
  * The `TextureType` enum class defines the various types of textures that can be used
  * within a graphics application. It provides identifiers for different texture categories,
@@ -19,7 +25,7 @@ enum class TextureType
 };
 
 /**
- * Enumeration of internal texture formats used for specifying pixel formats in textures.
+ * @brief Enumeration of internal texture formats used for specifying pixel formats in textures.
  *
  * The `TextureFormat` enum provides a list of supported internal formats for textures. These
  * formats determine how pixel data is stored in the graphics memory. Each format has different
@@ -28,6 +34,7 @@ enum class TextureType
 enum class TextureFormat
 {
     None = 0,           ///< No format.
+    
     // Color formats
     R8,                 ///< 8-bit single channel (red only).
     RG8,                ///< 8-bit per channel, 16-bit total (two channels).
@@ -59,7 +66,7 @@ enum class TextureFormat
 };
 
 /**
- * Enumeration of different texture wrapping modes.
+ * @brief Enumeration of different texture wrapping modes.
  *
  * The `TextureWrap` enum provides a list of supported texture wrapping modes that determine
  * how texture coordinates outside the [0, 1] range are handled. These modes dictate how the
@@ -75,7 +82,7 @@ enum class TextureWrap
 };
 
 /**
- * Enumeration of texture filtering modes.
+ * @brief Enumeration of texture filtering modes.
  *
  * The `TextureFilter` enum provides a list of supported texture filtering modes that
  * determine how textures are sampled when their original resolution differs from the rendering
@@ -90,12 +97,13 @@ enum class TextureFilter
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
 /**
- * Define the number of channels in the texture based on its format.
+ * @brief Define the number of channels in the texture based on its format.
  *
  * @param format The texture format.
  *
@@ -135,12 +143,12 @@ inline unsigned int GetChannelCount(TextureFormat format)
         case TextureFormat::DEPTH24STENCIL8: return 0;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
 /**
- * Define the number of bytes (per channel) in the texture based on its format.
+ * @brief Define the number of bytes (per channel) in the texture based on its format.
  *
  * @param format The texture format.
  *
@@ -150,7 +158,7 @@ inline unsigned int GetChannelCount(TextureFormat format)
  */
 inline unsigned int GetBytesPerChannel(TextureFormat format)
 {
-    switch (format) 
+    switch (format)
     {
         case TextureFormat::None:
             return 0;
@@ -159,13 +167,13 @@ inline unsigned int GetBytesPerChannel(TextureFormat format)
         case TextureFormat::RG8:
         case TextureFormat::RGB8:
         case TextureFormat::RGBA8:
-        
+            
         case TextureFormat::R8UI:
         case TextureFormat::RG8UI:
         case TextureFormat::RGB8UI:
         case TextureFormat::RGBA8UI:
             return 1;  // Each channel (R, G, B) is 1 byte
-
+            
         case TextureFormat::R16F:
         case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
@@ -188,12 +196,12 @@ inline unsigned int GetBytesPerChannel(TextureFormat format)
             return 4;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return 0;
 }
 
 /**
- * Verify if a texture format can be represented as depth format.
+ * @brief Verify if a texture format can be represented as depth format.
  *
  * @param format The texture format.
  *
@@ -233,12 +241,12 @@ inline bool IsDepthFormat(TextureFormat format)
         case TextureFormat::RGBA8UI: return false;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return false;
 }
 
 /**
- * Verify if a texture format can be represented as RGB format.
+ * @brief Verify if a texture format can be represented as RGB format.
  *
  * @param format The texture format.
  *
@@ -252,13 +260,13 @@ inline bool IsRGBFormat(TextureFormat format)
     {
         case TextureFormat::RGB8:
         case TextureFormat::RGB16F:
-        case TextureFormat::RGB32F: 
+        case TextureFormat::RGB32F:
         case TextureFormat::RGB8UI:     return true;
             
         case TextureFormat::None:
         case TextureFormat::R8:
         case TextureFormat::RG8:
-        
+            
         case TextureFormat::RGBA8:
             
         case TextureFormat::R16F:
@@ -282,7 +290,7 @@ inline bool IsRGBFormat(TextureFormat format)
         case TextureFormat::DEPTH16:    return false;
     }
     
-    CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture format!");
     return false;
 }
 
@@ -319,7 +327,7 @@ inline void* AllocateTextureData(TextureFormat format, unsigned int size)
         case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
         case TextureFormat::RGBA16F:
-        
+            
         case TextureFormat::R32F:
         case TextureFormat::RG32F:
         case TextureFormat::RGB32F:
@@ -327,7 +335,7 @@ inline void* AllocateTextureData(TextureFormat format, unsigned int size)
         case TextureFormat::DEPTH32F: return static_cast<void*>(new float[size]);
     }
     
-    CORE_ASSERT(false, "Unknown texture format!");
+    PIXEL_CORE_ASSERT(false, "Unknown texture format!");
     return nullptr;
 }
 
@@ -346,7 +354,7 @@ inline void FreeTextureData(TextureFormat format, void* buffer)
         case TextureFormat::None:
             // Do nothing, as nullptr was returned in AllocateBufferForFormat
             break;
-
+            
         case TextureFormat::R8:
         case TextureFormat::RG8:
         case TextureFormat::RGB8:
@@ -357,14 +365,14 @@ inline void FreeTextureData(TextureFormat format, void* buffer)
         case TextureFormat::RGBA8UI:
             delete[] static_cast<char*>(buffer);
             break;
-
+            
         case TextureFormat::DEPTH16:
         case TextureFormat::DEPTH24:
         case TextureFormat::DEPTH32:
         case TextureFormat::DEPTH24STENCIL8:
             delete[] static_cast<int*>(buffer);
             break;
-
+            
         case TextureFormat::R16F:
         case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
@@ -376,12 +384,13 @@ inline void FreeTextureData(TextureFormat format, void* buffer)
         case TextureFormat::DEPTH32F:
             delete[] static_cast<float*>(buffer);
             break;
-
+            
         default:
-            CORE_ASSERT(false, "Unknown texture format!");
+            PIXEL_CORE_ASSERT(false, "Unknown texture format!");
             break;
     }
 }
 
 } // namespace textures
 } // namespace utils
+} // namespace pixc

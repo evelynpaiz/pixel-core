@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/TextureCube.h"
+#include "Foundation/Renderer/Texture/TextureCube.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture.h"
 
 /**
- * Concrete implementation of a cubemap texture for OpenGL.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a cubemap texture for OpenGL.
  *
  * The `OpenGLTextureCube` class specializes the `TextureCube` class to provide
  * a concrete implementation using the OpenGL API. It handles the creation, binding,
@@ -50,3 +56,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLTextureCube);
 };
+
+} // namespace pixc

@@ -43,6 +43,7 @@ private:
     struct VertexData
     {
         glm::vec4 position;         ///< Vertex position.
+        glm::vec2 uv;               ///< Texture coordinate.
     };
     
     // Disable the copying or moving of this resource

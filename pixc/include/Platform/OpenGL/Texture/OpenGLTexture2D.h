@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture2D.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture.h"
 
 /**
- * Concrete implementation of a two-dimensional texture for OpenGL.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a two-dimensional texture for OpenGL.
  *
  * The `OpenGLTexture2D` class specializes the `Texture2D` class to provide
  * a concrete implementation using the OpenGL API. It handles the creation, binding,
@@ -26,7 +32,7 @@ public:
     
     
     OpenGLTexture2D(const void *data, uint8_t samples);
-    OpenGLTexture2D(const void *data, const TextureSpecification& spec, 
+    OpenGLTexture2D(const void *data, const TextureSpecification& spec,
                     uint8_t samples);
     
     OpenGLTexture2D(const std::filesystem::path& filePath, bool flip);
@@ -47,3 +53,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLTexture2D);
 };
+
+} // namespace pixc

@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/TextureCube.h"
+#include "Foundation/Renderer/Texture/TextureCube.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
 
 /**
- * Concrete implementation of a cubemap texture for Metal.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a cubemap texture for Metal.
  *
  * The `MetalTextureCube` class specializes the `TextureCube` class to provide
  * a concrete implementation using the Metal API. It handles the creation, binding,
@@ -56,3 +62,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(MetalTextureCube);
 };
+
+} // namespace pixc

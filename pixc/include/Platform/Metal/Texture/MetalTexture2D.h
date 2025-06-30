@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture2D.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
 
 /**
- * Concrete implementation of a two-dimensional texture for Metal.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a two-dimensional texture for Metal.
  *
  * The `MetalTexture2D` class specializes the `Texture2D` class to provide
  * a concrete implementation using the Metal API. It handles the creation, binding,
@@ -53,3 +59,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(MetalTexture2D);
 };
+
+} // namespace pixc

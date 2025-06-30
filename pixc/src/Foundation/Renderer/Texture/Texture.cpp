@@ -1,11 +1,13 @@
-#include "enginepch.h"
-#include "Common/Renderer/Texture/Texture.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+namespace pixc {
+
 /**
- * Update the specifications of a texture resource based on width, height, channels, and extension.
+ * @brief Update the specifications of a texture resource based on width, height, channels, and extension.
  *
  * @param width The width of the texture.
  * @param height The height of the texture.
@@ -44,7 +46,7 @@ void Texture::Update(const unsigned int width, const unsigned int height,
 }
 
 /**
- * Retrieves the number of channels in the texture.
+ * @brief Retrieves the number of channels in the texture.
  *
  * @returns The number of channels.
  */
@@ -52,14 +54,14 @@ int Texture::GetChannels() const
 {
     // Get the number of channels in the texture
     int channels = utils::textures::GetChannelCount(m_Spec.Format);
-    CORE_ASSERT(channels >= 1 && channels <= 4, "Invalid number of channels in the attachment!");
+    PIXEL_CORE_ASSERT(channels >= 1 && channels <= 4, "Invalid number of channels in the attachment!");
     
     // TODO: Verify support for depth attachments (channels = 0 for now)
     return channels;
 }
 
 /**
- * Retrieves the number of channels, ensuring a 4-byte aligned stride.
+ * @brief Retrieves the number of channels, ensuring a 4-byte aligned stride.
  *
  * @return The adjusted number of channels ensuring a 4-byte aligned stride.
  */
@@ -74,7 +76,7 @@ int Texture::GetAlignedChannels() const
 }
 
 /**
- * Computes the stride (row size in bytes) of the texture.
+ * @brief Computes the stride (row size in bytes) of the texture.
  *
  * @returns The computed stride of the texture in bytes.
  */
@@ -86,3 +88,5 @@ int Texture::GetStride() const
     
     return stride;
 }
+
+} // namespace pixc

@@ -1,23 +1,30 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/Texture.h"
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 // Forward declarations
 class Texture2D;
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::draw
+ * @brief Utility functions related to rendering UI and drawing operations.
  */
-namespace utils { namespace Draw {
+namespace utils { namespace draw {
 
 inline bool TextureLoader(std::shared_ptr<Texture2D> &texture,
                           std::filesystem::path &name, const char *label,
                           const char *filter, const bool &flip);
-} // namespace Draw
+} // namespace draw
 } // namespace utils
 
 /**
- * Represents a two-dimensional texture.
+ * @brief Represents a two-dimensional texture.
  *
  * The `Texture2D` class specializes the `Texture` base class to provide functionality
  * for creating and managing standard 2D textures. This class supports multisampling to improve
@@ -50,7 +57,7 @@ public:
     
     // Friend class definition(s)
     // ----------------------------------------
-    friend bool utils::Draw::TextureLoader(std::shared_ptr<Texture2D> &texture,
+    friend bool utils::draw::TextureLoader(std::shared_ptr<Texture2D> &texture,
                                            std::filesystem::path &name, const char *label,
                                            const char *filter, const bool &flip);
     
@@ -64,14 +71,14 @@ protected:
     /// @param spec The texture specifications.
     /// @param samples The number of samples to use for multisampling.
     Texture2D(const TextureSpecification& spec, uint8_t samples)
-        : Texture(spec), m_Samples(samples)
+    : Texture(spec), m_Samples(samples)
     {}
     
     /// @brief Create a general texture from a specific path.
     /// @param filePath Texture file path.
     /// @param flip Fip the texture vertically.
     Texture2D(const std::filesystem::path& filePath, bool flip) :
-        Texture(filePath), m_Flip(flip)
+    Texture(filePath), m_Flip(flip)
     {}
     /// @brief Create a general texture with specific properties and defined file path.
     /// @param filePath Texture file path.
@@ -79,7 +86,7 @@ protected:
     /// @param flip Fip the texture vertically.
     Texture2D(const std::filesystem::path& filePath,
               const TextureSpecification& spec, bool flip) :
-        Texture(filePath, spec), m_Flip(flip)
+    Texture(filePath, spec), m_Flip(flip)
     {}
     
 protected:
@@ -102,7 +109,8 @@ public:
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
@@ -119,14 +127,14 @@ struct TextureHelper<Texture2D>
 };
 
 /**
- * Get a shared pointer to a 1x1 white texture.
+ * @brief Get a shared pointer to a 1x1 white texture.
  *
  * @return A 1x1 white texture.
  */
 DEFINE_WHITE_TEXTURE(Texture2D)
 
 /**
- * Get a shared pointer to an empty texture with a checkerboard pattern.
+ * @brief Get a shared pointer to an empty texture with a checkerboard pattern.
  *
  * This function returns a shared pointer to an empty texture with a checkerboard pattern.
  * If the texture has already been created, it will be reused to avoid redundant texture creation.
@@ -154,5 +162,6 @@ inline std::shared_ptr<Texture2D> EmptyTexture2D()
     return texture;
 }
 
-} // namespace Texturing
+} // namespace textures
 } // namespace utils
+} // namespace pixc

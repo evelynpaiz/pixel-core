@@ -1,17 +1,20 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
-#include "Common/Renderer/Texture/TextureUtils.h"
+#include "Foundation/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/TextureUtils.h"
 
 /**
- * Provides a static interface for common OpenGL texture operations.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Provides a static interface for common OpenGL texture operations.
  *
  * This class encapsulates low-level OpenGL functions related to texture management. It offers
  * a simplified way to perform operations like creation, binding, unbinding, and deletion of texture
  * objects.
- *
- * @note `OpenGLTexture` is a non-instantiable utility class. All its members are static, and
- * it's not intended to be subclassed.
  */
 class OpenGLTexture
 {
@@ -28,10 +31,6 @@ public:
     void GLBind(TextureType type) const;
     void GLBindToTextureUnit(TextureType type, uint32_t slot) const;
     void GLUnbind(TextureType type)const;
-    
-    // Getter(s)
-    // ----------------------------------------
-    static uint32_t GLGetTextureID(const std::shared_ptr<Texture>& texture);
     
     // Friend class definition(s)
     // ----------------------------------------
@@ -86,3 +85,5 @@ protected:
     }\
     /** @brief Creates the OpenGL texture. */\
     void CreateTexture(const void* data) override;
+
+} // namespace pixc

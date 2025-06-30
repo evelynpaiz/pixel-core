@@ -44,11 +44,11 @@ public:
     void SetMat2(const std::string& name, const glm::mat2& value) override;
     void SetMat3(const std::string& name, const glm::mat3& value) override;
     void SetMat4(const std::string& name, const glm::mat4& value) override;
-    /*
+    
     void SetTexture(const std::string &name,
                     const std::shared_ptr<Texture>& texture,
                     int slot) override;
-    */
+    
 private:
     /**
      * Represents the source code for an OpenGL shader program.

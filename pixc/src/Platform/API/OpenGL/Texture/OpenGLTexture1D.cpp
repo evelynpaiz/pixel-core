@@ -1,62 +1,64 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture1D.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTextureUtils.h"
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 /**
- * Create a base 1D texture.
+ * @brief Create a base 1D texture.
  */
 OpenGLTexture1D::OpenGLTexture1D()
-    : Texture1D(), OpenGLTexture()
+: Texture1D(), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE1D;
 }
 
 /**
- * Create a 1D base texture with specific properties.
+ * @brief Create a 1D base texture with specific properties.
  *
  * @param spec The texture specifications.
  */
 OpenGLTexture1D::OpenGLTexture1D(const TextureSpecification& spec)
-    : Texture1D(spec), OpenGLTexture()
+: Texture1D(spec), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE1D;
 }
 
 /**
- * Create a 1D texture from input data.
+ * @brief Create a 1D texture from input data.
  *
  * @param data The data for the 1D texture.
  */
 OpenGLTexture1D::OpenGLTexture1D(const void *data)
-    : OpenGLTexture1D()
+: OpenGLTexture1D()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a 1D texture from input data and with specific properties.
+ * @brief Create a 1D texture from input data and with specific properties.
  *
  * @param data The data for the 1D texture.
  * @param spec The texture specifications.
  */
 OpenGLTexture1D::OpenGLTexture1D(const void *data, const TextureSpecification& spec)
-    : OpenGLTexture1D(spec)
+: OpenGLTexture1D(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The texture data. This can be nullptr if the texture is to be written.
  */
 void OpenGLTexture1D::CreateTexture(const void *data)
 {
     // Verify size of the 1D texture
-    CORE_ASSERT(m_Spec.Width > 0, "1D texture size not properly defined!");
+    PIXEL_CORE_ASSERT(m_Spec.Width > 0, "1D texture size not properly defined!");
     
     // Bind the texture
     Bind();
@@ -96,3 +98,5 @@ void OpenGLTexture1D::CreateTexture(const void *data)
     // Define the texture as loaded
     m_IsLoaded = true;
 }
+
+} // namespace pixc

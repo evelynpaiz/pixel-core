@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
 /**
- * Represents a three-dimensional texture.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a three-dimensional texture.
  *
  * The `Texture3D` class specializes the `Texture` base class to provide functionality for creating
  * and managing 3D textures. These textures consist of volumetric data, organized as a set of 2D slices.
@@ -38,7 +44,8 @@ public:
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
@@ -63,3 +70,4 @@ DEFINE_WHITE_TEXTURE(Texture3D)
 
 } // namespace Texturing
 } // namespace utils
+} // namespace pixc

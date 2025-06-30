@@ -1,15 +1,20 @@
-#include "enginepch.h"
-#include "Common/Renderer/Texture/Texture2D.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTexture2D.h"
+#ifdef __APPLE__
 #include "Platform/Metal/Texture/MetalTexture2D.h"
+#endif
 
 #include <stb_image.h>
 
+namespace pixc {
+
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param samples The number of samples to use for multisampling.
  *
@@ -17,11 +22,11 @@
  */
 std::shared_ptr<Texture2D> Texture2D::Create(uint8_t samples)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, samples)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, samples)
 }
 
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param spec The texture specifications.
  * @param samples The number of samples to use for multisampling.
@@ -31,25 +36,25 @@ std::shared_ptr<Texture2D> Texture2D::Create(uint8_t samples)
 std::shared_ptr<Texture2D> Texture2D::Create(const TextureSpecification& spec,
                                              uint8_t samples)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, spec, samples)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, spec, samples)
 }
 
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param data The data for the 2D texture.
  * @param samples The number of samples to use for multisampling.
  *
  * @return A shared pointer to the created texture, or nullptr if the API is not supported or an error occurs.
  */
-std::shared_ptr<Texture2D> Texture2D::CreateFromData(const void *data, 
+std::shared_ptr<Texture2D> Texture2D::CreateFromData(const void *data,
                                                      uint8_t samples)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, data, samples)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, data, samples)
 }
 
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param data The data for the 1D texture.
  * @param spec The texture specifications.
@@ -61,11 +66,11 @@ std::shared_ptr<Texture2D> Texture2D::CreateFromData(const void *data,
                                                      const TextureSpecification& spec,
                                                      uint8_t samples)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, data, spec, samples)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, data, spec, samples)
 }
 
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param filePath Texture file path.
  * @param flip Fip the texture vertically.
@@ -75,11 +80,11 @@ std::shared_ptr<Texture2D> Texture2D::CreateFromData(const void *data,
 std::shared_ptr<Texture2D> Texture2D::CreateFromFile(const std::filesystem::path& filePath,
                                                      bool flip)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, filePath, flip)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, filePath, flip)
 }
 
 /**
- * Create a 2D texture based on the active rendering API.
+ * @brief Create a 2D texture based on the active rendering API.
  *
  * @param filePath Texture file path.
  * @param spec The texture specifications.
@@ -91,11 +96,11 @@ std::shared_ptr<Texture2D> Texture2D::CreateFromFile(const std::filesystem::path
 std::shared_ptr<Texture2D> Texture2D::CreateFromFile(const std::filesystem::path& filePath,
                                                      const TextureSpecification& spec, bool flip)
 {
-    CREATE_RENDERER_OBJECT(Texture2D, filePath, spec, flip)
+    CREATE_RENDERER_OBJECT(std::make_shared, Texture2D, filePath, spec, flip)
 }
 
 /**
- * Load the texture from an input (image) source file.
+ * @brief Load the texture from an input (image) source file.
  *
  * @param filePath Texture file path.
  */
@@ -112,18 +117,18 @@ void Texture2D::LoadFromFile(const std::filesystem::path& filePath)
     void* data = nullptr;
     
     data = (extension != ".hdr") ? stbi_load(filePath.string().c_str(), &width, &height, &channels, 0) :
-                            (void*)stbi_loadf(filePath.string().c_str(), &width, &height, &channels, 0);
+    (void*)stbi_loadf(filePath.string().c_str(), &width, &height, &channels, 0);
     
     // Verify that the image has been loaded correctly
     if (!data)
     {
-        CORE_WARN("Failed to load: " + filePath.filename().string());
+        PIXEL_CORE_WARN("Failed to load: " + filePath.filename().string());
         return;
     }
     
     // Save the corresponding image information
     Update(width, height, channels, extension);
-    CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + m_Path.filename().string() + " not supported!");
+    PIXEL_CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + m_Path.filename().string() + " not supported!");
     
     // Generate the 2D texture
     CreateTexture(data);
@@ -131,3 +136,5 @@ void Texture2D::LoadFromFile(const std::filesystem::path& filePath)
     // Free memory
     stbi_image_free(data);
 }
+
+} // namespace pixc

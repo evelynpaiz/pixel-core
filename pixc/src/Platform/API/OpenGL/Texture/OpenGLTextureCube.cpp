@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Texture/OpenGLTextureCube.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTextureUtils.h"
@@ -6,75 +6,81 @@
 #include <GL/glew.h>
 
 /**
- * Create a cube texture with no data defined.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Create a cube texture with no data defined.
  */
 OpenGLTextureCube::OpenGLTextureCube()
-    : TextureCube(), OpenGLTexture()
+: TextureCube(), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
 }
 
 /**
- * Create a cube texture with specific properties and no data defined.
+ * @brief Create a cube texture with specific properties and no data defined.
  *
  * @param spec The texture specifications.
  */
 OpenGLTextureCube::OpenGLTextureCube(const TextureSpecification& spec)
-    : TextureCube(spec), OpenGLTexture()
+: TextureCube(spec), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
 }
 
 /**
- * Create a cube texture from input data.
+ * @brief Create a cube texture from input data.
  *
  * @param data The data to be placed on all the faces of the cube.
  */
 OpenGLTextureCube::OpenGLTextureCube(const void *data)
-    : OpenGLTextureCube()
+: OpenGLTextureCube()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data.
+ * @brief Create a cube texture from input data.
  *
  * @param data The data for the cube texture (defined for each face).
  */
 OpenGLTextureCube::OpenGLTextureCube(const std::vector<const void *>& data)
-    : OpenGLTextureCube()
+: OpenGLTextureCube()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data and with specific properties.
+ * @brief Create a cube texture from input data and with specific properties.
  *
  * @param data The data to be placed on all the faces of the cube.
  * @param spec The texture specifications.
  */
-OpenGLTextureCube::OpenGLTextureCube(const void *data, 
+OpenGLTextureCube::OpenGLTextureCube(const void *data,
                                      const TextureSpecification& spec)
-    : OpenGLTextureCube(spec)
+: OpenGLTextureCube(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data and with specific properties.
+ * @brief Create a cube texture from input data and with specific properties.
  *
  * @param data The data for the cube texture (defined for each face).
  * @param spec The texture specifications.
  */
 OpenGLTextureCube::OpenGLTextureCube(const std::vector<const void *>& data,
                                      const TextureSpecification& spec)
-    : OpenGLTextureCube(spec)
+: OpenGLTextureCube(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from the input source files.
+ * @brief Create a cube texture from the input source files.
  *
  * @param directory Textures file path.
  * @param files List of texture files.
@@ -82,7 +88,7 @@ OpenGLTextureCube::OpenGLTextureCube(const std::vector<const void *>& data,
  */
 OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& directory,
                                      const std::vector<std::string>& files, bool flip)
-    : TextureCube(directory, files, flip), OpenGLTexture()
+: TextureCube(directory, files, flip), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     
@@ -90,7 +96,7 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& directory,
 }
 
 /**
- * Create a cube texture from the input source files.
+ * @brief Create a cube texture from the input source files.
  *
  * @param directory Textures file path.
  * @param files List of texture files.
@@ -98,10 +104,10 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& directory,
  * @param flip Fip the texture vertically.
  */
 OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& directory,
-                                   const std::vector<std::string>& files,
-                                   const TextureSpecification& spec,
-                                   bool flip)
-    : TextureCube(directory, files, spec, flip), OpenGLTexture()
+                                     const std::vector<std::string>& files,
+                                     const TextureSpecification& spec,
+                                     bool flip)
+: TextureCube(directory, files, spec, flip), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     
@@ -109,7 +115,7 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& directory,
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The data to be placed on all the faces of the cube.
  */
@@ -121,14 +127,14 @@ void OpenGLTextureCube::CreateTexture(const void *data)
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The data for the cube texture (defined for each face).
  */
 void OpenGLTextureCube::CreateTexture(const std::vector<const void *> &data)
 {
     // Check that the data contains exactly 6 faces
-    CORE_ASSERT(data.size() == 6, "Invalid data for the texture cube map!");
+    PIXEL_CORE_ASSERT(data.size() == 6, "Invalid data for the texture cube map!");
     
     // Bind the texture
     Bind();
@@ -147,7 +153,7 @@ void OpenGLTextureCube::CreateTexture(const std::vector<const void *> &data)
                     utils::textures::gl::ToOpenGLFilter(m_Spec.Filter, false));
     
     // Verify size of the 2D texture
-    CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
+    PIXEL_CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
     
     for (unsigned int i = 0; i < data.size(); ++i)
     {
@@ -167,3 +173,5 @@ void OpenGLTextureCube::CreateTexture(const std::vector<const void *> &data)
     // Define the texture as loaded
     m_IsLoaded = true;
 }
+
+} // namespace pixc

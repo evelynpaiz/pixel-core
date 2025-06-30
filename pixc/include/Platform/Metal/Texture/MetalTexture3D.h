@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture3D.h"
+#include "Foundation/Renderer/Texture/Texture3D.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
 
 /**
- * Concrete implementation of a three-dimensional texture for OpenGL.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a three-dimensional texture for Metal.
  *
  * The `MetalGLTexture3D` class specializes the `Texture3D` class to provide a concrete
  * implementation using the Metal API. It handles the creation, binding, unbinding, and resource
@@ -44,3 +50,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(MetalTexture3D);
 };
+
+} // namespace pixc

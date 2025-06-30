@@ -2,7 +2,7 @@
 #include "Platform/Metal/Shader/MetalShader.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
-//#include "Platform/Metal/Texture/MetalTexture.h"
+#include "Platform/Metal/Texture/MetalTexture.h"
 
 #include <Metal/Metal.h>
 
@@ -203,7 +203,7 @@ void MetalShader::SetMat4(const std::string& name, const glm::mat4& value)
  * @param texture The texture map.
  * @param name Uniform name.
  * @param slot The texture slot.
-
+ */
 void MetalShader::SetTexture(const std::string &name,
                              const std::shared_ptr<Texture>& texture,
                              int slot)
@@ -214,7 +214,7 @@ void MetalShader::SetTexture(const std::string &name,
     
     // Get the current Metal render command encoder
     id<MTLRenderCommandEncoder> encoder =
-    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetEncoder());
+    reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
     
     // Dynamically cast the Texture to a MetalTexture
     std::shared_ptr<MetalTexture> metalTexture = std::dynamic_pointer_cast<MetalTexture>(texture);
@@ -244,12 +244,11 @@ void MetalShader::SetTexture(const std::string &name,
                 [encoder setFragmentSamplerState:rawSampler atIndex:slot];
                 break;
             default:
-                CORE_WARN("Unsupported shader type for texture!");
+                PIXEL_CORE_WARN("Unsupported shader type for texture!");
                 break;
         }
     }
 }
- */
 
 /**
  * @brief Returns a shared MTLVertexDescriptor used for shader reflection.
@@ -272,6 +271,8 @@ void* MetalShader::GetShaderVertexDescriptor()
     // Define a dummy buffer layout with a single attribute (position vector)
     BufferLayout layout = {
         { "a_Position", DataType::Vec4 },
+        { "a_TextureCoord", DataType::Vec2 },
+        { "a_Normal", DataType::Vec3 }
     };
     
     // Fill in attribute descriptions
@@ -283,7 +284,7 @@ void* MetalShader::GetShaderVertexDescriptor()
         auto *attribute = descriptor.attributes[index];
         attribute.format = utils::graphics::mtl::ToMetalFormat(element.Type);
         attribute.offset = element.Offset;
-        attribute.bufferIndex = index;
+        attribute.bufferIndex = 0;
         index++;
     }
     

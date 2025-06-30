@@ -5,7 +5,7 @@
 #include "Foundation/Renderer/Buffer/Buffer.h"
 #include "Foundation/Renderer/Shader/Uniform.h"
 
-//#include "Foundation/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
 #include <glm/glm.hpp>
 
@@ -61,11 +61,11 @@ public:
     virtual void SetMat2(const std::string& name, const glm::mat2& value) = 0;
     virtual void SetMat3(const std::string& name, const glm::mat3& value) = 0;
     virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
-    /*
+    
     virtual void SetTexture(const std::string &name,
                             const std::shared_ptr<Texture>& texture,
                             int slot) = 0;
-    */
+    
     // Parsing
     // ----------------------------------------
     std::string ReadFile(const std::filesystem::path& filePath);

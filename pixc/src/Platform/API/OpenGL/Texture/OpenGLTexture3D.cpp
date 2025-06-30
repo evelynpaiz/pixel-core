@@ -1,62 +1,64 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture3D.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTextureUtils.h"
 
 #include <GL/glew.h>
 
+namespace pixc {
+
 /**
- * Create a base 3D texture.
+ * @brief Create a base 3D texture.
  */
 OpenGLTexture3D::OpenGLTexture3D()
-    : Texture3D(), OpenGLTexture()
+: Texture3D(), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE3D;
 }
 
 /**
- * Create a 3D base texture with specific properties.
+ * @brief Create a 3D base texture with specific properties.
  *
  * @param spec The texture specifications.
  */
 OpenGLTexture3D::OpenGLTexture3D(const TextureSpecification& spec)
-    : Texture3D(spec), OpenGLTexture()
+: Texture3D(spec), OpenGLTexture()
 {
     m_Spec.Type = TextureType::TEXTURE3D;
 }
 
 /**
- * Create a 3D texture from input data.
+ * @brief Create a 3D texture from input data.
  *
  * @param data The data for the 3D texture.
  */
 OpenGLTexture3D::OpenGLTexture3D(const void *data)
-    : OpenGLTexture3D()
+: OpenGLTexture3D()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a 3D texture from input data and with specific properties.
+ * @brief Create a 3D texture from input data and with specific properties.
  *
  * @param data The data for the 1D texture.
  * @param spec The texture specifications.
  */
 OpenGLTexture3D::OpenGLTexture3D(const void *data, const TextureSpecification& spec)
-    : OpenGLTexture3D(spec)
+: OpenGLTexture3D(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The texture data. This can be nullptr if the texture is to be written.
  */
 void OpenGLTexture3D::CreateTexture(const void *data)
 {
     // Verify size of the 3D texture
-    CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0 && m_Spec.Depth > 0,
+    PIXEL_CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0 && m_Spec.Depth > 0,
                 "3D texture size not properly defined!");
     
     // Set texture wrapping and filtering parameters
@@ -99,3 +101,5 @@ void OpenGLTexture3D::CreateTexture(const void *data)
     // Define the texture as loaded
     m_IsLoaded = true;
 }
+
+} // namespace pixc

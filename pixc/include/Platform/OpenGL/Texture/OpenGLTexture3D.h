@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture3D.h"
+#include "Foundation/Renderer/Texture/Texture3D.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture.h"
 
 /**
- * Concrete implementation of a three-dimensional texture for OpenGL.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a three-dimensional texture for OpenGL.
  *
  * The `OpenGLTexture3D` class specializes the `Texture3D` class to provide a concrete
  * implementation using the OpenGL API. It handles the creation, binding, unbinding, and resource
@@ -38,3 +44,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLTexture3D);
 };
+
+} // namespace pixc

@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
-#include "Common/Renderer/Texture/TextureUtils.h"
+#include "Foundation/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/TextureUtils.h"
 
 #include "Platform/Metal/MetalContext.h"
 
 /**
- * Represents a texture in Metal.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a texture in Metal.
  *
  * This class encapsulates the creation, configuration, and anagement of texture data specifically
  * for Metal, Apple's graphics API. It provides methods to define texture parameters, upload data
@@ -94,3 +100,5 @@ private:
     void ReleaseTexture() override {}\
     /** @brief Creates the OpenGL texture. */\
     void CreateTexture(const void* data) override;
+
+} // namespace pixc

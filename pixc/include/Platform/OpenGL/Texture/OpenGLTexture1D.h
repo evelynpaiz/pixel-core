@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture1D.h"
+#include "Foundation/Renderer/Texture/Texture1D.h"
 #include "Platform/OpenGL/Texture/OpenGLTexture.h"
 
 /**
- * Concrete implementation of a one-dimensional texture for OpenGL.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a one-dimensional texture for OpenGL.
  *
  * The `OpenGLTexture1D` class specializes the `Texture1D` class to provide a concrete
  * implementation using the OpenGL API. It handles the creation, binding, unbinding, and resource
@@ -38,3 +44,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(OpenGLTexture1D);
 };
+
+} // namespace pixc

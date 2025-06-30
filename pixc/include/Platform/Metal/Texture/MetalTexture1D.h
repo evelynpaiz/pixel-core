@@ -1,10 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture1D.h"
+#include "Foundation/Renderer/Texture/Texture1D.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
 
 /**
- * Concrete implementation of a one-dimensional texture for Metal.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Concrete implementation of a one-dimensional texture for Metal.
  *
  * The `MetalTexture1D` class specializes the `Texture1D` class to provide a concrete
  *  implementation using Metal. It handles the creation, binding, unbinding, and resource
@@ -44,3 +50,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(MetalTexture1D);
 };
+
+} // namespace pixc

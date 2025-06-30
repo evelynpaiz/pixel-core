@@ -1,8 +1,26 @@
 #pragma once
 
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
+/**
+ * @brief Represents a cube map texture.
+ *
+ * The `TextureCube` class specializes the `Texture` base class to provide functionality for creating
+ * and managing cube map textures. Cube maps consist of six square textures representing the faces of a cube,
+ * typically used for environment mapping, skyboxes, and reflection effects.
+ *
+ * Like other texture types, `TextureCube` objects can be bound to specific texture units for use within
+ * shaders.
+ *
+ * @note Copying or moving `TextureCube` objects is disabled to ensure single ownership and prevent
+ * unintended resource duplication.
+ */
 class TextureCube : public Texture
 {
 public:
@@ -32,7 +50,7 @@ protected:
     /// @brief Create a cube texture with specific properties and no data.
     /// @param spec The texture specifications.
     TextureCube(const TextureSpecification& spec)
-        : Texture(spec)
+    : Texture(spec)
     {}
     
     /// @brief Create a general texture from a specific path.
@@ -41,7 +59,7 @@ protected:
     /// @param flip Fip the texture vertically.
     TextureCube(const std::filesystem::path& directory,
                 const std::vector<std::string>& files, bool flip) :
-        Texture(directory), m_Files(files), m_Flip(flip)
+    Texture(directory), m_Files(files), m_Flip(flip)
     {}
     /// @brief Create a general texture with specific properties and defined file path.
     /// @param directory Textures file path.
@@ -51,7 +69,7 @@ protected:
     TextureCube(const std::filesystem::path& directory,
                 const std::vector<std::string>& files,
                 const TextureSpecification& spec, bool flip) :
-        Texture(directory, spec), m_Files(files), m_Flip(flip)
+    Texture(directory, spec), m_Files(files), m_Flip(flip)
     {}
     
     // Texture creation
@@ -79,7 +97,8 @@ public:
 };
 
 /**
- * Utility functions related to texture operations.
+ * @namespace utils::textures
+ * @brief Utility functions related to texture operations.
  */
 namespace utils { namespace textures {
 
@@ -96,7 +115,7 @@ struct TextureHelper<TextureCube>
 };
 
 /**
- * Get a shared pointer to a cube white texture.
+ * @brief Get a shared pointer to a cube white texture.
  *
  * @return A cube white texture.
  */
@@ -104,3 +123,4 @@ DEFINE_WHITE_TEXTURE(TextureCube)
 
 } // namespace Texturing
 } // namespace utils
+} // namespace pixc

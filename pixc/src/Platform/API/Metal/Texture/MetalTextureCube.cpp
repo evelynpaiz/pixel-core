@@ -1,76 +1,78 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/Texture/MetalTextureCube.h"
 
+namespace pixc {
+
 /**
- * Create a cube texture with no data defined.
+ * @brief Create a cube texture with no data defined.
  */
 MetalTextureCube::MetalTextureCube()
-    : TextureCube(), MetalTexture()
+: TextureCube(), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
 }
 
 /**
- * Create a cube texture with specific properties and no data defined.
+ * @brief Create a cube texture with specific properties and no data defined.
  *
  * @param spec The texture specifications.
  */
 MetalTextureCube::MetalTextureCube(const TextureSpecification& spec)
-    : TextureCube(spec), MetalTexture()
+: TextureCube(spec), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
 }
 
 /**
- * Create a cube texture from input data.
+ * @brief Create a cube texture from input data.
  *
  * @param data The data to be placed on all the faces of the cube.
  */
 MetalTextureCube::MetalTextureCube(const void *data)
-    : MetalTextureCube()
+: MetalTextureCube()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data.
+ * @brief Create a cube texture from input data.
  *
  * @param data The data for the cube texture (defined for each face).
  */
 MetalTextureCube::MetalTextureCube(const std::vector<const void *>& data)
-    : MetalTextureCube()
+: MetalTextureCube()
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data and with specific properties.
+ * @brief Create a cube texture from input data and with specific properties.
  *
  * @param data The data to be placed on all the faces of the cube.
  * @param spec The texture specifications.
  */
 MetalTextureCube::MetalTextureCube(const void *data,
                                    const TextureSpecification& spec)
-    : MetalTextureCube(spec)
+: MetalTextureCube(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from input data and with specific properties.
+ * @brief Create a cube texture from input data and with specific properties.
  *
  * @param data The data for the cube texture (defined for each face).
  * @param spec The texture specifications.
  */
 MetalTextureCube::MetalTextureCube(const std::vector<const void *>& data,
                                    const TextureSpecification& spec)
-    : MetalTextureCube(spec)
+: MetalTextureCube(spec)
 {
     CreateTexture(data);
 }
 
 /**
- * Create a cube texture from the input source files.
+ * @brief Create a cube texture from the input source files.
  *
  * @param directory Textures file path.
  * @param files List of texture files.
@@ -78,7 +80,7 @@ MetalTextureCube::MetalTextureCube(const std::vector<const void *>& data,
  */
 MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
                                    const std::vector<std::string>& files, bool flip)
-    : TextureCube(directory, files, flip), MetalTexture()
+: TextureCube(directory, files, flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     
@@ -86,7 +88,7 @@ MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
 }
 
 /**
- * Create a cube texture from the input source files.
+ * @brief Create a cube texture from the input source files.
  *
  * @param directory Textures file path.
  * @param files List of texture files.
@@ -97,7 +99,7 @@ MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
                                    const std::vector<std::string>& files,
                                    const TextureSpecification& spec,
                                    bool flip)
-    : TextureCube(directory, files, spec, flip), MetalTexture()
+: TextureCube(directory, files, spec, flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     
@@ -105,7 +107,7 @@ MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The data to be placed on all the faces of the cube.
  */
@@ -117,14 +119,14 @@ void MetalTextureCube::CreateTexture(const void *data)
 }
 
 /**
- * Create and configure the texture based on the texture specification and provided data.
+ * @brief Create and configure the texture based on the texture specification and provided data.
  *
  * @param data The data for the cube texture (defined for each face).
  */
 void MetalTextureCube::CreateTexture(const std::vector<const void *> &data)
 {
     // Check that the data contains exactly 6 faces
-    CORE_ASSERT(data.size() == 6, "Invalid data for the texture cube map!");
+    PIXEL_CORE_ASSERT(data.size() == 6, "Invalid data for the texture cube map!");
     
     // Create the texture with its data and specifications
     for (unsigned int i = 0; i < data.size(); ++i)
@@ -133,3 +135,5 @@ void MetalTextureCube::CreateTexture(const std::vector<const void *> &data)
     // Define the texture as loaded
     m_IsLoaded = true;
 }
+
+} // namespace pixc
