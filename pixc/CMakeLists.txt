@@ -150,8 +150,8 @@ set_target_properties(pixc PROPERTIES
 
 # Link external libraries
 target_link_libraries(pixc 
-    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui
-#   stb::stb assimp::assimp
+    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui stb::stb
+#   assimp::assimp
 )
 
 # Link metal if apple device is used

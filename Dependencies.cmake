@@ -32,6 +32,16 @@ set(GLM_BUILD_LIBRARY OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(3rdparty/glm)
 
+## STB
+add_library(stb INTERFACE)
+
+target_include_directories(stb
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/stb/
+)
+
+add_library(stb::stb ALIAS stb)
+
 ## IMGUI
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/)
 add_library(imgui STATIC)

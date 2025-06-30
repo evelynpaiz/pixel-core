@@ -37,5 +37,5 @@ source_group(
 
 # source_group(""
 #     FILES ${outputs}
-#     REGULAR_EXPRESSION "^Resources/.*"
+#     REGULAR_EXPRESSION "^resources/.*"
 # )
