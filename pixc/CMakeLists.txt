@@ -13,6 +13,7 @@ file(
 
     src/Foundation/Renderer/Texture/*.cpp
     src/Foundation/Renderer/Shader/*.cpp
+    src/Foundation/Renderer/Camera/*.cpp
 
     src/Foundation/Renderer/GraphicsContext.cpp
     src/Foundation/Renderer/RendererAPI.cpp
@@ -76,6 +77,7 @@ file(
 
     include/Foundation/Renderer/Texture/*.h
     include/Foundation/Renderer/Shader/*.h
+    include/Foundation/Renderer/Camera/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h

@@ -3,14 +3,14 @@
 #include "Foundation/Renderer/RendererAPI.h"
 #include "Foundation/Renderer/RendererUtils.h"
 
+#include "Foundation/Renderer/Camera/Camera.h"
+
 #include "Foundation/Renderer/Drawable/Drawable.h"
 
 //#include "Foundation/Renderer/Buffer/IndexBuffer.h"
 //#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 //#include "Foundation/Renderer/Material/Material.h"
-
-//#include "Foundation/Renderer/Camera/Camera.h"
 
 #include <glm/glm.hpp>
 
@@ -37,12 +37,12 @@ public:
     // Scene parametrization
     // ----------------------------------------
     static void BeginScene();
-    static void EndScene();
-    /*
     static void BeginScene(const std::shared_ptr<Camera>& camera);
     static void BeginScene(const glm::mat4& view, const glm::mat4& projection,
                            const glm::vec3& position = glm::vec3(0.0f));
-     */
+    
+    static void EndScene();
+    
     
     // Render
     // ----------------------------------------

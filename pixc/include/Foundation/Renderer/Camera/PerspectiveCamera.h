@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Common/Renderer/Camera/Camera.h"
+#include "Foundation/Renderer/Camera/Camera.h"
 
 /**
  * @namespace pixc
@@ -13,7 +13,7 @@ namespace pixc {
 class MouseScrolledEvent;
 
 /**
- * Represents a perspective camera that captures the scene and displays it in a viewport.
+ * @brief Represents a perspective camera that captures the scene and displays it in a viewport.
  *
  * The `PerspectiveCamera`  class is a derived class of the `Camera` class, providing a perspective
  * projection for rendering. It inherits all the properties and functionality of the base Camera class and

@@ -10,14 +10,13 @@ namespace pixc {
 std::unique_ptr<Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
 
 static Renderer::RenderingStatistics g_Stats;
-/*
+
 static const glm::mat4 g_TextureMatrix = glm::mat4(
     0.5f, 0.0f, 0.0f, 0.0f,
     0.0f, 0.5f, 0.0f, 0.0f,
     0.0f, 0.0f, 0.5f, 0.0f,
     0.5f, 0.5f, 0.5f, 1.0f
 );
-*/
 
 /**
  * Initialize the renderer.
@@ -61,36 +60,6 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveTy
 }
 
 /**
- * Start the rendering of a scene by defining its general parameters.
- *
- * @param camera Rendering camera.
- 
-void Renderer::BeginScene(const std::shared_ptr<Camera> &camera)
-{
-    s_SceneData->ViewPosition = camera->GetPosition();
-    
-    s_SceneData->ViewMatrix = camera->GetViewMatrix();
-    s_SceneData->ProjectionMatrix = camera->GetProjectionMatrix();
-}
-*/
-/**
- * Start the rendering of a scene by defining its general parameters.
- *
- * @param view The view matrix transformation.
- * @param projection The projection matrix transformation.
- * @param position The view position.
-
-void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
-                          const glm::vec3& position)
-{
-    s_SceneData->ViewPosition = position;
-    
-    s_SceneData->ViewMatrix = view;
-    s_SceneData->ProjectionMatrix = projection;
-}
- */
-
-/**
  * Render primitives from a drawable object using the specified primitive type.
  *
  * @param drawable The drawable object containing the data for rendering.
@@ -132,6 +101,36 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     material->Unbind();
 }
  */
+
+/**
+ * Start the rendering of a scene by defining its general parameters.
+ *
+ * @param camera Rendering camera.
+ */
+void Renderer::BeginScene(const std::shared_ptr<Camera> &camera)
+{
+    s_SceneData->ViewPosition = camera->GetPosition();
+    
+    s_SceneData->ViewMatrix = camera->GetViewMatrix();
+    s_SceneData->ProjectionMatrix = camera->GetProjectionMatrix();
+}
+
+/**
+ * Start the rendering of a scene by defining its general parameters.
+ *
+ * @param view The view matrix transformation.
+ * @param projection The projection matrix transformation.
+ * @param position The view position.
+ */
+void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
+                          const glm::vec3& position)
+{
+    s_SceneData->ViewPosition = position;
+    
+    s_SceneData->ViewMatrix = view;
+    s_SceneData->ProjectionMatrix = projection;
+}
+
 /**
  * Set the depth function for rendering.
  *

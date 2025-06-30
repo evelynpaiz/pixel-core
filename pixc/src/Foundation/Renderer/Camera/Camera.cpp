@@ -1,5 +1,5 @@
-#include "enginepch.h"
-#include "Common/Renderer/Camera/Camera.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Camera/Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -58,7 +58,7 @@ void Camera::SetViewportSize(const int width, const int height)
     // Check input values
     if (width <= 0 || height <= 0)
     {
-        CORE_WARN("Attempted to rezize camera resolution to {0}, {1}", width, height);
+        PIXEL_CORE_WARN("Attempted to rezize camera resolution to {0}, {1}", width, height);
         return;
     }
     

@@ -1,12 +1,12 @@
-#include "enginepch.h"
-#include "Common/Renderer/Camera/PerspectiveCamera.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Camera/PerspectiveCamera.h"
 
-#include "Common/Input/Input.h"
-#include "Common/Input/KeyCodes.h"
-#include "Common/Input/MouseCodes.h"
+#include "Foundation/Input/Input.h"
+#include "Foundation/Input/KeyCodes.h"
+#include "Foundation/Input/MouseCodes.h"
 
-#include "Common/Event/MouseEvent.h"
-#include "Common/Event/KeyEvent.h"
+#include "Foundation/Event/MouseEvent.h"
+#include "Foundation/Event/KeyEvent.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>

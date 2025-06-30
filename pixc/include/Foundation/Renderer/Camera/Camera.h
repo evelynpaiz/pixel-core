@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Common/Event/Event.h"
-#include "Common/Core/Timestep.h"
+#include "Foundation/Core/ClassUtils.h"
+
+#include "Foundation/Core/Timestep.h"
+#include "Foundation/Event/Event.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

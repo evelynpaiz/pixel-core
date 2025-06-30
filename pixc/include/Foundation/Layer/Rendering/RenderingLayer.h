@@ -4,6 +4,7 @@
 
 #include "Foundation/Layer/Layer.h"
 
+#include "Foundation/Renderer/Camera/Camera.h"
 #include "Foundation/Renderer/Drawable/Drawable.h"
 
 /**
@@ -37,6 +38,8 @@ private:
     // Rendering layer variables
     // ----------------------------------------
 private:
+    std::shared_ptr<Camera> m_Camera;
+    
     std::shared_ptr<Drawable> m_Drawable;
     std::shared_ptr<Shader> m_Shader;
     

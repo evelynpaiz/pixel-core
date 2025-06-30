@@ -5,6 +5,8 @@
 #include "Foundation/Renderer/Renderer.h"
 #include "Foundation/Renderer/RendererCommand.h"
 
+#include "Foundation/Renderer/Camera/PerspectiveCamera.h"
+
 #include "Foundation/Renderer/Texture/Texture2D.h"
 
 //#include "Foundation/Renderer/Material/Material.h"
@@ -20,7 +22,11 @@ namespace pixc {
 RenderingLayer::RenderingLayer(int width, int height,
                                const std::string& name)
 : Layer(name)
-{}
+{
+    // Define the rendering camera
+    m_Camera = std::make_shared<PerspectiveCamera>(width, height);
+    m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.5f));
+}
 
 /**
  * @brief Attach (add) the viewer layer to the rendering engine.
@@ -29,14 +35,6 @@ void RenderingLayer::OnAttach()
 {
     // Define the shader to be used
     m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColorTexture.metal");
-    
-    m_Shader->Bind();
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(1.0f));
-    
-    m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
-    m_Shader->SetMat4("u_Transform.View", glm::mat4(1.0f));
-    m_Shader->SetMat4("u_Transform.Projection", glm::mat4(1.0f));
-    m_Shader->Unbind();
     
     // Create the drawable that will be rendered
     m_Drawable = Drawable::Create();
@@ -87,16 +85,24 @@ void RenderingLayer::OnUpdate(Timestep ts)
     RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
     RendererCommand::Clear();
     
-    Renderer::BeginScene();
+    Renderer::BeginScene(m_Camera);
     
     m_Shader->Bind();
+    m_Shader->SetVec4("u_Material.Color", glm::vec4(1.0f));
     m_Shader->SetTexture("u_Material.TextureMap", container, 0);
+    
+    m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
+    m_Shader->SetMat4("u_Transform.View", m_Camera->GetViewMatrix());
+    m_Shader->SetMat4("u_Transform.Projection", m_Camera->GetProjectionMatrix());
     m_Shader->Unbind();
     
     Renderer::Draw(m_Drawable);
     Renderer::EndScene();
     
     RendererCommand::EndRenderPass();
+    
+    // Update camera
+    m_Camera->OnUpdate(ts);
 }
 
 /**
@@ -113,7 +119,7 @@ void RenderingLayer::OnEvent(Event &e)
                                            BIND_EVENT_FN(RenderingLayer::OnWindowResize));
     
     // Handle the events on the camera
-    //m_Camera->OnEvent(e);
+    m_Camera->OnEvent(e);
 }
 
 /**
@@ -125,8 +131,10 @@ void RenderingLayer::OnEvent(Event &e)
 bool RenderingLayer::OnWindowResize(WindowResizeEvent &e)
 {
     // Update the camera
-    //m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
+    m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
+    
     //m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
+    
     PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());
     return true;
 }

@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Common/Renderer/Camera/Camera.h"
+#include "Foundation/Renderer/Camera/Camera.h"
 
 /**
  * @namespace pixc
