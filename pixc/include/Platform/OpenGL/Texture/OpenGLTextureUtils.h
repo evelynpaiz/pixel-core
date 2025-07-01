@@ -241,24 +241,66 @@ inline GLenum ToOpenGLWrap(TextureWrap wrap)
 /**
  * Convert the texture filter mode to its corresponding OpenGL type.
  *
- * @param mode The texture filtering mode.
+ * @param filter The texture filtering mode.
  *
  * @return OpenGL filtering mode.
  *
  * @note If the input filter mode is not recognized, the function will assert with an error.
  */
-inline GLenum ToOpenGLFilter(TextureFilter filter, bool useMipmaps)
+inline GLenum ToOpenGLMagFilter(TextureFilter filter)
 {
     switch (filter)
     {
         case TextureFilter::None:
             return 0;
         case TextureFilter::Nearest:
-            return useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+            return GL_NEAREST;
         case TextureFilter::Linear:
-            return useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
-            
-            // TODO: support more options for texture filtering.
+            return GL_LINEAR;
+    }
+    
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
+    return 0;
+}
+
+/**
+ * Convert the texture filter mode to its corresponding OpenGL type.
+ *
+ * @param filter The texture filtering mode.
+ *
+ * @return OpenGL filtering mode.
+ *
+ * @note If the input filter mode is not recognized, the function will assert with an error.
+ */
+inline GLenum ToOpenGLMinFilter(TextureFilterModes filter, bool useMipmaps)
+{
+    // If no mipmap is defined, return a simple filter definition
+    if (!useMipmaps || filter.Mip == TextureFilter::None)
+        return ToOpenGLMagFilter(filter.Min);
+    
+    // Define the minification filter based on the mipmapping filter too
+    switch (filter.Min)
+    {
+        case TextureFilter::None:
+            return 0;
+        case TextureFilter::Nearest:
+            switch (filter.Mip)
+            {
+                case TextureFilter::Nearest: return GL_NEAREST_MIPMAP_NEAREST;
+                case TextureFilter::Linear:  return GL_NEAREST_MIPMAP_LINEAR;
+                default:
+                    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) mipmap filter mode!");
+                    return 0;
+            }
+        case TextureFilter::Linear:
+            switch (filter.Mip)
+            {
+                case TextureFilter::Nearest: return GL_LINEAR_MIPMAP_NEAREST;
+                case TextureFilter::Linear:  return GL_LINEAR_MIPMAP_LINEAR;
+                default:
+                    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) mipmap filter mode!");
+                    return 0;
+            }
     }
     
     PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");

@@ -197,8 +197,9 @@ void MetalTexture::MTLDefineSampler(const TextureSpecification &spec)
     MTLSamplerDescriptor *descriptor = [[MTLSamplerDescriptor alloc] init];
     
     // Define the filter apply when sampling
-    descriptor.minFilter = utils::textures::mtl::ToMetalFilter(spec.Filter);
-    descriptor.magFilter = utils::textures::mtl::ToMetalFilter(spec.Filter);
+    descriptor.minFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Min);
+    descriptor.magFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Mag);
+    descriptor.mipFilter = utils::textures::mtl::ToMetalMipFilter(spec.Filter.Mip, spec.MipMaps);
     
     // Define the wrapping mode
     descriptor.sAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);

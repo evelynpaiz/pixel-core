@@ -10,6 +10,20 @@
 namespace pixc {
 
 /**
+ * @brief Specifies filtering modes for minification, magnification, and mipmapping.
+ *
+ * The `TextureFilterSpec` struct holds separate filter modes for minification, magnification,
+ * and mipmap sampling. This allows detailed control over how textures are sampled at different
+ * scales and mipmap levels.
+ */
+struct TextureFilterModes
+{
+    TextureFilter Min = TextureFilter::None;
+    TextureFilter Mag = TextureFilter::None;
+    TextureFilter Mip = TextureFilter::None;
+};
+
+/**
  * Specifications (properties) of a texture.
  *
  * The `TextureSpecification` provides a set of properties to define the characteristics of a
@@ -28,14 +42,13 @@ struct TextureSpecification
     /// @param type The type of the texture.
     /// @param format The texture format.
     TextureSpecification(const TextureType& type, const TextureFormat& format) :
-    Type(type), Format(format)
+        Type(type), Format(format)
     {}
     
     /// @brief Define a texture with a specific format.
     /// @param format The texture format.
-    /// @param filter The texture sampling filter.
-    TextureSpecification(const TextureFormat& format, const TextureFilter& filter) :
-    Format(format), Filter(filter)
+    TextureSpecification(const TextureFormat& format) :
+        Format(format)
     {}
     
     // Setter(s)
@@ -50,6 +63,22 @@ struct TextureSpecification
         Height = height;
         Depth = depth;
     }
+    /// @brief Sets both the minification and magnification filter modes to the same value.
+    /// @param filter The filter mode to use for minification and magnification.
+    void SetMinMagFilter(TextureFilter filter)
+    {
+        Filter.Min = filter;
+        Filter.Mag = filter;
+    }
+    /// @brief Sets the mipmap filter mode.
+    /// @param filter The filter mode to use for mipmapping.
+    void SetMipFilter(TextureFilter filter)
+    {
+        if (!MipMaps)
+            PIXEL_CORE_WARN("Attempting to set mipmap filter while mipmaps are disabled!");
+        
+        Filter.Mip = filter;
+    }
     
     // Texture specification variables
     // ----------------------------------------
@@ -61,16 +90,16 @@ struct TextureSpecification
     ///< The internal format of the texture data.
     TextureFormat Format = TextureFormat::None;
     
+    ///< The texture filtering mode, specifying how the texture is sampled during rendering.
+    TextureFilterModes Filter;
     ///< The texture wrap mode, specifying how texture coordinates outside the [0, 1] range
     ///< are handled.
     TextureWrap Wrap = TextureWrap::None;
-    ///< The texture filtering mode, specifying how the texture is sampled during rendering.
-    TextureFilter Filter = TextureFilter::None;
     
     ///< A flag indicating whether mipmaps should be created for the texture. Mipmaps are
     ///< precalculated versions of the texture at different levels of detail, providing smoother
     ///< rendering at varying distances.
-    bool MipMaps = false;
+    bool MipMaps = true;
 };
 
 // Forward declarations
@@ -217,18 +246,20 @@ struct TextureHelper
  *   CREATE_WHITE_TEXTURE(Texture2D) // Defines `WhiteTexture2D()`
  * @endcode
  */
-#define DEFINE_WHITE_TEXTURE(TextureType)\
-    inline std::shared_ptr<TextureType>& White##TextureType()\
-    {\
-        static std::shared_ptr<TextureType> texture;\
-        if (texture)\
-            return texture;\
-        TextureSpecification spec;\
-        TextureHelper<TextureType>::SetSize(spec, 1);\
-        spec.Format = TextureFormat::RGB8;\
-        spec.Wrap = TextureWrap::Repeat;\
-        const unsigned char whitePixel[] = {255, 255, 255};\
-        texture = TextureType::CreateFromData(whitePixel, spec);\
+#define DEFINE_WHITE_TEXTURE(TextureType)                           \
+    inline std::shared_ptr<TextureType>& White##TextureType()       \
+    {                                                               \
+        static std::shared_ptr<TextureType> texture;                \
+        if (texture)                                                \
+            return texture;                                         \
+        TextureSpecification spec;                                  \
+        TextureHelper<TextureType>::SetSize(spec, 1);               \
+        spec.Format = TextureFormat::RGB8;                          \
+        spec.SetMinMagFilter(TextureFilter::Nearest);               \
+        spec.Wrap = TextureWrap::Repeat;                            \
+        spec.MipMaps = false;                                       \
+        const unsigned char whitePixel[] = {255, 255, 255};         \
+        texture = TextureType::CreateFromData(whitePixel, spec);    \
         return texture;\
     }
 

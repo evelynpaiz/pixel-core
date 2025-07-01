@@ -152,7 +152,9 @@ inline std::shared_ptr<Texture2D> EmptyTexture2D()
     
     // Define a basic filtering
     TextureSpecification spec;
-    spec.Filter = TextureFilter::Nearest;
+    spec.MipMaps = true;
+    spec.SetMinMagFilter(TextureFilter::Nearest);
+    spec.SetMipFilter(TextureFilter::Linear);
     
     // Create the empty texture using a ccheckerboard pattern
     texture = Texture2D::CreateFromFile("resources/common/checkerboard.png",

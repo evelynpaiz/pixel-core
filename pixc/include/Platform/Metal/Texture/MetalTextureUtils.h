@@ -110,13 +110,13 @@ inline MTLSamplerAddressMode ToMetalWrap(TextureWrap wrap)
 /**
  * @brief Convert the texture filter mode to its corresponding Metal type.
  *
- * @param mode The texture filtering mode.
+ * @param filter The texture filtering mode.
  *
  * @return Metal filtering mode.
  *
  * @note If the input filter mode is not recognized, the function will assert with an error.
  */
-inline MTLSamplerMinMagFilter ToMetalFilter(TextureFilter filter)
+inline MTLSamplerMinMagFilter ToMetalMinMaxFilter(TextureFilter filter)
 {
     switch (filter)
     {
@@ -129,6 +129,32 @@ inline MTLSamplerMinMagFilter ToMetalFilter(TextureFilter filter)
     
     PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
     return (MTLSamplerMinMagFilter)0;
+}
+
+/**
+ * @brief Convert the texture filter mode to its corresponding Metal type.
+ *
+ * @param filter The texture filtering mode.
+ * @param useMipmaps A flag indicating if mip maps are used.
+ *
+ * @return Metal filtering mode.
+ *
+ * @note If the input filter mode is not recognized, the function will assert with an error.
+ */
+inline MTLSamplerMipFilter ToMetalMipFilter(TextureFilter filter, bool useMipmaps)
+{
+    if (!useMipmaps)
+        return MTLSamplerMipFilterNotMipmapped;
+    
+    switch (filter)
+    {
+        case TextureFilter::None:       return MTLSamplerMipFilterNotMipmapped;
+        case TextureFilter::Nearest:    return MTLSamplerMipFilterNearest;
+        case TextureFilter::Linear:     return MTLSamplerMipFilterLinear;
+    }
+    
+    PIXEL_CORE_ASSERT(false, "Unknown (or unsupported) texture filter mode!");
+    return (MTLSamplerMipFilter)0;
 }
 
 /**

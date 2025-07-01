@@ -70,9 +70,9 @@ void OpenGLTexture3D::CreateTexture(const void *data)
                     utils::textures::gl::ToOpenGLWrap(m_Spec.Wrap));
     
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER,
-                    utils::textures::gl::ToOpenGLFilter(m_Spec.Filter, m_Spec.MipMaps));
+                    utils::textures::gl::ToOpenGLMinFilter(m_Spec.Filter, m_Spec.MipMaps));
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER,
-                    utils::textures::gl::ToOpenGLFilter(m_Spec.Filter, false));
+                    utils::textures::gl::ToOpenGLMagFilter(m_Spec.Filter.Mag));
     
     // Create the texture based on the format and data type
     if (utils::textures::IsDepthFormat(m_Spec.Format))

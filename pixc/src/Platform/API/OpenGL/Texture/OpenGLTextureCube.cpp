@@ -148,9 +148,9 @@ void OpenGLTextureCube::CreateTexture(const std::vector<const void *> &data)
                     utils::textures::gl::ToOpenGLWrap(m_Spec.Wrap));
     
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
-                    utils::textures::gl::ToOpenGLFilter(m_Spec.Filter, m_Spec.MipMaps));
+                    utils::textures::gl::ToOpenGLMinFilter(m_Spec.Filter, m_Spec.MipMaps));
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER,
-                    utils::textures::gl::ToOpenGLFilter(m_Spec.Filter, false));
+                    utils::textures::gl::ToOpenGLMagFilter(m_Spec.Filter.Mag));
     
     // Verify size of the 2D texture
     PIXEL_CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");

@@ -74,8 +74,11 @@ void RenderingLayer::OnAttach()
 void RenderingLayer::OnUpdate(Timestep ts)
 {
     // Define rendering texture(s)
+    // Define a basic filtering
+    TextureSpecification spec;
+    
     static auto &white = utils::textures::WhiteTexture2D();
-    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg");
+    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg", spec);
     
     // Reset rendering statistics
     Renderer::ResetStats();
