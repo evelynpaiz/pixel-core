@@ -1,9 +1,15 @@
 #pragma once
 
-#include "Common/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Material/Material.h"
 
 /**
- * A base class for materials with a simple color-based shading.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief A base class for materials with a simple color-based shading.
  *
  * The `FlatColor` class provides a basic material definition for shading 3D models with a
  * simple color.
@@ -56,7 +62,7 @@ protected:
 };
 
 /**
- * A base class for materials with a simple texture-based shading.
+ * @brief A base class for materials with a simple texture-based shading.
  *
  * The `FlatTexture` class provides a basic material definition for shading 3D models with a
  * simple texture map.
@@ -112,7 +118,7 @@ protected:
 };
 
 /**
- * A material class for simple color-based shading.
+ * @brief A material class for simple color-based shading.
  *
  * The `SimpleColorMaterial` class is a subclass of `Material` and provides a basic material
  * definition for shading 3D models with a simple color. It uses a shader specified by the given file path
@@ -132,7 +138,7 @@ public:
     /// @param filePath The file path to the shader used by the material.
     SimpleColorMaterial(const std::filesystem::path& filePath =
                         std::filesystem::path("Resources/shaders/base/SimpleColor"))
-        : Material(filePath), FlatColor()
+    : Material(filePath), FlatColor()
     {}
     /// @brief Destructor for the hair shading material.
     ~SimpleColorMaterial() override = default;
@@ -153,7 +159,7 @@ public:
 };
 
 /**
- * A material class for simple texture-based shading.
+ * @brief A material class for simple texture-based shading.
  *
  * The `SimpleTextureMaterial` class is a subclass of `Material` and provides a basic material
  * definition for shading 3D models with a simple texture map. It uses a shader specified by the given file
@@ -172,8 +178,8 @@ public:
     /// @brief Generate a basic material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
     SimpleTextureMaterial(const std::filesystem::path& filePath =
-                  std::filesystem::path("Resources/shaders/base/SimpleTexture"))
-        : Material(filePath), FlatTexture()
+                          std::filesystem::path("Resources/shaders/base/SimpleTexture"))
+    : Material(filePath), FlatTexture()
     {}
     /// @brief Destructor for the basic material.
     ~SimpleTextureMaterial() override = default;
@@ -195,7 +201,7 @@ public:
 };
 
 /**
- * A material class that combines simple color and texture-based shading.
+ * @brief A material class that combines simple color and texture-based shading.
  *
  * The `SimpleMaterial` class is a subclass of `Material` and provides a basic material
  * definition for shading 3D models with a combination of a simple color and a texture map. It
@@ -214,8 +220,8 @@ public:
     /// @brief Generate a basic material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
     SimpleMaterial(const std::filesystem::path& filePath =
-                  std::filesystem::path("Resources/shaders/base/SimpleColorTexture"))
-        : Material(filePath), FlatColor(), FlatTexture()
+                   std::filesystem::path("Resources/shaders/base/SimpleColorTexture"))
+    : Material(filePath), FlatColor(), FlatTexture()
     {}
     /// @brief Destructor for the basic material.
     ~SimpleMaterial() override = default;
@@ -237,3 +243,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(SimpleMaterial);
 };
+
+} // namespace pixc

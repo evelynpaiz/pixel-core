@@ -8,11 +8,11 @@
 #include "Foundation/Renderer/Camera/PerspectiveCamera.h"
 
 #include "Foundation/Renderer/Texture/Texture2D.h"
+#include "Foundation/Renderer/Material/SimpleMaterial.h"
 
-//#include "Foundation/Renderer/Material/Material.h"
-#include "Foundation/Renderer/Shader/Shader.h"
+#include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
 
-//#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace pixc {
 
@@ -33,37 +33,22 @@ RenderingLayer::RenderingLayer(int width, int height,
  */
 void RenderingLayer::OnAttach()
 {
-    // Define the shader to be used
-    m_Shader = Shader::Create("Simple", "Resources/shaders/base/SimpleColorTexture.metal");
+    // Define the material(s)
+    auto& materialLibrary = Renderer::GetMaterialLibrary();
+    auto simple = materialLibrary.Create<SimpleMaterial>("Simple");
     
-    // Create the drawable that will be rendered
-    m_Drawable = Drawable::Create();
+    // Define the model(s)
+    auto cube = utils::geometry::ModelCube<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
+    cube->SetScale(glm::vec3(0.5f));
+    cube->SetMaterial(simple);
+    m_Models.Add("Cube", cube);
     
-    // Define the index data for the drawable
-    std::vector<unsigned int> indices =
-    {
-        0, 1, 2,    // first triangle
-        2, 3, 0,    // second triangle
-    };
-    m_Drawable->SetIndexData(indices);
-    
-    // Define the vertex data for the drawable
-    std::vector<RenderingLayer::VertexData> vertices =
-    {
-        // { position, texture coords }
-        { {-0.5f, -0.5f, 0.0f, 1.0f}, {0.0f,  0.0f} },     // bottom left (0)
-        { { 0.5f, -0.5f, 0.0f, 1.0f}, {1.0f,  0.0f} },     // bottom right (1)
-        { { 0.5f,  0.5f, 0.0f, 1.0f}, {1.0f,  1.0f} },     // top right (2)
-        { {-0.5f,  0.5f, 0.0f, 1.0f}, {0.0f,  1.0f} }      // top left (3)
-    };
-    
-    BufferLayout layout = {
-        { "a_Position", DataType::Vec4 },
-        { "a_TextureCoord", DataType::Vec2 },
-    };
-    
-    m_Drawable->AddVertexData(vertices, layout);
-    m_Drawable->SetShader(m_Shader);
+    auto plane = utils::geometry::ModelPlane<GeoVertexData<glm::vec4, glm::vec2>>();
+    plane->SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
+    plane->SetScale(glm::vec3(2.0f));
+    plane->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+    plane->SetMaterial(simple);
+    m_Models.Add("Plane", plane);
 }
 
 /**
@@ -74,11 +59,16 @@ void RenderingLayer::OnAttach()
 void RenderingLayer::OnUpdate(Timestep ts)
 {
     // Define rendering texture(s)
-    // Define a basic filtering
-    TextureSpecification spec;
-    
     static auto &white = utils::textures::WhiteTexture2D();
-    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg", spec);
+    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg");
+    
+    // Get the material(s)
+    auto material = std::dynamic_pointer_cast<SimpleMaterial>(
+                      Renderer::GetMaterialLibrary().Get("Simple"));
+    
+    // Get the model(s)
+    auto& cube = m_Models.Get("Cube");
+    auto& plane = m_Models.Get("Plane");
     
     // Reset rendering statistics
     Renderer::ResetStats();
@@ -90,18 +80,16 @@ void RenderingLayer::OnUpdate(Timestep ts)
     
     Renderer::BeginScene(m_Camera);
     
-    m_Shader->Bind();
-    m_Shader->SetVec4("u_Material.Color", glm::vec4(1.0f));
-    m_Shader->SetTexture("u_Material.TextureMap", container, 0);
+    material->SetColor(glm::vec4(1.0f));
+    material->SetTextureMap(container);
+    cube->DrawModel();
     
-    m_Shader->SetMat4("u_Transform.Model", glm::mat4(1.0f));
-    m_Shader->SetMat4("u_Transform.View", m_Camera->GetViewMatrix());
-    m_Shader->SetMat4("u_Transform.Projection", m_Camera->GetProjectionMatrix());
-    m_Shader->Unbind();
+    material->SetColor(glm::vec4(0.3f, 0.2f, 0.8f, 1.0f));
+    material->SetTextureMap(white);
+    plane->DrawModel();
     
-    Renderer::Draw(m_Drawable);
     Renderer::EndScene();
-    
+
     RendererCommand::EndRenderPass();
     
     // Update camera

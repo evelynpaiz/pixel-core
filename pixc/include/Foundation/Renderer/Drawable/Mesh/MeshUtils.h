@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Common/Renderer/Drawable/Mesh/Mesh.h"
-#include "Common/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
+#include "Foundation/Renderer/Drawable/Model/Model.h"
 
 #include <glm/glm.hpp>
 
 /**
- * Define a default vertex structure that represents the different data that a vertex may contain.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Define a default vertex structure that represents the different data that a vertex may contain.
  *
  * @tparam Components The components of the vertex structure.
  */
@@ -14,7 +20,7 @@ template<typename... Components>
 struct GeoVertexData {};
 
 /**
- * Specialization of VertexData for 3D vertices with position information.
+ * @brief Specialization of VertexData for 3D vertices with position information.
  */
 template<>
 struct GeoVertexData<glm::vec4>
@@ -23,7 +29,7 @@ struct GeoVertexData<glm::vec4>
 };
 
 /**
- * Specialization of VertexData for 3D vertices with position and UV coordinate information.
+ * @brief Specialization of VertexData for 3D vertices with position and UV coordinate information.
  */
 template<>
 struct GeoVertexData<glm::vec4, glm::vec2>
@@ -33,7 +39,7 @@ struct GeoVertexData<glm::vec4, glm::vec2>
 };
 
 /**
- * Specialization of VertexData for 3D vertices with position and normal vector information.
+ * @brief Specialization of VertexData for 3D vertices with position and normal vector information.
  */
 template<>
 struct GeoVertexData<glm::vec4, glm::vec3>
@@ -43,7 +49,7 @@ struct GeoVertexData<glm::vec4, glm::vec3>
 };
 
 /**
- * Specialization of VertexData for 3D vertices with position, UV coordinate, and normal vector information.
+ * @brief Specialization of VertexData for 3D vertices with position, UV coordinate, and normal vector information.
  */
 template<>
 struct GeoVertexData<glm::vec4, glm::vec2, glm::vec3>
@@ -53,13 +59,17 @@ struct GeoVertexData<glm::vec4, glm::vec2, glm::vec3>
     glm::vec3 normal;           ///< Normal vector.
 };
 
-namespace utils { namespace Geometry
+/**
+ * @namespace utils::geometry
+ * @brief Utility functions and types related to geometric operations.
+ */
+namespace utils { namespace geometry
 {
 
 // Geometry
 // ----------------------------------------
 /**
- * Get the indices for a plane geometry, which consists of two triangles forming a rectangle.
+ * @brief Get the indices for a plane geometry, which consists of two triangles forming a rectangle.
  *
  * @return A vector of indices forming a plane.
  */
@@ -73,7 +83,7 @@ inline std::vector<unsigned int> IndicesOfPlane()
 }
 
 /**
- * Get the indices for a basic cube geometry, consisting of 12 triangles forming 6 faces.
+ * @brief Get the indices for a basic cube geometry, consisting of 12 triangles forming 6 faces.
  *
  * @return A vector of indices forming a basic cube (fewer number of vertices).
  */
@@ -103,7 +113,7 @@ inline std::vector<unsigned int> IndicesOfBasicCube()
 }
 
 /**
- * Get the indices for a cube geometry, consisting of 12 triangles forming 6 faces.
+ * @brief Get the indices for a cube geometry, consisting of 12 triangles forming 6 faces.
  *
  * @return A vector of indices forming a cube.
  */
@@ -133,7 +143,7 @@ inline std::vector<unsigned int> IndicesOfCube()
 }
 
 /**
- * Get the indices for a sphere geometry, which consists of triangles forming a sphere.
+ * @brief Get the indices for a sphere geometry, which consists of triangles forming a sphere.
  *
  * @param resolution The number of horizontal and vertical segments of the sphere.
  * @return A vector of indices forming a sphere.
@@ -141,7 +151,7 @@ inline std::vector<unsigned int> IndicesOfCube()
 inline std::vector<unsigned int> IndicesOfSphere(int resolution)
 {
     std::vector<unsigned int> indices;
-
+    
     for (int i = 0; i < resolution; i++)
     {
         for (int j = 0; j < resolution; j++)
@@ -150,24 +160,24 @@ inline std::vector<unsigned int> IndicesOfSphere(int resolution)
             int p2 = p1 + 1;
             int p3 = (i + 1) * (resolution + 1) + j;
             int p4 = p3 + 1;
-
+            
             indices.push_back(p1);
             indices.push_back(p2);
             indices.push_back(p3);
-
+            
             indices.push_back(p3);
             indices.push_back(p2);
             indices.push_back(p4);
         }
     }
-
+    
     return indices;
 }
 
 // Plane geometry
 // ----------------------------------------
 /**
- * Define the geometry of a plane with only position information.
+ * @brief Define the geometry of a plane with only position information.
  *
  * @param vertices Vector to store the vertex data for the plane (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -187,7 +197,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
 }
 
 /**
- * Define the geometry of a plane with position and texture coordinate information.
+ * @brief Define the geometry of a plane with position and texture coordinate information.
  *
  * @param vertices Vector to store the vertex data for the plane (position and texture coordinate vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -207,7 +217,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>
 }
 
 /**
- * Define the geometry of a plane with position and normal vector information.
+ * @brief Define the geometry of a plane with position and normal vector information.
  *
  * @param vertices Vector to store the vertex data for the plane (position and normal vector vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -227,13 +237,13 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>
 }
 
 /**
- * Define the geometry of a plane with position, texture coordinate, and normal vector information.
+ * @brief Define the geometry of a plane with position, texture coordinate, and normal vector information.
  *
  * @param vertices Vector to store the vertex data for the plane (position, texture coordinate, and normal vector vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                        std::vector<unsigned int>& indices)
+                                std::vector<unsigned int>& indices)
 {
     vertices = {
         // { position, texture coords, normal }
@@ -249,13 +259,13 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, 
 // Cube geometry
 // ----------------------------------------
 /**
- * Define the geometry of a cube with only position information.
+ * @brief Define the geometry of a cube with only position information.
  *
  * @param vertices Vector to store the vertex data for the cube (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
-                        std::vector<unsigned int>& indices)
+                               std::vector<unsigned int>& indices)
 {
     vertices = {
         // Front face
@@ -274,13 +284,13 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
 }
 
 /**
- * Define the geometry of a cube with position and texture coordinate information.
+ * @brief Define the geometry of a cube with position and texture coordinate information.
  *
  * @param vertices Vector to store the vertex data for the cube (position and texture coordinate vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>& vertices,
-                        std::vector<unsigned int>& indices)
+                               std::vector<unsigned int>& indices)
 {
     vertices = {
         // Front face
@@ -299,13 +309,13 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>&
 }
 
 /**
- * Define the geometry of a cube with position and normal vector information.
+ * @brief Define the geometry of a cube with position and normal vector information.
  *
  * @param vertices Vector to store the vertex data for the cube (position and normal vector vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>& vertices,
-                        std::vector<unsigned int>& indices)
+                               std::vector<unsigned int>& indices)
 {
     // Define the vertices with positions and normals
     vertices = {
@@ -345,13 +355,13 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>&
 }
 
 /**
- * Define the geometry of a cube with position, texture coordinate, and normal vector information.
+ * @brief Define the geometry of a cube with position, texture coordinate, and normal vector information.
  *
  * @param vertices Vector to store the vertex data for the cube (position, texture coordinate, and normal vector vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                        std::vector<unsigned int>& indices)
+                               std::vector<unsigned int>& indices)
 {
     // Define the vertices with positions and normals
     vertices = {
@@ -391,7 +401,7 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, g
 }
 
 /**
- * Define the geometry of a sphere with position information.
+ * @brief Define the geometry of a sphere with position information.
  *
  * @param vertices Vector to store the vertex data for the sphere (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -399,11 +409,11 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, g
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                 std::vector<unsigned int>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
-
+    
     // Calculate the vertices of the sphere
     for (int i = 0; i <= resolution; i++)
     {
@@ -411,7 +421,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices
         for (int j = 0; j <= resolution; j++)
         {
             float phi = ((float)j / resolution) * glm::pi<float>();
-
+            
             float x = radius * cos(theta) * sin(phi);
             float y = radius * cos(phi);
             float z = radius * sin(theta) * sin(phi);
@@ -419,12 +429,12 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices
             vertices.push_back({ glm::vec4(x, y, z, 1.0f) });
         }
     }
-
+    
     indices = IndicesOfSphere(resolution);
 }
 
 /**
- * Define the geometry of a sphere with position information.
+ * @brief Define the geometry of a sphere with position information.
  *
  * @param vertices Vector to store the vertex data for the sphere (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -432,11 +442,11 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                 std::vector<unsigned int>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
-
+    
     // Calculate the vertices of the sphere
     for (int i = 0; i <= resolution; i++)
     {
@@ -444,7 +454,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>
         for (int j = 0; j <= resolution; j++)
         {
             float phi = ((float)j / resolution);
-
+            
             float x = radius * cos(theta * glm::two_pi<float>()) * sin(phi * glm::pi<float>());
             float y = radius * cos(phi * glm::pi<float>());
             float z = radius * sin(theta * glm::two_pi<float>()) * sin(phi * glm::pi<float>());
@@ -452,12 +462,12 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>
             vertices.push_back({ glm::vec4(x, y, z, 1.0f), glm::vec2(theta, phi) });
         }
     }
-
+    
     indices = IndicesOfSphere(resolution);
 }
 
 /**
- * Define the geometry of a sphere with position information.
+ * @brief Define the geometry of a sphere with position information.
  *
  * @param vertices Vector to store the vertex data for the sphere (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -465,11 +475,11 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                 std::vector<unsigned int>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
-
+    
     // Calculate the vertices of the sphere
     for (int i = 0; i <= resolution; i++)
     {
@@ -477,7 +487,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>
         for (int j = 0; j <= resolution; j++)
         {
             float phi = ((float)j / resolution) * glm::pi<float>();
-
+            
             float x = radius * cos(theta) * sin(phi);
             float y = radius * cos(phi);
             float z = radius * sin(theta) * sin(phi);
@@ -485,12 +495,12 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>
             vertices.push_back({ glm::vec4(x, y, z, 1.0f), glm::vec3(x, y, z) });
         }
     }
-
+    
     indices = IndicesOfSphere(resolution);
 }
 
 /**
- * Define the geometry of a sphere with position information.
+ * @brief Define the geometry of a sphere with position information.
  *
  * @param vertices Vector to store the vertex data for the sphere (position-only vertices).
  * @param indices Vector to store the indices of the vertices to form triangles.
@@ -498,11 +508,11 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                 std::vector<unsigned int>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
-
+    
     // Calculate the vertices of the sphere
     for (int i = 0; i <= resolution; i++)
     {
@@ -510,7 +520,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2,
         for (int j = 0; j <= resolution; j++)
         {
             float phi = ((float)j / resolution);
-
+            
             float x = radius * cos(theta * glm::two_pi<float>()) * sin(phi * glm::pi<float>());
             float y = radius * cos(phi * glm::pi<float>());
             float z = radius * sin(theta * glm::two_pi<float>()) * sin(phi * glm::pi<float>());
@@ -518,9 +528,10 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2,
             vertices.push_back({ glm::vec4(x, y, z, 1.0f), glm::vec2(theta, phi), glm::vec3(x, y, z)});
         }
     }
-
+    
     indices = IndicesOfSphere(resolution);
 }
 
-} // namespace Geometry
+} // namespace geometry
 } // namespace utils
+} // namespace pixc

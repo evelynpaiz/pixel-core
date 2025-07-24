@@ -66,7 +66,7 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveTy
  * @param shader The shader program.
  * @param transform The transformation matrix of the geometry (model matrix).
  * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
-
+ */
 void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared_ptr<Material>& material,
                     const glm::mat4 &transform, const PrimitiveType &primitive)
 {
@@ -85,6 +85,8 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     if (flags.NormalMatrix)
         material->GetShader()->SetMat3("u_Transform.Normal", glm::mat3(glm::transpose(glm::inverse(transform))));
     
+    //TODO: uncomment when lighted material is added
+    /*
     auto lightedMaterial = std::dynamic_pointer_cast<LightedMaterial>(material);
     if (lightedMaterial)
     {
@@ -93,6 +95,7 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
         if (lightFlags.ShadowProperties)
             material->GetShader()->SetMat4("u_Transform.Texture", g_TextureMatrix);
     }
+     */
     
     // Render the geometry
     Draw(drawable, primitive);
@@ -100,7 +103,6 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     // Unbind the material
     material->Unbind();
 }
- */
 
 /**
  * Start the rendering of a scene by defining its general parameters.

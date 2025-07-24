@@ -1,14 +1,22 @@
 #pragma once
 
-#include "Common/Core/Library.h"
-#include "Common/Renderer/Drawable/Mesh/Mesh.h"
+#include "Foundation/Core/ClassUtils.h"
+#include "Foundation/Core/Library.h"
+
+#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 /**
- * Represents a bounding box around a 3D model.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a bounding box around a 3D model.
  *
  * The `BBox` structure defines a bounding box by storing the minimum and maximum coordinates
  * along the x, y, and z axes. It represents the extent or volume occupied by a 3D model.
@@ -20,7 +28,7 @@ struct BBox
 };
 
 /**
- * Represents a basic model used for rendering geometry.
+ * @brief Represents a basic model used for rendering geometry.
  *
  * The `BaseModel` class provides functionality for drawing the model with a specified transformation
  * matrix and primitive type. It encapsulates information about the model's position, rotation, scale,
@@ -103,7 +111,7 @@ protected:
     /// @brief Define a base model.
     /// @param primitives The type of the primitive that defines the model.
     BaseModel(const PrimitiveType &primitive)
-        : m_Primitive(primitive)
+    : m_Primitive(primitive)
     {}
     
     // Transformation matrices
@@ -135,7 +143,7 @@ public:
 };
 
 /**
- * A library for managing models used in rendering.
+ * @brief A library for managing models used in rendering.
  *
  * The `ModelLibrary` class provides functionality to add, load, retrieve, and check
  * for the existence of models within the library. Each model is associated with
@@ -163,7 +171,7 @@ public:
         auto model = std::make_shared<Type>(std::forward<Args>(args)...);
         
         std::string message = GetTypeName() + " '" + name + "' is not of the specified type!";
-        CORE_ASSERT(std::dynamic_pointer_cast<BaseModel>(model), message);
+        PIXEL_CORE_ASSERT(std::dynamic_pointer_cast<BaseModel>(model), message);
         
         Add(name, model);
         return model;
@@ -171,7 +179,7 @@ public:
 };
 
 /**
- * Represents a model used for rendering geometry.
+ * @brief Represents a model used for rendering geometry.
  *
  * The `Model` class inherits from the `BaseModel` class and provides additional
  * functionality specific to defining models. It encapsulates information required to and render
@@ -259,9 +267,9 @@ public:
 };
 
 /**
- * Represents a model loaded from a file.
+ * @brief Represents a model loaded from a file.
  *
- * The `LoadedModel` class inherits from the Model class and adds functionality specific to 
+ * The `LoadedModel` class inherits from the Model class and adds functionality specific to
  * loading models from a file. It encapsulates methods for loading meshes and associated data
  * from a file and populating the model with the loaded data.
  *
@@ -300,7 +308,7 @@ protected:
     /// @param primitive The primitive type of the model.
     LoadedModel(const std::filesystem::path& filePath,
                 const PrimitiveType &primitive)
-        : Model<VertexData>(primitive), m_FilePath(filePath)
+    : Model<VertexData>(primitive), m_FilePath(filePath)
     {}
     
     // Model variables
@@ -316,7 +324,7 @@ public:
 };
 
 /**
- * Update the boundaries of the bounding box using a vertex coordinate.
+ * @brief Update the boundaries of the bounding box using a vertex coordinate.
  *
  * @param v The vertex coordinate to be considered when updating the bounding box.
  */
@@ -346,7 +354,7 @@ void Model<VertexData>::UpdateBBoxWithVertex(const glm::vec3& v)
 }
 
 /**
- * Update the model matrix with translation, scaling, and rotation transformations.
+ * @brief Update the model matrix with translation, scaling, and rotation transformations.
  */
 template<typename VertexData>
 void Model<VertexData>::UpdateModelMatrix()
@@ -354,20 +362,20 @@ void Model<VertexData>::UpdateModelMatrix()
     // Get the size of the model and its center position
     glm::vec3 size = m_BBox.max - m_BBox.min;
     glm::vec3 center = (m_BBox.max + m_BBox.min) / 2.0f;
-
+    
     // Reset the model matrix to the identity
     m_ModelMatrix = glm::mat4(1.0f);
-
+    
     // 1. Translate (and center) to the selected position
     m_ModelMatrix = glm::translate(m_ModelMatrix, -center);
     m_ModelMatrix = glm::translate(m_ModelMatrix, m_Position);
-
+    
     // Translate back to the center
     m_ModelMatrix = glm::translate(m_ModelMatrix, center);
-
+    
     // 2. Scale the model using the scaling factor
     m_ModelMatrix = glm::scale(m_ModelMatrix, m_Scale);
-
+    
     // 3. Rotate with the selected user angle around the center
     m_ModelMatrix *= glm::toMat4(glm::quat(glm::radians(m_Rotation)));
     
@@ -381,7 +389,9 @@ void Model<VertexData>::UpdateModelMatrix()
         glm::vec3 axis = glm::normalize(glm::cross(referenceAxis, m_UpAxis));
         m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
     }
-
+    
     // Translate back to the original position
     m_ModelMatrix = glm::translate(m_ModelMatrix, -center);
 }
+
+} // namespace pixc

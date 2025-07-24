@@ -24,6 +24,9 @@ struct MetalDrawable::DrawableState {
     MTLRenderPipelineDescriptor* PipelineDescriptor;
     ///< Describes the layout of vertex data.
     MTLVertexDescriptor* VertexDescriptor;
+    
+    ///< Uniforms buffer.
+    std::unordered_map<std::string, id<MTLBuffer>> UniformBuffer;
 };
 
 /**
@@ -83,9 +86,23 @@ void MetalDrawable::Bind() const
     }
     
     // Define the uniforms in the command encoder
-    auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
-    PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
-    metalShader->BindUniformBuffers();
+    BindUniformBuffers();
+}
+
+/**
+ * @brief Sets the shader used for shading.
+ *
+ * @param shader The shader program.
+ */
+void MetalDrawable::SetShader(const std::shared_ptr<Shader>& shader)
+{
+    // Define the current shader
+    m_Shader = shader;
+    // Define the uniforms
+    InitUniformBuffers();
+    
+    // Set the pipeline state
+    SetPipelineState();
 }
 
 /**
@@ -159,6 +176,108 @@ void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo
 void* MetalDrawable::GetPipelineState() const
 {
     return reinterpret_cast<void*>(m_State->PipelineState);
+}
+
+/**
+ * @brief Initializes Metal uniform buffers for each uniform block in the shader.
+ *
+ * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
+ *        objects and that the `DataElement` objects within the layouts have
+ *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
+ */
+void MetalDrawable::InitUniformBuffers()
+{
+    // Clear the current buffer if necessary
+    if(!m_State->UniformBuffer.empty())
+        m_State->UniformBuffer.clear();
+    
+    // Retrieve the Metal device from the rendering context
+    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+    // Iterate over each uniform block layout defined for the shader
+    auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
+    for (auto& [uniform, layout] : shader->m_Uniforms)
+    {
+        // Determine the required buffer size for this uniform layout
+        uint32_t stride = layout.GetStride();
+        // Create a new Metal buffer for this uniform block
+        id<MTLBuffer> buffer = [device
+                                    newBufferWithLength:stride
+                                    options:MTLResourceStorageModeShared
+        ];
+        // Store the buffer in the shader source's uniform buffer list
+        m_State->UniformBuffer[uniform] = buffer;
+    }
+}
+
+/**
+ * @brief Binds all uniform buffers to the GPU pipeline.
+ *
+ * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
+ *        objects and that the `DataElement` objects within the layouts have
+ *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
+ */
+void MetalDrawable::BindUniformBuffers() const
+{
+    // Update the buffers with the current data
+    UpdateUniformBuffers();
+    
+    // Get the current command encoder
+    id<MTLRenderCommandEncoder> encoder =
+            reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+    
+    // Iterate over all uniform groups and their layouts stored
+    auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
+    for (const auto& [uniform, layout] : shader->m_Uniforms)
+    {
+        // Retrieve the binding index specified in the layout, which indicates
+        // the slot the buffer should be bound to in the shader
+        int32_t index = layout.GetIndex();
+        
+        // Get the Metal buffer associated with the current uniform group by index
+        id<MTLBuffer> buffer = m_State->UniformBuffer[uniform];
+
+        // Iterate over all shader stages that use this uniform layout (e.g., vertex, fragment, etc.)
+        for (const auto& type : layout.GetShaderType())
+        {
+            // Bind the buffer to the appropriate shader stage at the specified index
+            switch (type)
+            {
+                case ShaderType::VERTEX:
+                    [encoder setVertexBuffer:buffer offset:0 atIndex:index];
+                    break;
+                case ShaderType::FRAGMENT:
+                    [encoder setFragmentBuffer:buffer offset:0 atIndex:index];
+                    break;
+                default:
+                    PIXEL_CORE_WARN("Unsupported shader type for uniform: {}", uniform);
+                    break;
+            }
+        }
+    }
+}
+
+/**
+ * @brief Updates a specific uniform buffer if any of its members have changed.
+ *
+ *@param name The name of the uniform to be updated.
+ *
+ * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
+ *        objects and that the `DataElement` objects within the layouts have
+ *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
+ */
+void MetalDrawable::UpdateUniformBuffers() const
+{
+    // Iterate over all uniform groups and their layouts stored
+    auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
+    for (const auto& [uniform, layout] : shader->m_Uniforms)
+    {
+        // Get the source and destination buffer associated with the current uniform
+        id<MTLBuffer> src = reinterpret_cast<id<MTLBuffer>>(layout.GetBufferOfData());
+        id<MTLBuffer> dst = m_State->UniformBuffer[uniform];
+        
+        NSUInteger copySize = std::min(src.length, dst.length);
+        std::memcpy(dst.contents, src.contents, copySize);
+    }
 }
 
 } // namespace pixc

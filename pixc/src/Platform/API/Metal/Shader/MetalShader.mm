@@ -565,49 +565,6 @@ void MetalShader::InitUniformBuffers()
 }
 
 /**
- * @brief Binds all uniform buffers to the GPU pipeline.
- *
- * @note  Assumes that `m_Uniforms` has been populated with valid `UniformLayout`
- *        objects and that the `DataElement` objects within the layouts have
- *        accurate data pointers (`Data`), sizes (`Size`), and offsets (`Offset`).
- */
-void MetalShader::BindUniformBuffers()
-{
-    // Get the current command encoder
-    id<MTLRenderCommandEncoder> encoder =
-            reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
-    
-    // Iterate over all uniform groups and their layouts stored
-    for (const auto& [uniform, layout] : m_Uniforms)
-    {
-        // Retrieve the binding index specified in the layout, which indicates
-        // the slot the buffer should be bound to in the shader
-        int32_t index = layout.GetIndex();
-        
-        // Get the Metal buffer associated with the current uniform group by index
-        id<MTLBuffer> buffer = reinterpret_cast<id<MTLBuffer>>(layout.GetBufferOfData());
-
-        // Iterate over all shader stages that use this uniform layout (e.g., vertex, fragment, etc.)
-        for (const auto& type : layout.GetShaderType())
-        {
-            // Bind the buffer to the appropriate shader stage at the specified index
-            switch (type)
-            {
-                case ShaderType::VERTEX:
-                    [encoder setVertexBuffer:buffer offset:0 atIndex:index];
-                    break;
-                case ShaderType::FRAGMENT:
-                    [encoder setFragmentBuffer:buffer offset:0 atIndex:index];
-                    break;
-                default:
-                    PIXEL_CORE_WARN("Unsupported shader type for uniform: {}", uniform);
-                    break;
-            }
-        }
-    }
-}
-
-/**
  * @brief Updates a specific uniform buffer if any of its members have changed.
  *
  *@param name The name of the uniform to be updated.

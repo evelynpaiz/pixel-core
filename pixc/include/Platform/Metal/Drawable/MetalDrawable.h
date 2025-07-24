@@ -36,17 +36,17 @@ public:
     
     // Setter(s)
     // ----------------------------------------
-    /// @brief Sets the shader used for shading.
-    /// @param shader The shader program.
-    void SetShader(const std::shared_ptr<Shader>& shader) override
-    {
-        m_Shader = shader;
-        SetPipelineState();
-    }
+    void SetShader(const std::shared_ptr<Shader>& shader) override;
     
     // Getter(s)
     // ----------------------------------------
     void* GetPipelineState() const;
+    
+    // Argument(s) and Uniform(s)
+    // ----------------------------------------
+    void InitUniformBuffers();
+    void BindUniformBuffers() const;
+    void UpdateUniformBuffers() const;
     
 private:
     // Setter(s)

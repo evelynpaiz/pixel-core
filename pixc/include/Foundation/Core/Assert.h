@@ -20,22 +20,23 @@
 #endif
 
 #ifdef ENGINE_ENABLE_ASSERTS
-    #define PIXEL_CORE_ASSERT(x, ...)                                           \
-        do                                                                      \
-        {                                                                       \
-            if (!(x))                                                           \
-            {                                                                   \
-                PIXEL_CORE_ERROR("{0}", __VA_ARGS__);                           \
-                DEBUGBREAK();                                                   \
-            }                                                                   \
+    #define PIXEL_CORE_ASSERT(x, ...)                                                           \
+        do                                                                                      \
+        {                                                                                       \
+            if (!(x))                                                                           \
+            {                                                                                   \
+                PIXEL_CORE_ERROR("{0}", __VA_ARGS__);                                           \
+                DEBUGBREAK();                                                                   \
+            }                                                                                   \
         } while (false)
 #else
-    #define PIXEL_CORE_ASSERT(x, ...)                                           \
-        do                                                                      \
-        {                                                                       \
-            if (!(x))                                                           \
-            {                                                                   \
-                PIXEL_CORE_ERROR("{0}", __VA_ARGS__);                           \
-            }                                                                   \
+    #include <iostream>
+    #include <cstdlib>
+    #define PIXEL_CORE_ASSERT(x, ...)                                                           \
+        do {                                                                                    \
+            if (!(x)) {                                                                         \
+                PIXEL_CORE_ERROR("Fatal error. Please run in debug mode for more information!");\
+                std::exit(EXIT_FAILURE);                                                        \
+            }                                                                                   \
         } while (false)
 #endif

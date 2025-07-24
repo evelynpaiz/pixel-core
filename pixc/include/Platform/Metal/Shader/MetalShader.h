@@ -78,7 +78,6 @@ private:
     void ExtractShaderResources() override;
     
     void InitUniformBuffers();
-    void BindUniformBuffers();
     void UpdateUniformBuffer(const std::string& name);
     
     friend class MetalDrawable;

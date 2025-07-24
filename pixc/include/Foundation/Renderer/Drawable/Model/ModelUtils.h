@@ -1,16 +1,26 @@
 #pragma once
 
-#include "Common/Renderer/Drawable/Mesh/Mesh.h"
-#include "Common/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
+#include "Foundation/Renderer/Drawable/Model/Model.h"
 
-#include "Common/Renderer/Drawable/Mesh/MeshUtils.h"
+#include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
 
 #include <glm/glm.hpp>
 
-namespace utils { namespace Geometry
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @namespace utils::geometry
+ * @brief Utility functions and types related to geometric operations.
+ */
+namespace utils { namespace geometry
 {
 /**
- * Generate a buffer layout for a vector of 3D vertices with position information.
+ * @brief Generate a buffer layout for a vector of 3D vertices with position information.
  *
  * @param vertices A vector of 3D vertices with position information.
  *
@@ -24,7 +34,7 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4>>&)
 }
 
 /**
- * Generate a buffer layout for a vector of 3D vertices with position and UV coordinate information.
+ * @brief Generate a buffer layout for a vector of 3D vertices with position and UV coordinate information.
  *
  * @param vertices A vector of 3D vertices with position and UV coordinate information.
  *
@@ -39,7 +49,7 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
 }
 
 /**
- * Generate a buffer layout for a vector of 3D vertices with position and normal vector information.
+ * @brief Generate a buffer layout for a vector of 3D vertices with position and normal vector information.
  *
  * @param vertices A vector of 3D vertices with position and normal vector information.
  *
@@ -54,7 +64,7 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
 }
 
 /**
- * Generate a buffer layout for a vector of 3D vertices with position, UV coordinate, and normal vector information.
+ * @brief Generate a buffer layout for a vector of 3D vertices with position, UV coordinate, and normal vector information.
  *
  * @param vertices A vector of 3D vertices with position, UV coordinate, and normal vector information.
  *
@@ -70,7 +80,7 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
 }
 
 /**
- * Generate a model from a specified geometry and material.
+ * @brief Generate a model from a specified geometry and material.
  *
  * This function generates a model by defining the geometry using a specific vertex data type and providing a material.
  * The `DefineGeometry` function pointer is used to define the geometry data, such as vertices and indices.
@@ -86,8 +96,8 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-    GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&,std::vector<unsigned int>&),
-                  const std::shared_ptr<Material>& material)
+GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&,std::vector<unsigned int>&),
+              const std::shared_ptr<Material>& material)
 {
     std::vector<VertexData> vertices;
     std::vector<unsigned int> indices;
@@ -105,23 +115,23 @@ inline std::shared_ptr<Model<VertexData>>
 }
 
 /**
- * Generate a model for a plane using the specified material.
+ * @brief Generate a model for a plane using the specified material.
  *
  * @tparam VertexData The type of vertex data used to define the geometry.
  *
  * @param material A shared pointer to the material to be applied to the model.
- * 
+ *
  * @return The generated model for the plane with the specified material.
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-    ModelPlane(const std::shared_ptr<Material>& material = nullptr)
+ModelPlane(const std::shared_ptr<Material>& material = nullptr)
 {
-    return GenerateModel<VertexData>(utils::Geometry::DefinePlaneGeometry, material);
+    return GenerateModel<VertexData>(utils::geometry::DefinePlaneGeometry, material);
 }
 
 /**
- * Generate a model for a cube using the specified material.
+ * @brief Generate a model for a cube using the specified material.
  *
  * @tparam VertexData The type of vertex data used to define the geometry.
  *
@@ -131,13 +141,13 @@ inline std::shared_ptr<Model<VertexData>>
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-    ModelCube(const std::shared_ptr<Material>& material = nullptr)
+ModelCube(const std::shared_ptr<Material>& material = nullptr)
 {
-    return GenerateModel<VertexData>(utils::Geometry::DefineCubeGeometry, material);
+    return GenerateModel<VertexData>(utils::geometry::DefineCubeGeometry, material);
 }
 
 /**
- * Generate a model for a sphere using the specified material.
+ * @b rief Generate a model for a sphere using the specified material.
  *
  * @tparam VertexData The type of vertex data used to define the geometry.
  *
@@ -150,10 +160,11 @@ inline std::shared_ptr<Model<VertexData>>
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-    ModelSphere(const std::shared_ptr<Material>& material = nullptr)
+ModelSphere(const std::shared_ptr<Material>& material = nullptr)
 {
-    return GenerateModel<VertexData>(utils::Geometry::DefineSphereGeometry, material);
+    return GenerateModel<VertexData>(utils::geometry::DefineSphereGeometry, material);
 }
 
 } // namespace Geometry
 } // namespace utils
+} // namespace pixc

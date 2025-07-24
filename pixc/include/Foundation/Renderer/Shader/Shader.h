@@ -193,8 +193,7 @@ public:
         auto& uniform = SetUniformData(name, value);   \
         if (uniform.Update) {                          \
             backendSetter;                             \
-            uniform.Update = false;                    \
         }                                              \
-    } while (0)
+    } while (0);
 
 } // namespace pixc

@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Common/Core/Library.h"
-#include "Common/Renderer/Shader/Shader.h"
-#include "Common/Renderer/Texture/Texture.h"
+#include "Foundation/Core/Library.h"
+#include "Foundation/Renderer/Shader/Shader.h"
+#include "Foundation/Renderer/Texture/Texture.h"
 
-using namespace pixc;
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * @brief Flags representing properties of a material.
@@ -19,7 +23,7 @@ struct MaterialFlags
 };
 
 /**
- * Base class representing a material used for rendering.
+ * @brief Base class representing a material used for rendering.
  *
  * The `Material` class provides a base interface for defining materials used in rendering.
  * It encapsulates functionality for binding and unbinding the material, as well as setting
@@ -56,14 +60,10 @@ public:
         SetMaterialProperties();
     }
     /// @brief Unbinds the material's associated shader.
-    virtual void Unbind() 
+    virtual void Unbind()
     {
         m_Shader -> Unbind();
-#ifdef __APPLE__
         m_Slot = 0;
-#else
-        m_Slot = 1;
-#endif
     }
     
     // Getter(s)
@@ -89,12 +89,7 @@ protected:
     std::shared_ptr<Shader> m_Shader;
     
     ///< Texture unit index.
-    // TODO: fix the issue related to starting slot number.
-#ifdef __APPLE__
     unsigned int m_Slot = 0;
-#else
-    unsigned int m_Slot = 1;
-#endif
     ///< Flags for shading.
     MaterialFlags m_Flags;
     
@@ -136,9 +131,11 @@ public:
         auto material = std::make_shared<Type>(std::forward<Args>(args)...);
         
         std::string message = GetTypeName() + " '" + name + "' is not of the specified type!";
-        CORE_ASSERT(std::dynamic_pointer_cast<Material>(material), message);
+        PIXEL_CORE_ASSERT(std::dynamic_pointer_cast<Material>(material), message);
         
         Add(name, material);
         return material;
     }
 };
+
+} // namespace pixc

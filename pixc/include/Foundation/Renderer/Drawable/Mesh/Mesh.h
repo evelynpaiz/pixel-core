@@ -1,17 +1,23 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/VertexBuffer.h"
-#include "Common/Renderer/Buffer/IndexBuffer.h"
-#include "Common/Renderer/Drawable/Drawable.h"
+#include "Foundation/Renderer/Buffer/VertexBuffer.h"
+#include "Foundation/Renderer/Buffer/IndexBuffer.h"
+#include "Foundation/Renderer/Drawable/Drawable.h"
 
-#include "Common/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Material/Material.h"
 
-#include "Common/Renderer/Renderer.h"
+#include "Foundation/Renderer/Renderer.h"
 
 #include <glm/glm.hpp>
 
 /**
- * Represents a mesh used for rendering geometry.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a mesh used for rendering geometry.
  *
  * The `Mesh` class provides functionality to define and render geometry using vertex data.
  * It encapsulates the necessary information, such as vertex positions, texture coordinates, normals,
@@ -81,7 +87,7 @@ private:
 };
 
 /**
- * Generate an empty mesh.
+ * @brief Generate an empty mesh.
  */
 template<typename VertexData>
 Mesh<VertexData>::Mesh()
@@ -90,7 +96,7 @@ Mesh<VertexData>::Mesh()
 }
 
 /**
- * Generate a mesh from a set of vertices and incides defined.
+ * @brief Generate a mesh from a set of vertices and incides defined.
  *
  * @param vertices The vertex data of the mesh.
  * @param indices The index data of the mesh.
@@ -98,15 +104,15 @@ Mesh<VertexData>::Mesh()
  */
 template<typename VertexData>
 Mesh<VertexData>::Mesh(const std::vector<VertexData> &vertices,
-     const std::vector<unsigned int> &indices, const BufferLayout &layout)
-    : Mesh()
+                       const std::vector<unsigned int> &indices, const BufferLayout &layout)
+: Mesh()
 {
     // Define the mesh information into corresponding buffers
     DefineMesh(vertices, indices, layout);
 }
 
 /**
- * Define vertices that define the mesh.
+ * @brief Define vertices that define the mesh.
  *
  * @param vertices The vertex data of the mesh.
  * @param layout The layout of the vertex data in the buffer.
@@ -122,7 +128,7 @@ void Mesh<VertexData>::DefineVertices(const std::vector<VertexData> &vertices,
 }
 
 /**
- * Define the indices that the mesh should use when it is drawed.
+ * @brief Define the indices that the mesh should use when it is drawed.
  *
  * @param indices The index data of the mesh.
  */
@@ -136,7 +142,7 @@ void Mesh<VertexData>::DefineIndices(const std::vector<unsigned int> &indices)
 }
 
 /**
- * Render the mesh.
+ * @brief Render the mesh.
  *
  * @param transform Transformation matrix of the geometry.
  * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
@@ -148,7 +154,7 @@ void Mesh<VertexData>::DrawMesh(const glm::mat4 &transform,
     // Verify that the vertex information has been set for the mesh
     if (m_Drawable->GetVertexBuffers().empty() && !m_Drawable->GetIndexBuffer())
     {
-        CORE_WARN("Mesh vertex or index information has not been defined!");
+        PIXEL_CORE_WARN("Mesh vertex or index information has not been defined!");
         return;
     }
     
@@ -157,3 +163,5 @@ void Mesh<VertexData>::DrawMesh(const glm::mat4 &transform,
     else
         Renderer::Draw(m_Drawable, primitive);
 }
+
+} // namespace pixc

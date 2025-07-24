@@ -10,7 +10,7 @@
 //#include "Foundation/Renderer/Buffer/IndexBuffer.h"
 //#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
-//#include "Foundation/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Material/Material.h"
 
 #include <glm/glm.hpp>
 
@@ -48,18 +48,17 @@ public:
     // ----------------------------------------
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const PrimitiveType &primitive = PrimitiveType::Triangle);
-    /*
+    
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const std::shared_ptr<Material>& material,
                      const glm::mat4 &transform = glm::mat4(1.0f),
                      const PrimitiveType &primitive = PrimitiveType::Triangle);
-     */
     
     // Getters(s)
     // ----------------------------------------
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
     
-    //static MaterialLibrary& GetMaterialLibrary() { return s_MaterialLibrary; }
+    static MaterialLibrary& GetMaterialLibrary() { return s_MaterialLibrary; }
     
     // Setter(s)
     // ----------------------------------------
@@ -109,7 +108,7 @@ private:
     static std::unique_ptr<SceneData> s_SceneData;
     
     ///< Rendering libraries.
-    //static inline MaterialLibrary s_MaterialLibrary;
+    static inline MaterialLibrary s_MaterialLibrary;
 };
 
 } // namespace pixc
