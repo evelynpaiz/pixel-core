@@ -63,7 +63,6 @@ public:
     // Setter(s)
     // ----------------------------------------
     // TODO: move to renderer command
-    //static void SetDepthFunction(const DepthFunction depth);
     //static void SetFaceCulling(const FaceCulling culling);
     //static void SetCubeMapSeamless(const bool enabled);
     

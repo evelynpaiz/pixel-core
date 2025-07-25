@@ -73,6 +73,8 @@ private:
     // ----------------------------------------
     void UpdateViewport(const void* descriptor);
     
+    void SetDepthStencilState(const void* state);
+    
     // Render
     // ----------------------------------------
     void EndEncoding();

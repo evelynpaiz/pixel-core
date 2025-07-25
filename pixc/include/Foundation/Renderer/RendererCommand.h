@@ -37,7 +37,7 @@ public:
     static void BeginRenderPass();
     static void EndRenderPass();
     
-    static void Clear();
+    static void Clear(const RenderTargetBuffers& targets = {true, false, false});
     
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const PrimitiveType &primitive = PrimitiveType::Triangle);
@@ -58,7 +58,8 @@ public:
     
     // Setter(s)
     // ----------------------------------------
-    //static void SetDepthTesting(const bool enabled);
+    static void SetDepthTesting(const bool enabled = true,
+                                const DepthFunction function = DepthFunction::Less);
     
     // Renderer variables
     // ----------------------------------------

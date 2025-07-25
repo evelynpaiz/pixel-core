@@ -134,18 +134,27 @@ void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
 }
 
 /**
- * Set the depth function for rendering.
+ * Reset rendering statistics.
  *
- * The depth function determines how fragments (pixels) are compared to the depth buffer
- * to determine if they should be drawn or discarded.
- *
- * @param depth The depth function to be set.
-
-void Renderer::SetDepthFunction(const DepthFunction depth)
-{
-    glDepthFunc(utils::graphics::gl::ToOpenGLDepthFunc(depth));
-}
+ * This function resets the stored rendering statistics, including information about
+ * the number of draw calls, vertices rendered, and other rendering-related data.
+ * After calling this function, the statistics will be reset to zero values.
  */
+void Renderer::ResetStats()
+{
+    memset(&g_Stats, 0, sizeof(RenderingStatistics));
+}
+
+/**
+ * Get the current rendering statistics.
+ *
+ * @return The rendering statistics structure containing performance metrics.
+ */
+Renderer::RenderingStatistics Renderer::GetStats()
+{
+    return g_Stats;
+}
+
 /**
  * @brief Set the face culling mode for rendering.
  *
@@ -176,26 +185,5 @@ void Renderer::SetCubeMapSeamless(const bool enabled)
         glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
  */
-/**
- * Reset rendering statistics.
- *
- * This function resets the stored rendering statistics, including information about
- * the number of draw calls, vertices rendered, and other rendering-related data.
- * After calling this function, the statistics will be reset to zero values.
- */
-void Renderer::ResetStats()
-{
-    memset(&g_Stats, 0, sizeof(RenderingStatistics));
-}
-
-/**
- * Get the current rendering statistics.
- *
- * @return The rendering statistics structure containing performance metrics.
- */
-Renderer::RenderingStatistics Renderer::GetStats()
-{
-    return g_Stats;
-}
 
 } // namespace pixc

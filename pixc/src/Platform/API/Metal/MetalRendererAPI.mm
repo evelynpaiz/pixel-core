@@ -12,17 +12,6 @@
 namespace pixc {
 
 /**
- * @brief Holds Metal pipeline configuration states.
- */
-struct MetalPipelineState
-{
-    ///< The current render pipeline state.
-    id<MTLRenderPipelineState> RenderPipelineState;
-    ///< The current depth-stencil state.
-    id<MTLDepthStencilState> DepthStencilState;
-};
-
-/**
  * @brief Represents the rendering target resources.
  */
 struct MetalRenderTarget
@@ -34,12 +23,19 @@ struct MetalRenderTarget
 };
 
 /**
+ * @brief Caches various GPU state objects for reuse.
+ */
+struct MetalRenderCache
+{
+    ///< Cache of depth-stencil states keyed by depth descriptor.
+    std::unordered_map<DepthDescriptor, id<MTLDepthStencilState>> Depth;
+};
+
+/**
  * @brief Holds the core Metal objects required for rendering within the MetalRendererAPI.
  */
 struct MetalRendererAPI::MetalRendererState
 {
-    ///< Pipeline and depth-stencil state configuration.
-    MetalPipelineState PipelineState;
     ///< Render target resources.
     MetalRenderTarget RenderTarget;
     
@@ -47,6 +43,11 @@ struct MetalRendererAPI::MetalRendererState
     MTLViewport Viewport;
     ///< Clear color.
     MTLClearColor ClearColor;
+    ///< Depth configuration.
+    DepthDescriptor DepthState;
+    
+    /// Cache of render-related GPU states (e.g., depth-stencil).
+    MetalRenderCache Cache;
 };
 
 /**
@@ -108,6 +109,23 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
  }
 
 /**
+ * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ *
+ * @param enable Enable or not the depth testing.
+ * @param function Depth function to be used for depth computation.
+ */
+void MetalRendererAPI::SetDepthTesting(const bool enabled,
+                                       const DepthFunction function)
+{
+    m_State->DepthState.Enabled = enabled;
+    
+    if (function != DepthFunction::None)
+    {
+        m_State->DepthState.Function = function;
+    }
+}
+
+/**
  * @brief Initialize a new rendering pass.
  */
 void MetalRendererAPI::BeginRenderPass()
@@ -125,8 +143,10 @@ void MetalRendererAPI::EndRenderPass()
 
 /**
  * @brief Clear the buffers to preset values.
+ *
+ * @param targets The rendering buffers to be cleared.
  */
-void MetalRendererAPI::Clear()
+void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
     // Create the render pass descriptor
     MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
@@ -139,8 +159,25 @@ void MetalRendererAPI::Clear()
     descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     descriptor.colorAttachments[0].texture = drawable.texture;
     
+    // Configure depth attachment (if depth buffer is active)
+    if (targets.depthBufferActive)
+    {
+        // Create the depth texture for the screen target if it doesn't exist or needs to be updated
+        CreateDepthTexture();
+        
+        descriptor.depthAttachment.clearDepth = 1.0;
+        descriptor.depthAttachment.loadAction = MTLLoadActionClear;
+        descriptor.depthAttachment.storeAction = MTLStoreActionDontCare;
+        
+        descriptor.depthAttachment.texture = m_State->RenderTarget.DepthAttachment;
+    }
+    
     // Define a new command encoder
-    m_Context->InitCommandEncoder(descriptor);
+    m_Context->InitCommandEncoder(descriptor, "Scene");
+    
+    // Defines a depth stencil state into the current command encoder
+    SetDepthTesting(targets.depthBufferActive, DepthFunction::None);
+    m_Context->SetDepthStencilState(GetOrCreateDepthState());
 }
 
 /**
@@ -169,6 +206,68 @@ void MetalRendererAPI::Clear()
         indexBuffer:indexBuffer
         indexBufferOffset:0
     ];
+}
+
+/**
+ * @brief Creates and sets the depth attachment texture for the screen render target.
+ */
+void MetalRendererAPI::CreateDepthTexture()
+{
+    // Avoid unnecessary recreation
+    glm::vec2 drawableSize = m_Context->GetDrawableSize();
+    
+    if (m_State->RenderTarget.DepthAttachment &&
+        m_State->RenderTarget.DepthAttachment.width == drawableSize.x &&
+        m_State->RenderTarget.DepthAttachment.height == drawableSize.y)
+    {
+        return;
+    }
+    
+    // Get the Metal device from the context
+    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+    
+    // Define a depth texture
+    MTLTextureDescriptor *descriptor = [[MTLTextureDescriptor alloc] init];
+    
+    // Define a depth texture
+    descriptor.textureType = MTLTextureType2D;
+    descriptor.pixelFormat = MTLPixelFormatDepth16Unorm;
+    
+    // Set the same texture dimensions
+    descriptor.width = drawableSize.x;
+    descriptor.height = drawableSize.y;
+    
+    // Set the texture's storage and usage modes
+    descriptor.storageMode = MTLStorageModePrivate;
+    descriptor.usage =  MTLTextureUsageShaderWrite | MTLTextureUsageRenderTarget;
+    
+    m_State->RenderTarget.DepthAttachment = [device newTextureWithDescriptor:descriptor];
+    [descriptor release];
+}
+
+/**
+ * @brief Creates a default depth-stencil state.
+ */
+void* MetalRendererAPI::GetOrCreateDepthState()
+{
+    // Verify that the state has not been created yet
+    auto it = m_State->Cache.Depth.find(m_State->DepthState);
+        if (it != m_State->Cache.Depth.end())
+            return reinterpret_cast<void*>(it->second);
+    
+    // Get the Metal device from the context
+    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+    
+    // Define the depth stencil descriptor and create the pipeline
+    MTLDepthStencilDescriptor *descriptor = [[MTLDepthStencilDescriptor alloc] init];
+    descriptor.depthWriteEnabled = m_State->DepthState.Enabled;
+    descriptor.depthCompareFunction = utils::graphics::mtl::ToMetalCompareFunction(m_State->DepthState.Function);
+    id<MTLDepthStencilState> depthState = [device newDepthStencilStateWithDescriptor:descriptor];
+    [descriptor release];
+    
+    // Cache the newly created state and return it
+    m_State->Cache.Depth[m_State->DepthState] = depthState;
+    return reinterpret_cast<void*>(depthState);
 }
 
 /**
@@ -228,21 +327,6 @@ void MetalRendererAPI::Clear()
  {
  m_Context->EndEncoding();
  RendererAPI::EndRenderPass(framebuffer);
- }
- */
-
-/**
- * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
- *
- * @param enable Enable or not the depth testing.
- 
- void MetalRendererAPI::SetDepthTesting(bool enabled)
- {
- if (!enabled)
- return;
- 
- // Defines a depth stencil state into the current command encoder
- m_Context->EnableDepthStencilState();
  }
  */
 

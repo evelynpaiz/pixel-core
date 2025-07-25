@@ -39,12 +39,15 @@ public:
     void SetViewport(const unsigned int x, const unsigned int y,
                      const unsigned int width, const unsigned int height) override;
     
+    void SetDepthTesting(const bool enabled,
+                         const DepthFunction function) override;
+    
     // Render
     // ----------------------------------------
     void BeginRenderPass() override;
     void EndRenderPass() override;
     
-    void Clear() override;
+    void Clear(const RenderTargetBuffers& targets) override;
     
     void Draw(const std::shared_ptr<Drawable>& drawable,
               const PrimitiveType &primitive = PrimitiveType::Triangle) override;
@@ -59,18 +62,7 @@ public:
      void SetRenderTarget(const glm::vec4& color,
      const RenderTargetBuffers& targets,
      const std::shared_ptr<FrameBuffer>& framebuffer) override;
-     
-     // Setter(s)
-     // ----------------------------------------
-     void SetDepthTesting(const bool enabled) override;
      */
-    
-private:
-    // Clear
-    // ----------------------------------------
-    //void Clear(const RenderTargetBuffers& targets);
-    //void Clear(const glm::vec4& color,
-    //           const RenderTargetBuffers& targets);
     
     // OpenGL API variables
     // ----------------------------------------

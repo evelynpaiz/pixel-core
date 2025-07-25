@@ -33,7 +33,50 @@ enum class FaceCulling
  */
 enum class DepthFunction
 {
-    Always, Never, Less, Equal, LEqual, Greater, NotEqual, GEqual,
+    None, Always, Never, Less, Equal, LEqual, Greater, NotEqual, GEqual,
+};
+
+/**
+ * @brief Describes the configuration for depth testing.
+ */
+struct DepthDescriptor
+{
+    ///< Whether depth testing and writing is enabled.
+    bool Enabled = false;
+    ///< The depth comparison function (e.g., Less, Greater, Equal).
+    DepthFunction Function = DepthFunction::Less;
+    
+    /// @brief Equality operator for comparing two DepthDescriptor instances.
+    /// @param other Another descriptor to compare against.
+    /// @return True if both enabled state and compare function match.
+    bool operator==(const DepthDescriptor& other) const
+    {
+        return Enabled == other.Enabled &&
+               Function == other.Function;
+    }
 };
 
 } // namespace pixc
+
+
+namespace std {
+
+/**
+ * @brief Hash function specialization for DepthDescriptor.
+ *
+ * @note: Allows DepthDescriptor to be used as a key in unordered_map or other
+ * hash-based containers.
+ */
+template<>
+struct hash<pixc::DepthDescriptor> {
+    
+    /// @brief Generates a hash for a given DepthDescriptor.
+    /// @param key The depth descriptor to hash.
+    /// @return A combined hash of its Enabled flag and CompareFunction.
+    size_t operator()(const pixc::DepthDescriptor& key) const {
+        return std::hash<bool>()(key.Enabled) ^
+               (std::hash<int>()(static_cast<int>(key.Function)) << 1);
+    }
+};
+
+} // namespace std

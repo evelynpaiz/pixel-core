@@ -37,12 +37,15 @@ public:
     void SetViewport(const unsigned int x, const unsigned int y,
                      const unsigned int width, const unsigned int height) override;
     
+    void SetDepthTesting(const bool enabled,
+                         const DepthFunction function) override;
+    
     // Render
     // ----------------------------------------
     void BeginRenderPass() override;
     void EndRenderPass() override;
     
-    void Clear() override;
+    void Clear(const RenderTargetBuffers& targets) override;
     
     void Draw(const std::shared_ptr<Drawable>& drawable,
               const PrimitiveType &primitive = PrimitiveType::Triangle) override;
@@ -61,9 +64,11 @@ public:
     void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer) override;
      */
     
-    // Setter(s)
+private:
+    // Initialization
     // ----------------------------------------
-    //void SetDepthTesting(const bool enabled) override;
+    void CreateDepthTexture();
+    void* GetOrCreateDepthState();
     
     // Renderer API variables
     // ----------------------------------------

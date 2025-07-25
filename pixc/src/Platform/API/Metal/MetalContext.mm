@@ -321,7 +321,7 @@ void MetalContext::UpdateBufferSize(const unsigned int width,
 }
 
 /**
- * Set the viewport for rendering.
+ * @brief Set the viewport for rendering.
  *
  * @param descriptor Pointer to the metal viewport descriptor.
  */
@@ -333,6 +333,22 @@ void MetalContext::UpdateViewport(const void* descriptor)
     // Update the drawable and the encoder if necessary
     if (m_State->Frame.Encoder)
         [m_State->Frame.Encoder setViewport:*viewport];
+}
+
+/**
+ * @brief Sets the active depth-stencil state for rendering.
+ *
+ * @param state Pointer to the depth stencil state defined. 
+ */
+void MetalContext::SetDepthStencilState(const void* state)
+{
+    // Verify that the encoder has been defined
+    if (!m_State->Frame.Encoder)
+        return;
+    
+    // Set the depth stencil state
+    auto depthStencilState = reinterpret_cast<id<MTLDepthStencilState>>(state);
+    [m_State->Frame.Encoder setDepthStencilState:depthStencilState];
 }
 
 } // namespace pixc

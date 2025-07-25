@@ -76,7 +76,7 @@ void RenderingLayer::OnUpdate(Timestep ts)
     // Render
     RendererCommand::BeginRenderPass();
     RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
-    RendererCommand::Clear();
+    RendererCommand::Clear({true, true, false});
     
     Renderer::BeginScene(m_Camera);
     

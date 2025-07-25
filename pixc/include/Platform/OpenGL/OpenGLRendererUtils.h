@@ -87,7 +87,8 @@ inline DataType ToDataType(GLenum glType)
  *
  * @return Bitwise OR of masks that indicate the buffers to be cleared.
  */
-inline GLbitfield ToOpenGLClearMask(const RenderTargetBuffers& targets) {
+inline GLbitfield ToOpenGLClearMask(const RenderTargetBuffers& targets)
+{
     GLbitfield mask = 0;
     if (targets.colorBufferActive) {
         mask |= GL_COLOR_BUFFER_BIT;
@@ -157,6 +158,7 @@ inline GLenum ToOpenGLDepthFunc(DepthFunction depth)
 {
     switch (depth)
     {
+        case DepthFunction::None:     return 0;
         case DepthFunction::Always:   return GL_ALWAYS;
         case DepthFunction::Never:    return GL_NEVER;
         case DepthFunction::Less:     return GL_LESS;

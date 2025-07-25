@@ -100,6 +100,34 @@ inline MTLPrimitiveType ToMetalPrimitive(PrimitiveType primitiveType)
     return MTLPrimitiveTypeTriangle;
 }
 
+/**
+ * @brief Convert the depth function to its corresponding Metal compare function.
+ *
+ * @param depth The depth function mode to be converted.
+ * @return The corresponding MTLCompareFunction.
+ *
+ * @note If the input depth function is not recognized, the function will assert with an error.
+ */
+inline MTLCompareFunction ToMetalCompareFunction(DepthFunction depth)
+{
+    switch (depth)
+    {
+        case DepthFunction::None:     return MTLCompareFunctionLess;
+            
+        case DepthFunction::Always:   return MTLCompareFunctionAlways;
+        case DepthFunction::Never:    return MTLCompareFunctionNever;
+        case DepthFunction::Less:     return MTLCompareFunctionLess;
+        case DepthFunction::Equal:    return MTLCompareFunctionEqual;
+        case DepthFunction::LEqual:   return MTLCompareFunctionLessEqual;
+        case DepthFunction::Greater:  return MTLCompareFunctionGreater;
+        case DepthFunction::NotEqual: return MTLCompareFunctionNotEqual;
+        case DepthFunction::GEqual:   return MTLCompareFunctionGreaterEqual;
+    }
+
+    PIXEL_CORE_ASSERT(false, "Unknown depth function!");
+    return MTLCompareFunctionLess;
+}
+
 } // namespace mtl
 } // namespace graphics
 } // namespace utils

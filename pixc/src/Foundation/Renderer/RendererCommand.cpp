@@ -55,10 +55,12 @@ void RendererCommand::EndRenderPass()
 
 /**
  * @brief Clear the buffers to preset values.
+ *
+ * @param targets The rendering buffers to be cleared.
  */
-void RendererCommand::Clear()
+void RendererCommand::Clear(const RenderTargetBuffers& targets)
 {
-    s_API->Clear();
+    s_API->Clear(targets);
 }
 
 /**
@@ -71,6 +73,17 @@ void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
                            const PrimitiveType &primitive)
 {
     s_API->Draw(drawable, primitive);
+}
+
+/**
+ * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ *
+ * @param enable Enable or not the depth testing.
+ * @param function Depth function to be used for depth computation.
+ */
+void RendererCommand::SetDepthTesting(const bool enabled, const DepthFunction function)
+{
+    s_API->SetDepthTesting(enabled, function);
 }
 
 /**
@@ -128,17 +141,6 @@ void RendererCommand::SetRenderTarget(const glm::vec4& color,
 void RendererCommand::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
     s_API->EndRenderPass(framebuffer);
-}
- */
-
-/**
- * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
- *
- * @param enable Enable or not the depth testing.
-
-void RendererCommand::SetDepthTesting(const bool enabled)
-{
-    s_API->SetDepthTesting(enabled);
 }
  */
 } // namespace pixc

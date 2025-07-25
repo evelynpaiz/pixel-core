@@ -32,13 +32,13 @@ void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 }
 
 /**
-* Set the viewport for rendering.
-*
-* @param x The x-coordinate of the lower-left corner of the viewport.
-* @param y The y-coordinate of the lower-left corner of the viewport.
-* @param width The width of the viewport.
-* @param height The height of the viewport.
-*/
+ * @brief Set the viewport for rendering.
+ *
+ * @param x The x-coordinate of the lower-left corner of the viewport.
+ * @param y The y-coordinate of the lower-left corner of the viewport.
+ * @param width The width of the viewport.
+ * @param height The height of the viewport.
+ */
 void OpenGLRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
                                     const unsigned int width, const unsigned int height)
 {
@@ -46,7 +46,29 @@ void OpenGLRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
 }
 
 /**
- * Initialize a new rendering pass.
+ * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ *
+ * @param enable Enable or not the depth testing.
+ * @param function Depth function to be used for depth computation.
+ */
+void OpenGLRendererAPI::SetDepthTesting(const bool enabled,
+                                        const DepthFunction function)
+{
+    // Define depth test
+    if (enabled)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    
+    // Define depth function
+    if (function != DepthFunction::None)
+    {
+        glDepthFunc(utils::graphics::gl::ToOpenGLDepthFunc(function));
+    }
+}
+
+/**
+ * @brief Initialize a new rendering pass.
  */
 void OpenGLRendererAPI::BeginRenderPass()
 {
@@ -55,22 +77,26 @@ void OpenGLRendererAPI::BeginRenderPass()
 }
 
 /**
- * Finalize the current rendering pass.
+ * @brief Finalize the current rendering pass.
  */
 void OpenGLRendererAPI::EndRenderPass()
 {}
 
 /**
- * Clear the buffers to preset values.
+ * @brief Clear the buffers to preset values.
+ *
+ * @param targets The rendering buffers to be cleared.
  */
-void OpenGLRendererAPI::Clear()
+void OpenGLRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    // glClear(utils::OpenGL::BufferStateToOpenGLMask(buffersActive)); 
+    // Set depth testing state so it's in the correct state
+    SetDepthTesting(targets.depthBufferActive, DepthFunction::None);
+    // Clear buffers
+    glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
 }
 
 /**
- * Render primitives from array data using the specified vertex array.
+ * @brief Render primitives from array data using the specified vertex array.
  *
  * @param drawable The Vertex Array containing the vertex and index buffers for rendering.
  * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
@@ -159,17 +185,4 @@ void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
 }
  */
 
-/**
- * Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
- *
- * @param enable Enable or not the depth testing.
-
-void OpenGLRendererAPI::SetDepthTesting(bool enabled)
-{
-    if (enabled)
-        glEnable(GL_DEPTH_TEST);
-    else
-        glDisable(GL_DEPTH_TEST);
-}
- */
 } // namespace pixc

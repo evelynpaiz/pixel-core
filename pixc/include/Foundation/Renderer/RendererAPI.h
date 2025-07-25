@@ -62,19 +62,19 @@ public:
     virtual void SetViewport(const unsigned int x, const unsigned int y,
                              const unsigned int width, const unsigned int height) = 0;
     
+    virtual void SetDepthTesting(const bool enabled, const DepthFunction function) = 0;
+    
     // Render
     // ----------------------------------------
     // TODO: Define the rendering pass methods with a framebuffer.
     virtual void BeginRenderPass() = 0;
     virtual void EndRenderPass() = 0;
     
-    virtual void Clear() = 0;
+    virtual void Clear(const RenderTargetBuffers& targets) = 0;
     
     virtual void Draw(const std::shared_ptr<Drawable>& drawable,
                       const PrimitiveType &primitive = PrimitiveType::Triangle) = 0;
     
-    // Clear
-    // ----------------------------------------
     /*
      virtual void SetRenderTarget(const RenderTargetBuffers& targets) = 0;
      virtual void SetRenderTarget(const glm::vec4& color,
@@ -93,13 +93,6 @@ public:
      if (framebuffer)
      framebuffer->Unbind();
      }
-     
-     // Setter(s)
-     // ----------------------------------------
-     virtual void SetViewport(unsigned int x, unsigned int y,
-     unsigned int width, unsigned int height) = 0;
-     
-     virtual void SetDepthTesting(const bool enabled) = 0;
      */
     
 protected:
