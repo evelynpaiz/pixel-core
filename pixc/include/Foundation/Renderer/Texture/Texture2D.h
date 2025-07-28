@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Foundation/Core/Resources.h"
+
 #include "Foundation/Renderer/Texture/Texture.h"
 
 /**
@@ -157,7 +159,7 @@ inline std::shared_ptr<Texture2D> EmptyTexture2D()
     spec.SetMipFilter(TextureFilter::Linear);
     
     // Create the empty texture using a ccheckerboard pattern
-    texture = Texture2D::CreateFromFile("resources/common/checkerboard.png",
+    texture = Texture2D::CreateFromFile(ResourcesManager::GeneralPath("textures/checkerboard.png"),
                                         spec);
     
     // Return the created texture

@@ -1,5 +1,6 @@
 #include "Foundation/Layer/Rendering/RenderingLayer.h"
 
+#include "Foundation/Core/Resources.h"
 #include "Foundation/Event/WindowEvent.h"
 
 #include "Foundation/Renderer/Renderer.h"
@@ -11,8 +12,11 @@
 #include "Foundation/Renderer/Material/SimpleMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
+#include "Foundation/Renderer/Drawable/Model/AssimpModel.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "Foundation/Core/Resources.h"
 
 namespace pixc {
 
@@ -49,6 +53,11 @@ void RenderingLayer::OnAttach()
     plane->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
     plane->SetMaterial(simple);
     m_Models.Add("Plane", plane);
+    
+    auto planet = std::make_shared<AssimpModel>(ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
+    planet->SetScale(glm::vec3(0.15f));
+    planet->SetMaterial(simple);
+    m_Models.Add("Planet", planet);
 }
 
 /**
@@ -60,7 +69,8 @@ void RenderingLayer::OnUpdate(Timestep ts)
 {
     // Define rendering texture(s)
     static auto &white = utils::textures::WhiteTexture2D();
-    static auto container = Texture2D::CreateFromFile("resources/textures/container.jpg");
+    static auto container = Texture2D::CreateFromFile(ResourcesManager::SpecificPath("textures/sample/container.jpg"));
+    static auto ground = Texture2D::CreateFromFile(ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
     
     // Get the material(s)
     auto material = std::dynamic_pointer_cast<SimpleMaterial>(
@@ -69,6 +79,7 @@ void RenderingLayer::OnUpdate(Timestep ts)
     // Get the model(s)
     auto& cube = m_Models.Get("Cube");
     auto& plane = m_Models.Get("Plane");
+    auto& planet = m_Models.Get("Planet");
     
     // Reset rendering statistics
     Renderer::ResetStats();
@@ -80,12 +91,12 @@ void RenderingLayer::OnUpdate(Timestep ts)
     
     Renderer::BeginScene(m_Camera);
     
+    material->SetColor(glm::vec4(0.7f, 0.6f, 0.85f, 1.0f));
+    material->SetTextureMap(ground);
+    planet->DrawModel();
+    
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(container);
-    cube->DrawModel();
-    
-    material->SetColor(glm::vec4(0.3f, 0.2f, 0.8f, 1.0f));
-    material->SetTextureMap(white);
     plane->DrawModel();
     
     Renderer::EndScene();

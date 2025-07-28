@@ -24,13 +24,14 @@ vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
     // Calculate the final position of the vertex in clip space
     // by transforming the vertex position from object space to clip space
     float4 position = u_Transform.Projection * u_Transform.View * u_Transform.Model * in.a_Position;
-    // Flip the texture coordinates
-    float2 uv = float2(in.a_TextureCoord.x, 1.0f - in.a_TextureCoord.y);
+    
+    // NOTE: Flip the texture coordinates if necessary with:
+    // float2 uv = float2(in.a_TextureCoord.x, 1.0f - in.a_TextureCoord.y);
     
     // Pass the input attributes to the fragment shader
     VertexOut out {
         .Position = position,
-        .v_TextureCoord = uv
+        .v_TextureCoord = in.a_TextureCoord
     };
     return out;
 }

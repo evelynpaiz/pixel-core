@@ -1,12 +1,14 @@
-#include "enginepch.h"
-#include "Common/Renderer/Drawable/Model/AssimpModel.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Drawable/Model/AssimpModel.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+namespace pixc {
+
 /**
- * Load the model from the specified file path.
+ * @brief Load the model from the specified file path.
  *
  * @param filePath The path to the model file.
  */
@@ -19,7 +21,7 @@ void AssimpModel::LoadModel(const std::filesystem::path &filePath)
     // Check for error(s) during loading
     bool success = scene && scene->mRootNode &&
                     !(scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE);
-    CORE_ASSERT(success, "Error loading model with Assimp: " +
+    PIXEL_CORE_ASSERT(success, "Error loading model with Assimp: " +
                 std::string(importer.GetErrorString()));
 
     // Save the file path
@@ -34,7 +36,7 @@ void AssimpModel::LoadModel(const std::filesystem::path &filePath)
 }
 
 /**
- * Processes the nodes in the ASSIMP scene recursively.
+ * @brief Processes the nodes in the ASSIMP scene recursively.
  *
  * @param node The current node being processed.
  * @param scene The ASSIMP scene containing the model data.
@@ -58,7 +60,7 @@ void AssimpModel::ProcessNode(aiNode *node, const aiScene *scene)
 }
 
 /**
- * Processes an ASSIMP mesh and creates a corresponding `Mesh` object.
+ * @brief Processes an ASSIMP mesh and creates a corresponding `Mesh` object.
  *
  * @param mesh The ASSIMP mesh to be processed.
  * @return The processed `Mesh` object.
@@ -123,3 +125,5 @@ Mesh<AssimpVertexData> AssimpModel::ProcessMesh(aiMesh *mesh)
     
     return Mesh<AssimpVertexData>(vertices, indices, layout);
 }
+
+} // namespace pixc

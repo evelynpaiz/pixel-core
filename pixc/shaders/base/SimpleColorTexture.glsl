@@ -2,19 +2,19 @@
 #version 330 core
 
 // Include transformation matrices
-#include "Resources/shaders/shared/structure/matrix/SimpleMatrix.glsl"
+#include "pixc/shaders/shared/structure/matrix/SimpleMatrix.glsl"
 
 // Include vertex shader
-#include "Resources/shaders/shared/chunk/vertex/Tex.vs.glsl"
+#include "pixc/shaders/shared/chunk/vertex/Tex.vs.glsl"
 
 #shader fragment
 #version 330 core
 
 // Include material properties
-#include "Resources/shaders/shared/structure/material/ColorTextureMaterial.glsl"
+#include "pixc/shaders/shared/structure/material/ColorTextureMaterial.glsl"
 
 // Include fragment inputs
-#include "Resources/shaders/shared/chunk/fragment/Tex.fs.glsl"
+#include "pixc/shaders/shared/chunk/fragment/Tex.fs.glsl"
 
 // Entry point of the fragment shader
 void main()

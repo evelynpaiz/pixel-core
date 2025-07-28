@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common/Renderer/Drawable/Mesh/Mesh.h"
-#include "Common/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
+#include "Foundation/Renderer/Drawable/Model/Model.h"
 
 #include <glm/glm.hpp>
 
@@ -10,7 +10,13 @@ struct aiScene;
 struct aiMesh;
 
 /**
- * Represents the different data that a vertex from an assimp model contains.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents the different data that a vertex from an assimp model contains.
  */
 struct AssimpVertexData
 {
@@ -20,7 +26,7 @@ struct AssimpVertexData
 };
 
 /**
- * Represents a model loaded using the ASSIMP library.
+ * @brief Represents a model loaded using the ASSIMP library.
  *
  * The `AssimpModel` class extends the base `Model` class and provides functionality for loading
  *  and processing models. It inherits the ability to load and render meshes from the base class and
@@ -59,3 +65,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(AssimpModel);
 };
+
+} // namespace pixc

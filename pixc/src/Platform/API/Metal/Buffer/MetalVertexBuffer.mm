@@ -24,13 +24,10 @@ MetalVertexBuffer::MetalVertexBuffer(const void *vertices, const uint32_t size,
     // Get the Metal device from the context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(context->GetDevice());
     
-    // Calculate the length of the buffer in bytes
-    NSUInteger length = count * size;
-    
     // Create the Metal buffer
     id<MTLBuffer> buffer = [device
                             newBufferWithBytes:vertices
-                            length:length
+                            length:size
                             options:MTLResourceStorageModeShared];
     m_Buffer = reinterpret_cast<void*>(buffer);
 }

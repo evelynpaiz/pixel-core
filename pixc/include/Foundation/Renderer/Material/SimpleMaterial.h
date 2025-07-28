@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Foundation/Core/Resources.h"
+
 #include "Foundation/Renderer/Material/Material.h"
 
 /**
@@ -137,7 +139,7 @@ public:
     /// @brief Generate a material for hair with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
     SimpleColorMaterial(const std::filesystem::path& filePath =
-                        std::filesystem::path("Resources/shaders/base/SimpleColor"))
+                        ResourcesManager::GeneralPath("pixc/shaders/base/SimpleColor"))
     : Material(filePath), FlatColor()
     {}
     /// @brief Destructor for the hair shading material.
@@ -178,7 +180,7 @@ public:
     /// @brief Generate a basic material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
     SimpleTextureMaterial(const std::filesystem::path& filePath =
-                          std::filesystem::path("Resources/shaders/base/SimpleTexture"))
+                          ResourcesManager::GeneralPath("pixc/shaders/base/SimpleTexture"))
     : Material(filePath), FlatTexture()
     {}
     /// @brief Destructor for the basic material.
@@ -220,7 +222,7 @@ public:
     /// @brief Generate a basic material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
     SimpleMaterial(const std::filesystem::path& filePath =
-                   std::filesystem::path("Resources/shaders/base/SimpleColorTexture"))
+                   ResourcesManager::GeneralPath("pixc/shaders/base/SimpleColorTexture"))
     : Material(filePath), FlatColor(), FlatTexture()
     {}
     /// @brief Destructor for the basic material.

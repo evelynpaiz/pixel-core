@@ -5,6 +5,7 @@
 // --------------------------------------------
 #include "Foundation/Core/Assert.h"
 #include "Foundation/Core/Log.h"
+#include "Foundation/Core/Resources.h"
 #include "Foundation/Core/Library.h"
 
 #include "Foundation/Core/Timestep.h"
@@ -66,18 +67,18 @@
 //#include "Foundation/Renderer/Light/DirectionalLight.h"
 //#include "Foundation/Renderer/Light/EnvironmentLight.h"
 
-//#include "Foundation/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Material/Material.h"
 //#include "Foundation/Renderer/Material/LightedMaterial.h"
-//#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/SimpleMaterial.h"
 //#include "Foundation/Renderer/Material/PhongMaterial.h"
 
-//#include "Foundation/Renderer/Drawable/Drawable.h"
-//#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
-//#include "Foundation/Renderer/Drawable/Model/Model.h"
-//#include "Foundation/Renderer/Drawable/Model/AssimpModel.h"
+#include "Foundation/Renderer/Drawable/Drawable.h"
+#include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
+#include "Foundation/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Drawable/Model/AssimpModel.h"
 
-//#include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
-//#include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
+#include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
+#include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
 
 #include "Foundation/Renderer/Camera/PerspectiveCamera.h"
 #include "Foundation/Renderer/Camera/OrthographicCamera.h"

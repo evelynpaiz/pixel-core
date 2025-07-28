@@ -14,6 +14,7 @@ file(
     src/Foundation/Renderer/Texture/*.cpp
     src/Foundation/Renderer/Shader/*.cpp
     src/Foundation/Renderer/Camera/*.cpp
+    src/Foundation/Renderer/Drawable/*.cpp
 
     src/Foundation/Renderer/GraphicsContext.cpp
     src/Foundation/Renderer/RendererAPI.cpp
@@ -22,8 +23,6 @@ file(
 
     src/Foundation/Renderer/Buffer/IndexBuffer.cpp
     src/Foundation/Renderer/Buffer/VertexBuffer.cpp
-
-    src/Foundation/Renderer/Drawable/Drawable.cpp
 )
 
 # Find platform-specific source files
@@ -78,6 +77,7 @@ file(
     include/Foundation/Renderer/Texture/*.h
     include/Foundation/Renderer/Shader/*.h
     include/Foundation/Renderer/Camera/*.h
+    include/Foundation/Renderer/Drawable/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h
@@ -94,11 +94,6 @@ file(
     
     include/Foundation/Renderer/Material/Material.h
     include/Foundation/Renderer/Material/SimpleMaterial.h
-
-    include/Foundation/Renderer/Drawable/Drawable.h
-    include/Foundation/Renderer/Drawable/Mesh/*.h
-    include/Foundation/Renderer/Drawable/Model/Model.h
-    include/Foundation/Renderer/Drawable/Model/ModelUtils.h
 
     include/Platform/OpenGL/Texture/*.h
     include/Platform/OpenGL/Shader/*h
@@ -157,6 +152,20 @@ if (APPLE)
     )
 endif()
 
+# Find the shader files
+file(
+    GLOB_RECURSE shader_files
+    LIST_DIRECTORIES false
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    shaders/*.glsl
+    shaders/*.metal
+)
+
+# Create custom target sources (for IDE visibility only)
+foreach(shader ${shader_files})
+    set_source_files_properties(${shader} PROPERTIES HEADER_FILE_ONLY TRUE)
+endforeach()
+
 # Define the engine library
 add_library(pixc STATIC ${sources} ${platform_sources} ${public_headers})
 add_library(pixc::Engine ALIAS pixc)
@@ -173,10 +182,12 @@ set_target_properties(pixc PROPERTIES
     PUBLIC_HEADER "${public_headers}"
 )
 
+# Include shader files as private
+target_sources(pixc PRIVATE ${shader_files})
+
 # Link external libraries
 target_link_libraries(pixc 
-    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui stb::stb
-#   assimp::assimp
+    spdlog::spdlog OpenGL::GL glfw::glfw glew::glew glm::glm imgui::imgui stb::stb assimp::assimp
 )
 
 # Link metal if apple device is used
@@ -195,5 +206,5 @@ target_compile_definitions(pixc PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WA
 # Define solution tree organization
 source_group(
     TREE ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES ${public_headers} ${sources} ${platform_sources}
+    FILES ${public_headers} ${sources} ${platform_sources} ${shader_files}
 )
