@@ -39,4 +39,48 @@ std::unique_ptr<RendererAPI> RendererAPI::Create()
     return nullptr;
 }
 
+/**
+ * @brief Initialize a new rendering pass.
+ *
+ * @param framebuffer Buffer to hold to result of the rendered pass.
+ */
+void RendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
+{
+    // If no framebuffer is active, return and render into the screen buffer
+    if (!framebuffer)
+        return;
+    
+    // Update the information of the currently bound framebuffer
+    m_ActiveFramebuffer = framebuffer;
+    m_ActiveFramebuffer->Bind();                // render into the framebuffer
+}
+
+/**
+ * @brief Finalize the current rendering pass.
+ */
+void RendererAPI::EndRenderPass()
+{
+    // If no framebuffer is active, return
+    if (!m_ActiveFramebuffer)
+        return;
+    
+    // Unbound the framebuffer if necessary
+    m_ActiveFramebuffer->Unbind();
+    m_ActiveFramebuffer = nullptr;
+}
+
+/**
+ * @brief Clear the buffers to preset values.
+ */
+void RendererAPI::Clear()
+{
+    RenderTargetBuffers clearTargets = m_ActiveFramebuffer
+            ? m_ActiveFramebuffer->GetActiveRenderTargets()     // Clear buffers in the active framebuffer
+            : RenderTargetBuffers{ true, false, false };        // Clear color only for screen
+    
+    Clear(clearTargets);
+}
+
+
+
 } // namespace pixc

@@ -6,6 +6,7 @@
 
 #include "Foundation/Renderer/Camera/Camera.h"
 #include "Foundation/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 /**
  * @namespace pixc
@@ -43,11 +44,8 @@ private:
     ///< Set of objects in the scene.
     ModelLibrary m_Models;
     
-    struct VertexData
-    {
-        glm::vec4 position;         ///< Vertex position.
-        glm::vec2 uv;               ///< Texture coordinate.
-    };
+    ///< Framebuffers.
+    std::shared_ptr<FrameBuffer> m_Framebuffer;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

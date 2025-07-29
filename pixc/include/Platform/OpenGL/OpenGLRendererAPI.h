@@ -44,25 +44,12 @@ public:
     
     // Render
     // ----------------------------------------
-    void BeginRenderPass() override;
-    void EndRenderPass() override;
+    void BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer) override;
     
     void Clear(const RenderTargetBuffers& targets) override;
     
     void Draw(const std::shared_ptr<Drawable>& drawable,
               const PrimitiveType &primitive = PrimitiveType::Triangle) override;
-    
-    /*
-     void SetRenderTarget(const RenderTargetBuffers& targets) override;
-     void SetRenderTarget(const glm::vec4& color,
-     const RenderTargetBuffers& targets) override;
-     
-     void SetRenderTarget(const RenderTargetBuffers& targets,
-     const std::shared_ptr<FrameBuffer>& framebuffer) override;
-     void SetRenderTarget(const glm::vec4& color,
-     const RenderTargetBuffers& targets,
-     const std::shared_ptr<FrameBuffer>& framebuffer) override;
-     */
     
     // OpenGL API variables
     // ----------------------------------------

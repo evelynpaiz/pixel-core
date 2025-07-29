@@ -42,22 +42,31 @@ void RenderingLayer::OnAttach()
     auto simple = materialLibrary.Create<SimpleMaterial>("Simple");
     
     // Define the model(s)
+    auto planet = std::make_shared<AssimpModel>(ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
+    planet->SetScale(glm::vec3(0.12f));
+    planet->SetMaterial(simple);
+    planet->SetPosition(glm::vec3(-0.5f, 0.0f, 0.0f));
+    m_Models.Add("Planet", planet);
+    
     auto cube = utils::geometry::ModelCube<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
     cube->SetScale(glm::vec3(0.5f));
+    cube->SetPosition(glm::vec3(0.5f, 0.0f, 0.0f));
     cube->SetMaterial(simple);
     m_Models.Add("Cube", cube);
     
-    auto plane = utils::geometry::ModelPlane<GeoVertexData<glm::vec4, glm::vec2>>();
-    plane->SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-    plane->SetScale(glm::vec3(2.0f));
-    plane->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
-    plane->SetMaterial(simple);
-    m_Models.Add("Plane", plane);
+    auto viewport = utils::geometry::ModelPlane<GeoVertexData<glm::vec4, glm::vec2>>();
+    viewport->SetScale(glm::vec3(2.0f));
+    viewport->SetMaterial(simple);
+    m_Models.Add("Viewport", viewport);
     
-    auto planet = std::make_shared<AssimpModel>(ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
-    planet->SetScale(glm::vec3(0.15f));
-    planet->SetMaterial(simple);
-    m_Models.Add("Planet", planet);
+    // Define the framebuffer(s)
+    FrameBufferSpecification spec;
+    spec.SetFrameBufferSize(m_Camera->GetWidth(), m_Camera->GetHeight());
+    spec.AttachmentsSpec = {
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
+        { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
+    };
+    m_Framebuffer = FrameBuffer::Create(spec);
 }
 
 /**
@@ -77,31 +86,52 @@ void RenderingLayer::OnUpdate(Timestep ts)
                       Renderer::GetMaterialLibrary().Get("Simple"));
     
     // Get the model(s)
-    auto& cube = m_Models.Get("Cube");
-    auto& plane = m_Models.Get("Plane");
     auto& planet = m_Models.Get("Planet");
+    auto& cube = m_Models.Get("Cube");
+    
+    auto& viewport = m_Models.Get("Viewport");
     
     // Reset rendering statistics
     Renderer::ResetStats();
     
     // Render
-    RendererCommand::BeginRenderPass();
+    
+    // -------
+    RendererCommand::BeginRenderPass(m_Framebuffer);
     RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
-    RendererCommand::Clear({true, true, false});
+    RendererCommand::Clear();
     
     Renderer::BeginScene(m_Camera);
     
-    material->SetColor(glm::vec4(0.7f, 0.6f, 0.85f, 1.0f));
+    material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(ground);
     planet->DrawModel();
     
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(container);
-    plane->DrawModel();
+    cube->DrawModel();
     
     Renderer::EndScene();
 
     RendererCommand::EndRenderPass();
+    
+    // -------
+    
+    RendererCommand::BeginRenderPass();
+    RendererCommand::SetClearColor(glm::vec4(0.0f));
+    RendererCommand::Clear();
+    
+    Renderer::BeginScene();
+    
+    material->SetColor(glm::vec4(1.0f));
+    material->SetTextureMap(m_Framebuffer->GetColorAttachment(0));
+    viewport->DrawModel();
+    
+    Renderer::EndScene();
+
+    RendererCommand::EndRenderPass();
+    
+    // -------
     
     // Update camera
     m_Camera->OnUpdate(ts);
@@ -117,8 +147,7 @@ void RenderingLayer::OnEvent(Event &e)
     EventDispatcher dispatcher(e);
     
     // Dispatch the event to the application event callbacks
-    dispatcher.Dispatch<WindowResizeEvent>(
-                                           BIND_EVENT_FN(RenderingLayer::OnWindowResize));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(RenderingLayer::OnWindowResize));
     
     // Handle the events on the camera
     m_Camera->OnEvent(e);
@@ -135,8 +164,10 @@ bool RenderingLayer::OnWindowResize(WindowResizeEvent &e)
     // Update the camera
     m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
     
-    //m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
+    // Update the framebuffer(s)
+    m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
     
+    // Notify of the change
     PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());
     return true;
 }

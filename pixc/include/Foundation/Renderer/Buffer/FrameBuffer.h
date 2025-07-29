@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Common/Core/Library.h"
+#include "Foundation/Core/Library.h"
 
-#include "Common/Renderer/Buffer/Buffer.h"
+#include "Foundation/Renderer/Buffer/Buffer.h"
 
-#include "Common/Renderer/Texture/Texture.h"
-#include "Common/Renderer/Texture/TextureUtils.h"
+#include "Foundation/Renderer/Texture/Texture.h"
+#include "Foundation/Renderer/Texture/TextureUtils.h"
 
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Defines the specification for framebuffer attachments.
@@ -152,7 +152,7 @@ class FrameBuffer
     /// @return The color attachment (texture reference).
     const std::shared_ptr<Texture>& GetColorAttachment(const uint32_t index) const
     {
-        CORE_ASSERT(index >= 0 && index < m_ColorAttachments.size(),
+        PIXEL_CORE_ASSERT(index >= 0 && index < m_ColorAttachments.size(),
                     "Trying to get color attachment out of scope!");
         return m_ColorAttachments[index];
     }
@@ -272,4 +272,4 @@ class FrameBufferLibrary : public Library<std::shared_ptr<FrameBuffer>>
     }
 };
 
-//} // namespace pixc
+} // namespace pixc

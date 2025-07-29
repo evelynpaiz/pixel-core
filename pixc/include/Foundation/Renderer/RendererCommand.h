@@ -2,8 +2,9 @@
 
 #include "Foundation/Renderer/RendererAPI.h"
 
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+
 #include <glm/glm.hpp>
-#include <optional>
 
 /**
  * @namespace pixc
@@ -34,10 +35,11 @@ public:
     
     // Render
     // ----------------------------------------
-    static void BeginRenderPass();
+    static void BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer = nullptr);
     static void EndRenderPass();
     
-    static void Clear(const RenderTargetBuffers& targets = {true, false, false});
+    static void Clear();
+    static void Clear(const RenderTargetBuffers& targets);
     
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const PrimitiveType &primitive = PrimitiveType::Triangle);

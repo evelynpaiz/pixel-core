@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Provides an implementation of the `FrameBuffer` interface using the OpenGL API.
@@ -69,4 +69,4 @@ class OpenGLFrameBuffer : public FrameBuffer
     DISABLE_COPY_AND_MOVE(OpenGLFrameBuffer);
 };
 
-//} // namespace pixc
+} // namespace pixc

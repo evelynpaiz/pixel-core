@@ -3,8 +3,7 @@
 #include "Foundation/Renderer/RendererUtils.h"
 
 #include "Foundation/Renderer/Drawable/Drawable.h"
-//#include "Foundation/Renderer/Material/Material.h"
-//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 #include <glm/glm.hpp>
 
@@ -66,34 +65,14 @@ public:
     
     // Render
     // ----------------------------------------
-    // TODO: Define the rendering pass methods with a framebuffer.
-    virtual void BeginRenderPass() = 0;
-    virtual void EndRenderPass() = 0;
+    virtual void BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer);
+    virtual void EndRenderPass();
     
+    void Clear();
     virtual void Clear(const RenderTargetBuffers& targets) = 0;
     
     virtual void Draw(const std::shared_ptr<Drawable>& drawable,
                       const PrimitiveType &primitive = PrimitiveType::Triangle) = 0;
-    
-    /*
-     virtual void SetRenderTarget(const RenderTargetBuffers& targets) = 0;
-     virtual void SetRenderTarget(const glm::vec4& color,
-     const RenderTargetBuffers& targets) = 0;
-     
-     virtual void SetRenderTarget(const RenderTargetBuffers& targets,
-     const std::shared_ptr<FrameBuffer>& framebuffer) = 0;
-     virtual void SetRenderTarget(const glm::vec4& color,
-     const RenderTargetBuffers& targets,
-     const std::shared_ptr<FrameBuffer>& framebuffer) = 0;
-     
-     /// @brief Finish rendering pass by unbiding the framebuffer if existent.
-     /// @param framebuffer The framebuffer where it was rendered into.
-     virtual void EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
-     {
-     if (framebuffer)
-     framebuffer->Unbind();
-     }
-     */
     
 protected:
     // Constructor(s)
@@ -103,6 +82,10 @@ protected:
     
     // Renderer API variables
     // ----------------------------------------
+protected:
+    ///< The currently bound framebuffer. If null, rendering goes to the screen (default framebuffer).
+    std::shared_ptr<FrameBuffer> m_ActiveFramebuffer = nullptr;
+    
 private:
     ///< The currently active rendering API.
     static API s_API;

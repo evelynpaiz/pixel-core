@@ -2,6 +2,7 @@
 #include "Platform/Metal/MetalRendererAPI.h"
 
 #include "Platform/Metal/Buffer/MetalIndexBuffer.h"
+#include "Platform/Metal/Texture/MetalTexture.h"
 #include "Platform/Metal/Drawable/MetalDrawable.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
@@ -127,9 +128,15 @@ void MetalRendererAPI::SetDepthTesting(const bool enabled,
 
 /**
  * @brief Initialize a new rendering pass.
+ *
+ * @param framebuffer Buffer to hold to result of the rendered pass.
  */
-void MetalRendererAPI::BeginRenderPass()
+void MetalRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
+    // Update the information of the currently bound framebuffer
+    RendererAPI::BeginRenderPass(framebuffer);
+    
+    // Initialize the command buffer
     m_Context->InitCommandBuffer();
 }
 
@@ -138,7 +145,11 @@ void MetalRendererAPI::BeginRenderPass()
  */
 void MetalRendererAPI::EndRenderPass()
 {
+    // End the encoding
     m_Context->EndEncoding();
+    
+    // Unbound the framebuffer if necessary
+    RendererAPI::EndRenderPass();
 }
 
 /**
@@ -148,16 +159,38 @@ void MetalRendererAPI::EndRenderPass()
  */
 void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
+    // If rendering into the screen buffer, get the next drawable
+    if (!m_ActiveFramebuffer)
+    {
+        auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
+        m_State->RenderTarget.ColorAttachment = drawable.texture;
+    }
+    
     // Create the render pass descriptor
     MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
     
-    // Configure color attachment
-    auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
-    
-    descriptor.colorAttachments[0].clearColor = m_State->ClearColor;
-    descriptor.colorAttachments[0].loadAction  = MTLLoadActionClear;
-    descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    descriptor.colorAttachments[0].texture = drawable.texture;
+    // Configure color attachment(s)
+    size_t colorAttachmentCount = m_ActiveFramebuffer ? m_ActiveFramebuffer->GetColorAttachments().size() : 1;
+    for (size_t i = 0; i < colorAttachmentCount; ++i)
+    {
+        // Define the color attachment to be used
+        id<MTLTexture> attachment;
+        if (!m_ActiveFramebuffer)
+            attachment = m_State->RenderTarget.ColorAttachment;
+        else
+        {
+            // Get the color attachment texture from the framebuffer
+            auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(
+                 m_ActiveFramebuffer->GetColorAttachment((unsigned int)i));
+            
+            attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
+        }
+        
+        descriptor.colorAttachments[i].clearColor = m_State->ClearColor;
+        descriptor.colorAttachments[i].loadAction  = MTLLoadActionClear;
+        descriptor.colorAttachments[i].storeAction = MTLStoreActionStore;
+        descriptor.colorAttachments[i].texture = attachment;
+    }
     
     // Configure depth attachment (if depth buffer is active)
     if (targets.depthBufferActive)
@@ -165,15 +198,27 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         // Create the depth texture for the screen target if it doesn't exist or needs to be updated
         CreateDepthTexture();
         
+        // Define the depth attachment to be used
+        id<MTLTexture> attachment;
+        if (!m_ActiveFramebuffer)
+            attachment = m_State->RenderTarget.DepthAttachment;
+        else
+        {
+            // Get the depth attachment texture from the framebuffer
+            std::shared_ptr<MetalTexture> framebufferAttachment =
+                std::dynamic_pointer_cast<MetalTexture>(m_ActiveFramebuffer->GetDepthAttachment());
+            
+            attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
+        }
+        
         descriptor.depthAttachment.clearDepth = 1.0;
         descriptor.depthAttachment.loadAction = MTLLoadActionClear;
-        descriptor.depthAttachment.storeAction = MTLStoreActionDontCare;
-        
-        descriptor.depthAttachment.texture = m_State->RenderTarget.DepthAttachment;
+        descriptor.depthAttachment.storeAction = m_ActiveFramebuffer ? MTLStoreActionStore : MTLStoreActionDontCare;
+        descriptor.depthAttachment.texture = attachment;
     }
     
     // Define a new command encoder
-    m_Context->InitCommandEncoder(descriptor, "Scene");
+    m_Context->InitCommandEncoder(descriptor, m_ActiveFramebuffer ? "FB" : "SB");
     
     // Defines a depth stencil state into the current command encoder
     SetDepthTesting(targets.depthBufferActive, DepthFunction::None);
@@ -269,65 +314,5 @@ void* MetalRendererAPI::GetOrCreateDepthState()
     m_State->Cache.Depth[m_State->DepthState] = depthState;
     return reinterpret_cast<void*>(depthState);
 }
-
-/**
- * Sets the active rendering targets and clears the specified buffers.
- *
- * @param targets Active rendering targets.
- 
- void MetalRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets)
- {
- SetRenderTarget(glm::vec4(glm::vec4(0.0f)), targets);
- }
- */
-
-/**
- * Sets the active rendering targets and clears the specified buffers.
- *
- * @param color Background color.
- * @param targets Active rendering targets.
- 
- void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
- const RenderTargetBuffers& targets)
- {
- m_Context->SetRenderTarget(color, targets);
- SetDepthTesting(targets.depthBufferActive);
- }
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param framebuffer Framebuffer whose targets should be activated.
- 
- void MetalRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets,
- const std::shared_ptr<FrameBuffer>& framebuffer)
- {
- SetRenderTarget(glm::vec4(glm::vec4(0.0f)), targets, framebuffer);
- }
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param color Background color.
- * @param framebuffer Framebuffer whose targets should be activated and cleared.
- 
- void MetalRendererAPI::SetRenderTarget(const glm::vec4& color,
- const RenderTargetBuffers& targets,
- const std::shared_ptr<FrameBuffer>& framebuffer)
- {
- framebuffer->Bind();
- m_Context->SetRenderTarget(color, targets, framebuffer);
- SetDepthTesting(targets.depthBufferActive);
- }
- */
-/**
- * Finalize the current rendering pass.
- 
- void MetalRendererAPI::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
- {
- m_Context->EndEncoding();
- RendererAPI::EndRenderPass(framebuffer);
- }
- */
 
 } // namespace pixc

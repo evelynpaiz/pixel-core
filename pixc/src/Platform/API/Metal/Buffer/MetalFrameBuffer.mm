@@ -1,4 +1,4 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/Metal/Buffer/MetalFrameBuffer.h"
 
 #include "Platform/Metal/Texture/MetalTexture.h"
@@ -7,7 +7,7 @@
 
 #include <Metal/Metal.h>
 
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Generate a framebuffer.
@@ -22,7 +22,7 @@ MetalFrameBuffer::MetalFrameBuffer(const FrameBufferSpecification& spec)
     
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
-    CORE_ASSERT(&context, "Graphics context is not Metal!");
+    PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
     m_Context = &context;
 }
 
@@ -65,12 +65,12 @@ void MetalFrameBuffer::Blit(const std::shared_ptr<MetalFrameBuffer>& src,
                             const BlitSpecification& spec)
 {
     // Ensure that source and destination framebuffers are defined
-    CORE_ASSERT(src && dst, "Trying to blit undefined framebuffer(s)");
+    PIXEL_CORE_ASSERT(src && dst, "Trying to blit undefined framebuffer(s)");
     
     // Ensure that the source attachment index is valid
-    CORE_ASSERT(spec.SrcAttachmentIndex < src->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+    PIXEL_CORE_ASSERT(spec.SrcAttachmentIndex < src->GetSpec().AttachmentsSpec.TexturesSpec.size(),
                 "Invalid source color attachment index!");
-    CORE_ASSERT(spec.DstAttachmentIndex < dst->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+    PIXEL_CORE_ASSERT(spec.DstAttachmentIndex < dst->GetSpec().AttachmentsSpec.TexturesSpec.size(),
                 "Invalid destination color attachment index!");
     
     // Perform a direct copy if no filtering or complex target buffers are involved
@@ -95,11 +95,11 @@ void MetalFrameBuffer::BlitDirect(const std::shared_ptr<MetalFrameBuffer> &src,
 {
     // Get the graphics context
     MetalContext* context = dynamic_cast<MetalContext*>(&GraphicsContext::Get());
-    CORE_ASSERT(context, "Graphics context is not Metal!");
+    PIXEL_CORE_ASSERT(context, "Graphics context is not Metal!");
     
     // Ensure the render command buffer is valid and not encoding anything
-    CORE_ASSERT(context->GetCommandBuffer(), "Command buffer is null!");
-    CORE_ASSERT(!context->GetEncoder(), "Command buffer is still encoding!");
+    PIXEL_CORE_ASSERT(context->GetCommandBuffer(), "Command buffer is null!");
+    PIXEL_CORE_ASSERT(!context->GetCommandEncoder(), "Command buffer is still encoding!");
     
     // Get the existing render command buffer
     id<MTLCommandBuffer> commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(context->GetCommandBuffer());
@@ -146,7 +146,7 @@ void MetalFrameBuffer::BlitAdvanced(const std::shared_ptr<MetalFrameBuffer> &src
                                     const std::shared_ptr<MetalFrameBuffer> &dst,
                                     const BlitSpecification &spec)
 {
-    CORE_WARN("Blit advanced is not defined!");
+    PIXEL_CORE_WARN("Blit advanced is not defined!");
 }
 
 /**
@@ -171,7 +171,7 @@ void MetalFrameBuffer::Invalidate()
 std::vector<char> MetalFrameBuffer::GetAttachmentData(const uint32_t index) const
 {
     // Verify the index for the attachment
-    CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
+    PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     // Get the Metal device from the context
     auto device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
@@ -224,4 +224,4 @@ std::vector<char> MetalFrameBuffer::GetAttachmentData(const uint32_t index) cons
     return data;
 }
 
-//} // namespace pixc
+} // namespace pixc

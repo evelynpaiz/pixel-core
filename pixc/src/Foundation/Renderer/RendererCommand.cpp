@@ -39,10 +39,12 @@ void RendererCommand::SetViewport(const unsigned int x, const unsigned int y,
 
 /**
  * @brief Initialize a new rendering pass.
+ *
+ * @param framebuffer Buffer to hold to result of the rendered pass.
  */
-void RendererCommand::BeginRenderPass()
+void RendererCommand::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    s_API->BeginRenderPass();
+    s_API->BeginRenderPass(framebuffer);
 }
 
 /**
@@ -51,6 +53,14 @@ void RendererCommand::BeginRenderPass()
 void RendererCommand::EndRenderPass()
 {
    s_API->EndRenderPass();
+}
+
+/**
+ * @brief Clear the buffers to preset values.
+ */
+void RendererCommand::Clear()
+{
+    s_API->Clear();
 }
 
 /**

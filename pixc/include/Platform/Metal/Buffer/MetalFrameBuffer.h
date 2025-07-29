@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 #include "Platform/Metal/MetalContext.h"
 
@@ -8,7 +8,7 @@
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Provides an implementation of the `FrameBuffer` interface using Apple's Metal API.
@@ -75,4 +75,4 @@ class MetalFrameBuffer : public FrameBuffer
     DISABLE_COPY_AND_MOVE(MetalFrameBuffer);
 };
 
-//} // namespace pixc
+} // namespace pixc

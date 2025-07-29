@@ -69,18 +69,21 @@ void OpenGLRendererAPI::SetDepthTesting(const bool enabled,
 
 /**
  * @brief Initialize a new rendering pass.
+ *
+ * @param framebuffer Buffer to hold to result of the rendered pass.
  */
-void OpenGLRendererAPI::BeginRenderPass()
+void OpenGLRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
+    // Reset the flag defining if something is currently being rendering
     if (!s_IsRendering)
         s_IsRendering = true;
+    
+    // Update the information of the currently bound framebuffer
+    RendererAPI::BeginRenderPass(framebuffer);
+    
+    if (!m_ActiveFramebuffer)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);       // render to screen
 }
-
-/**
- * @brief Finalize the current rendering pass.
- */
-void OpenGLRendererAPI::EndRenderPass()
-{}
 
 /**
  * @brief Clear the buffers to preset values.
@@ -109,80 +112,5 @@ void OpenGLRendererAPI::Draw(const std::shared_ptr<Drawable>& drawable,
                    drawable->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
     drawable->Unbind();
 }
-
-/**
- * Clears the specified rendering buffers.
- *
- * @param targets The rendering buffers to be cleared.
-
-void OpenGLRendererAPI::Clear(const RenderTargetBuffers &targets)
-{
-    glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
-    SetDepthTesting(targets.depthBufferActive);
-}
- */
-/**
- * Sets the background color and clears the specified rendering buffers.
- *
- * @param color The RGBA color used to clear the color buffer.
- * @param targets The rendering buffers to be cleared.
-
-void OpenGLRendererAPI::Clear(const glm::vec4& color,
-                              const RenderTargetBuffers& targets)
-{
-    glClearColor(color.r, color.g, color.b, color.a);
-    Clear(targets);
-}
- */
-/**
- * Sets the active rendering targets and clears the specified buffers.
- *
- * @param targets Active rendering targets.
-
-void OpenGLRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    Clear(targets);
-}
- */
-/**
- * Sets the active rendering targets and clears the specified buffers.
- *
- * @param color Background color.
- * @param targets Active rendering targets.
-
-void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
-                                        const RenderTargetBuffers& targets)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    Clear(color, targets);
-}
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param framebuffer Framebuffer whose targets should be activated.
-
-void OpenGLRendererAPI::SetRenderTarget(const RenderTargetBuffers& targets,
-                                        const std::shared_ptr<FrameBuffer>& framebuffer)
-{
-    framebuffer->Bind();
-    Clear(targets);
-}
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param color Background color.
- * @param framebuffer Framebuffer whose targets should be activated and cleared.
-
-void OpenGLRendererAPI::SetRenderTarget(const glm::vec4& color,
-                                        const RenderTargetBuffers& targets,
-                                        const std::shared_ptr<FrameBuffer>& framebuffer)
-{
-    framebuffer->Bind();
-    Clear(color, targets);
-}
- */
 
 } // namespace pixc

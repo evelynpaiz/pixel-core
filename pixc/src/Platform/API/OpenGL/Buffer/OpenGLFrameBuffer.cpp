@@ -1,10 +1,10 @@
-#include "enginepch.h"
+#include "pixcpch.h"
 #include "Platform/OpenGL/Buffer/OpenGLFrameBuffer.h"
 
-#include "Common/Renderer/Texture/Texture1D.h"
-#include "Common/Renderer/Texture/Texture2D.h"
-#include "Common/Renderer/Texture/Texture3D.h"
-#include "Common/Renderer/Texture/TextureCube.h"
+#include "Foundation/Renderer/Texture/Texture1D.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
+#include "Foundation/Renderer/Texture/Texture3D.h"
+#include "Foundation/Renderer/Texture/TextureCube.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTexture.h"
 
@@ -15,7 +15,7 @@
 
 #include <GL/glew.h>
 
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Generate a framebuffer.
@@ -25,7 +25,6 @@
 OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
 : FrameBuffer(spec)
 {
-    // Define the framebuffer along with all its attachments
     Invalidate();
 }
 
@@ -47,7 +46,7 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
 std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index) const
 {
     // Verify the index for the attachment
-    CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
+    PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     // Get the specifications from the attachment
     TextureSpecification spec = m_ColorAttachments[index]->GetSpecification();
@@ -93,7 +92,7 @@ void OpenGLFrameBuffer::Bind() const
  */
 void OpenGLFrameBuffer::BindForDrawAttachment(const uint32_t index) const
 {
-    CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
+    PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
     FrameBuffer::Bind();
@@ -124,15 +123,16 @@ void OpenGLFrameBuffer::BindForDrawAttachmentCube(const uint32_t index,
 {
     if (m_ColorAttachmentsSpec[index].Type != TextureType::TEXTURECUBE)
     {
-        CORE_WARN("Trying to bind for drawing an incorrect attachment type!");
+        PIXEL_CORE_WARN("Trying to bind for drawing an incorrect attachment type!");
         return;
     }
+    
+    auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_ColorAttachments[index]);
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
     FrameBuffer::Bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
-                           OpenGLTexture::GLGetTextureID(m_ColorAttachments[index]),
-                           level);
+                           attachment->m_ID, level);
 }
 
 /**
@@ -166,10 +166,11 @@ void OpenGLFrameBuffer::ClearAttachment(const uint32_t index, const int value)
 {
     // TODO: support other types of data. For the moment this is only for RED images.
     auto& spec = m_ColorAttachmentsSpec[index];
+    auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_ColorAttachments[index]);
     
-    glClearTexImage(OpenGLTexture::GLGetTextureID(m_ColorAttachments[index]),
-                    0, utils::textures::gl::ToOpenGLInternalFormat(spec.Format),
+    glClearTexImage(attachment->m_ID, 0, utils::textures::gl::ToOpenGLInternalFormat(spec.Format),
                     GL_INT, &value);
+     
 }
 
 /**
@@ -184,12 +185,12 @@ void OpenGLFrameBuffer::Blit(const std::shared_ptr<OpenGLFrameBuffer>& src,
                              const BlitSpecification& spec)
 {
     // Ensure that source and destination framebuffers are defined
-    CORE_ASSERT(src && dst, "Trying to blit undefined framebuffer(s)");
+    PIXEL_CORE_ASSERT(src && dst, "Trying to blit undefined framebuffer(s)");
     
     // Ensure that the source attachment index is valid
-    CORE_ASSERT(spec.SrcAttachmentIndex < src->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+    PIXEL_CORE_ASSERT(spec.SrcAttachmentIndex < src->GetSpec().AttachmentsSpec.TexturesSpec.size(),
                 "Invalid source color attachment index!");
-    CORE_ASSERT(spec.DstAttachmentIndex < dst->GetSpec().AttachmentsSpec.TexturesSpec.size(),
+    PIXEL_CORE_ASSERT(spec.DstAttachmentIndex < dst->GetSpec().AttachmentsSpec.TexturesSpec.size(),
                 "Invalid destination color attachment index!");
     
     // Determine the mask based on selected buffer components
@@ -206,7 +207,7 @@ void OpenGLFrameBuffer::Blit(const std::shared_ptr<OpenGLFrameBuffer>& src,
     // Perform the blit operation
     glBlitFramebuffer(0, 0, src->m_Spec.Width, src->m_Spec.Height,
                       0, 0, dst->m_Spec.Width, dst->m_Spec.Height,
-                      mask, utils::textures::gl::ToOpenGLFilter(spec.Filter, false));
+                      mask, utils::textures::gl::ToOpenGLMagFilter(spec.Filter));
     
     // Unbind the framebuffers and restore the default draw buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -232,26 +233,24 @@ void OpenGLFrameBuffer::Invalidate()
     // Attach defined textures to framebuffer
     for (unsigned int i = 0; i < m_ColorAttachments.size(); i++)
     {
+        auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_ColorAttachments[i]);
+        
         TextureType type = m_ColorAttachments[i]->GetSpecification().Type;
         GLenum target = utils::textures::gl::ToOpenGLTextureTarget(type);
-        
+    
         switch (type)
         {
             case TextureType::TEXTURE1D:
-                glFramebufferTexture1D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target,
-                                       OpenGLTexture::GLGetTextureID(m_ColorAttachments[i]), 0);
+                glFramebufferTexture1D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target, attachment->m_ID, 0);
                 break;
             case TextureType::TEXTURE2D:
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target,
-                                       OpenGLTexture::GLGetTextureID(m_ColorAttachments[i]), 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target, attachment->m_ID, 0);
                 break;
             case TextureType::TEXTURE3D:
-                glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target,
-                                       OpenGLTexture::GLGetTextureID(m_ColorAttachments[i]), 0, 0);
+                glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target, attachment->m_ID, 0, 0);
                 break;
             case TextureType::TEXTURECUBE:
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target,
-                                       OpenGLTexture::GLGetTextureID(m_ColorAttachments[i]), 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, target, attachment->m_ID, 0);
                 break;
             case TextureType::None:
             default:
@@ -262,14 +261,16 @@ void OpenGLFrameBuffer::Invalidate()
     // Depth attachment
     if(m_DepthAttachment)
     {
+        auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_DepthAttachment);
+        
         glFramebufferTexture2D(GL_FRAMEBUFFER, utils::textures::gl::ToOpenGLDepthAttachment(m_DepthAttachment->m_Spec.Format),
-                               utils::textures::gl::ToOpenGLTextureTarget(m_DepthAttachment->m_Spec.Type), OpenGLTexture::GLGetTextureID(m_DepthAttachment), 0);
+                               utils::textures::gl::ToOpenGLTextureTarget(m_DepthAttachment->m_Spec.Type), attachment->m_ID, 0);
     }
     
     // Draw the color attachments
     if (m_ColorAttachments.size() > 1)
     {
-        CORE_ASSERT(m_ColorAttachments.size() <= 4, "Using more than 4 color attachments in the Framebuffer!");
+        PIXEL_CORE_ASSERT(m_ColorAttachments.size() <= 4, "Using more than 4 color attachments in the Framebuffer!");
         GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
         glDrawBuffers((int)m_ColorAttachments.size(), buffers);
     }
@@ -279,7 +280,7 @@ void OpenGLFrameBuffer::Invalidate()
         glDrawBuffer(GL_NONE);
     }
     
-    CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+    PIXEL_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -292,4 +293,4 @@ void OpenGLFrameBuffer::ReleaseFramebuffer()
     FrameBuffer::ReleaseFramebuffer();
 }
 
-//} // namespace pixc
+} // namespace pixc

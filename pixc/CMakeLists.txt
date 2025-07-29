@@ -11,6 +11,7 @@ file(
     src/Foundation/Input/*.cpp
     src/Foundation/Layer/*.cpp
 
+    src/Foundation/Renderer/Buffer/*.cpp
     src/Foundation/Renderer/Texture/*.cpp
     src/Foundation/Renderer/Shader/*.cpp
     src/Foundation/Renderer/Camera/*.cpp
@@ -20,9 +21,6 @@ file(
     src/Foundation/Renderer/RendererAPI.cpp
     src/Foundation/Renderer/RendererCommand.cpp
     src/Foundation/Renderer/Renderer.cpp
-
-    src/Foundation/Renderer/Buffer/IndexBuffer.cpp
-    src/Foundation/Renderer/Buffer/VertexBuffer.cpp
 )
 
 # Find platform-specific source files
@@ -44,6 +42,7 @@ file(
     src/${PLATFORM_OS_DIR}/*.cpp
     src/${PLATFORM_OS_DIR}/*.mm
 
+    src/${PLATFORM_API_OPENGL_DIR}/Buffer/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Texture/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Shader/*.cpp
     src/${PLATFORM_API_OPENGL_DIR}/Drawable/*.cpp
@@ -51,10 +50,6 @@ file(
 
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLContext.cpp
     src/${PLATFORM_API_OPENGL_DIR}/OpenGLRendererAPI.cpp
-
-    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLIndexBuffer.cpp
-    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLVertexBuffer.cpp
-    src/${PLATFORM_API_OPENGL_DIR}/Buffer/OpenGLVertexArray.cpp
 
 #    src/${PLATFORM_API_OPENGL_DIR}/*.cpp
 #    src/${PLATFORM_API_OPENGL_DIR}/*.mm
@@ -74,6 +69,7 @@ file(
     include/Foundation/Input/*.h
     include/Foundation/Layer/*.h
 
+    include/Foundation/Renderer/Buffer/*.h
     include/Foundation/Renderer/Texture/*.h
     include/Foundation/Renderer/Shader/*.h
     include/Foundation/Renderer/Camera/*.h
@@ -86,15 +82,11 @@ file(
 
     include/Foundation/Renderer/FactoryUtils.h
     include/Foundation/Renderer/RendererUtils.h
-
-    include/Foundation/Renderer/Buffer/Data.h
-    include/Foundation/Renderer/Buffer/Buffer.h
-    include/Foundation/Renderer/Buffer/IndexBuffer.h
-    include/Foundation/Renderer/Buffer/VertexBuffer.h
     
     include/Foundation/Renderer/Material/Material.h
     include/Foundation/Renderer/Material/SimpleMaterial.h
 
+    include/Platform/OpenGL/Buffer/*.h
     include/Platform/OpenGL/Texture/*.h
     include/Platform/OpenGL/Shader/*h
     include/Platform/OpenGL/Drawable/*.h
@@ -103,10 +95,6 @@ file(
     include/Platform/OpenGL/OpenGLContext.h
     include/Platform/OpenGL/OpenGLRendererAPI.h
     include/Platform/OpenGL/OpenGLRendererUtils.h
-
-    include/Platform/OpenGL/Buffer/OpenGLIndexBuffer.h
-    include/Platform/OpenGL/Buffer/OpenGLVertexBuffer.h
-    include/Platform/OpenGL/Buffer/OpenGLVertexArray.h
 )
 
 # Add platform-specific sources and headers
@@ -120,6 +108,7 @@ if (APPLE)
 
         src/${PLATFORM_API_METAL_DIR}/Buffer/MetalIndexBuffer.mm
         src/${PLATFORM_API_METAL_DIR}/Buffer/MetalVertexBuffer.mm
+        src/${PLATFORM_API_METAL_DIR}/Buffer/MetalFrameBuffer.mm
 
         src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture.mm
         src/${PLATFORM_API_METAL_DIR}/Texture/MetalTexture1D.cpp
@@ -138,6 +127,7 @@ if (APPLE)
 
         include/Platform/Metal/Buffer/MetalIndexBuffer.h
         include/Platform/Metal/Buffer/MetalVertexBuffer.h
+        include/Platform/Metal/Buffer/MetalFrameBuffer.h
 
         include/Platform/Metal/Texture/MetalTextureUtils.h
         include/Platform/Metal/Texture/MetalTexture.h

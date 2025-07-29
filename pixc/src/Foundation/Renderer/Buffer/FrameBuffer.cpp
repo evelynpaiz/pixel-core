@@ -1,21 +1,24 @@
-#include "enginepch.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+#include "pixcpch.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
-#include "Common/Renderer/Texture/Texture1D.h"
-#include "Common/Renderer/Texture/Texture2D.h"
-#include "Common/Renderer/Texture/Texture3D.h"
-#include "Common/Renderer/Texture/TextureCube.h"
+#include "Foundation/Renderer/Texture/Texture1D.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
+#include "Foundation/Renderer/Texture/Texture3D.h"
+#include "Foundation/Renderer/Texture/TextureCube.h"
+
+#include "Foundation/Renderer/Renderer.h"
+#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/RendererCommand.h"
 
 #include "Platform/OpenGL/Buffer/OpenGLFrameBuffer.h"
+#ifdef __APPLE__
 #include "Platform/Metal/Buffer/MetalFrameBuffer.h"
-
-#include "Common/Renderer/Renderer.h"
-#include "Common/Renderer/RendererCommand.h"
+#endif
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-//namespace pixc {
+namespace pixc {
 
 /**
  * @brief Create a framebuffer based on the active rendering API.
@@ -27,7 +30,7 @@
  */
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
 {
-    CREATE_RENDERER_OBJECT(FrameBuffer, spec)
+    CREATE_RENDERER_OBJECT(std::make_shared, FrameBuffer, spec)
 }
 
 /**
@@ -70,7 +73,9 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
         // Depth attachment
         if (utils::textures::IsDepthFormat(spec.Format))
         {
-            spec.Filter = TextureFilter::Nearest;
+            spec.Filter.Min = TextureFilter::Nearest;
+            spec.Filter.Mag = TextureFilter::Nearest;
+            spec.Filter.Mip = TextureFilter::Nearest;
             
             // TODO: Add the stencil buffer activation too.
             m_DepthAttachmentSpec = spec;
@@ -79,7 +84,9 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
         // Color attachment
         else
         {
-            spec.Filter = TextureFilter::Linear;
+            spec.Filter.Min = TextureFilter::Linear;
+            spec.Filter.Mag = TextureFilter::Linear;
+            spec.Filter.Mip = TextureFilter::Linear;
             
             m_ColorAttachmentsSpec.emplace_back(spec);
             m_ActiveTargets.colorBufferActive = true;
@@ -140,7 +147,7 @@ void FrameBuffer::Blit(const std::shared_ptr<FrameBuffer>& src,
     switch (Renderer::GetAPI())
     {
         case RendererAPI::API::None:
-            CORE_ASSERT(false, "RendererAPI::None is not supported!");
+            PIXEL_CORE_ASSERT(false, "RendererAPI::None is not supported!");
             return nullptr;
         case RendererAPI::API::OpenGL:
             return OpenGLFrameBuffer::Blit(std::dynamic_pointer_cast<OpenGLFrameBuffer>(src),
@@ -151,7 +158,7 @@ void FrameBuffer::Blit(const std::shared_ptr<FrameBuffer>& src,
                                           std::dynamic_pointer_cast<MetalFrameBuffer>(dst),
                                           spec);
     }
-    CORE_ASSERT(false, "Unknown Renderer API!");
+    PIXEL_CORE_ASSERT(false, "Unknown Renderer API!");
     return nullptr;
 }
 
@@ -204,7 +211,7 @@ void FrameBuffer::DefineAttachments()
         // Check for errors during texture creation
         if (!m_ColorAttachments[i])
         {
-            CORE_WARN("Data in color attachment not properly defined");
+            PIXEL_CORE_WARN("Data in color attachment not properly defined");
             continue;
         }
         
@@ -228,7 +235,7 @@ void FrameBuffer::SaveAttachment(const uint32_t index,
                                  const std::filesystem::path &path)
 {
     // Verify the index for the attachment
-    CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
+    PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     // Get the specifications from the attachment
     TextureSpecification spec = m_ColorAttachments[index]->GetSpecification();
@@ -255,7 +262,7 @@ void FrameBuffer::SaveAttachment(const uint32_t index,
         stbi_write_hdr(path.string().c_str(), spec.Width, spec.Height,
                        channels, reinterpret_cast<float*>(pixels.data()));
     else
-        CORE_WARN("Unsupported file format!");
+        PIXEL_CORE_WARN("Unsupported file format!");
 }
 
-//} // namespace pixc
+} // namespace pixc
