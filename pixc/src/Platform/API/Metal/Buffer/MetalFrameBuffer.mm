@@ -17,13 +17,13 @@ namespace pixc {
 MetalFrameBuffer::MetalFrameBuffer(const FrameBufferSpecification& spec)
     : FrameBuffer(spec)
 {
-    // Define the framebuffer along with all its attachments
-    Invalidate();
-    
     // Get the Metal graphics context and save it
     MetalContext& context = dynamic_cast<MetalContext&>(GraphicsContext::Get());
     PIXEL_CORE_ASSERT(&context, "Graphics context is not Metal!");
     m_Context = &context;
+    
+    // Define the framebuffer along with all its attachments
+    Invalidate();
 }
 
 /**

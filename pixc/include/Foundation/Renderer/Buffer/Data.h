@@ -162,6 +162,20 @@ struct DataElement
         ::operator delete(Data);
         Data = nullptr;
     }
+    
+    // Operator(s)
+    // ----------------------------------------
+    /// @brief Equality operator for comparing two data elements.
+    /// @param other Another element to compare against.
+    /// @return True if both elements match.
+    inline bool operator==(const DataElement& other) const
+    {
+        return Data == other.Data &&
+               Type == other.Type &&
+               Size == other.Size &&
+               Offset == other.Offset &&
+               Normalized == other.Normalized;
+    }
 };
 
 /**
@@ -254,3 +268,27 @@ private:
 };
 
 } // namespace pixc
+
+namespace std {
+
+/**
+ * @brief Hash function specialization for `DataElement`.
+ *
+ * @note: Allows `MetalRendererDescriptor` to be used as a key in unordered_map.
+ */
+template<>
+struct hash<pixc::DataElement>
+{
+    /// @brief Generates a hash for a given `DataElement`.
+    /// @param key The descriptor to hash.
+    /// @return A combined hash of its data properties.
+    size_t operator()(const pixc::DataElement& element) const
+    {
+        return std::hash<int>()(static_cast<int>(element.Type)) ^
+               (std::hash<uint32_t>()(element.Size) << 1) ^
+               (std::hash<size_t>()(element.Offset) << 2) ^
+               (std::hash<bool>()(element.Normalized) << 3);
+    }
+};
+
+} // namespace std

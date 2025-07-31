@@ -245,6 +245,7 @@ void MetalTexture::MTLGenerateMipMaps(bool isOffscreenResource)
     
     // Create a blit command encoder to handle mipmap generation
     id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+    blitEncoder.label = @"MipMap";
     
     // Get the internal Metal texture object
     id<MTLTexture> texture = reinterpret_cast<id<MTLTexture>>(m_TextureData->Texture);

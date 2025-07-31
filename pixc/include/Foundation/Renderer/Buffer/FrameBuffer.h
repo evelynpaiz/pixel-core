@@ -30,13 +30,35 @@ struct AttachmentSpecification
     /// @brief Define a framebuffer attachment with texture specifications.
     /// @param spec The texture specifications.
     AttachmentSpecification(std::initializer_list<TextureSpecification> spec) :
-    TexturesSpec(spec)
+        TexturesSpec(spec)
     { }
     
     // Attachment specification variables
     // ----------------------------------------
     ///< The texture specifications for the framebuffer attachments.
     std::vector<TextureSpecification> TexturesSpec;
+    
+    // Operator(s)
+    // ----------------------------------------
+    /// @brief Equality operator for comparing two attachment specifications.
+    /// @param other Another attachment specification to compare against.
+    /// @return True if both specifications match.
+    inline bool operator==(const AttachmentSpecification& other) const
+    {
+        // Compare the size of the specifications
+        if (TexturesSpec.size() != other.TexturesSpec.size())
+                return false;
+
+        // Check each specification
+        for (size_t i = 0; i < TexturesSpec.size(); ++i)
+        {
+            if (!(TexturesSpec[i] == other.TexturesSpec[i]))
+                return false;
+        }
+
+        // Return true if both specifications are the same
+        return true;
+    }
 };
 
 /**
@@ -273,3 +295,29 @@ class FrameBufferLibrary : public Library<std::shared_ptr<FrameBuffer>>
 };
 
 } // namespace pixc
+
+namespace std {
+
+/**
+ * @brief Hash function specialization for `AttachmentSpecification`.
+ *
+ * @note: Allows `MetalRendererDescriptor` to be used as a key in unordered_map.
+ */
+template<>
+struct hash<pixc::AttachmentSpecification>
+{
+    /// @brief Generates a hash for a given `AttachmentSpecification`.
+    /// @param key The descriptor to hash.
+    /// @return A combined hash of each specification hash.
+    size_t operator()(const pixc::AttachmentSpecification& key) const
+    {
+        size_t h = 0;
+        for (const auto& texSpec : key.TexturesSpec)
+        {
+            h ^= std::hash<pixc::TextureSpecification>()(texSpec) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        }
+        return h;
+    }
+};
+
+} // namespace std

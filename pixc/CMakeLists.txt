@@ -74,14 +74,12 @@ file(
     include/Foundation/Renderer/Shader/*.h
     include/Foundation/Renderer/Camera/*.h
     include/Foundation/Renderer/Drawable/*.h
+    include/Foundation/Renderer/Utils/*.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h
     include/Foundation/Renderer/RendererCommand.h
     include/Foundation/Renderer/Renderer.h
-
-    include/Foundation/Renderer/FactoryUtils.h
-    include/Foundation/Renderer/RendererUtils.h
     
     include/Foundation/Renderer/Material/Material.h
     include/Foundation/Renderer/Material/SimpleMaterial.h
@@ -124,6 +122,7 @@ if (APPLE)
         include/Platform/Metal/MetalContext.h
         include/Platform/Metal/MetalRendererAPI.h
         include/Platform/Metal/MetalRendererUtils.h
+        include/Platform/Metal/MetalStateDescriptor.h
 
         include/Platform/Metal/Buffer/MetalIndexBuffer.h
         include/Platform/Metal/Buffer/MetalVertexBuffer.h

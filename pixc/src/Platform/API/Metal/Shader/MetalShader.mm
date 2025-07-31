@@ -74,7 +74,9 @@ void MetalShader::Bind() const
  * @brief Deactivate the shader.
  */
 void MetalShader::Unbind() const
-{}
+{
+    
+}
 
 /**
  * @brief Gets the compiled Metal vertex function.

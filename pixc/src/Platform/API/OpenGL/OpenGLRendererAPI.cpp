@@ -93,7 +93,7 @@ void OpenGLRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& fram
 void OpenGLRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
     // Set depth testing state so it's in the correct state
-    SetDepthTesting(targets.depthBufferActive, DepthFunction::None);
+    SetDepthTesting(targets.Depth, DepthFunction::None);
     // Clear buffers
     glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
 }

@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Buffer/IndexBuffer.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 
 #include "Platform/OpenGL/Buffer/OpenGLIndexBuffer.h"
 #ifdef __APPLE__

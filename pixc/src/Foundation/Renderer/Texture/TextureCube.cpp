@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Texture/TextureCube.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTextureCube.h"
 #ifdef __APPLE__

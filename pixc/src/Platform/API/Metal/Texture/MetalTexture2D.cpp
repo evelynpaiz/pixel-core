@@ -57,7 +57,8 @@ MetalTexture2D::MetalTexture2D(const void *data,
  */
 MetalTexture2D::MetalTexture2D(const std::filesystem::path& filePath,
                                bool flip)
-: Texture2D(filePath, flip), MetalTexture()
+// Metal textures are flipped in the y-axis
+: Texture2D(filePath, !flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURE2D;
     
@@ -73,7 +74,8 @@ MetalTexture2D::MetalTexture2D(const std::filesystem::path& filePath,
  */
 MetalTexture2D::MetalTexture2D(const std::filesystem::path& filePath,
                                const TextureSpecification& spec, bool flip)
-: Texture2D(filePath, spec, flip), MetalTexture()
+// Metal textures are flipped in the y-axis
+: Texture2D(filePath, spec, !flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURE2D;
     

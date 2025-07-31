@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Drawable/Drawable.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 
 #include "Platform/OpenGL/Drawable/OpenGLDrawable.h"
 #ifdef __APPLE__

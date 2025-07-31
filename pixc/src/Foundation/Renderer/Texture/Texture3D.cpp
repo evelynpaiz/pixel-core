@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Texture/Texture3D.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 
 #include "Platform/OpenGL/Texture/OpenGLTexture3D.h"
 #ifdef __APPLE__

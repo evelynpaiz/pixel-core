@@ -2,6 +2,8 @@
 
 #include "Foundation/Renderer/Drawable/Drawable.h"
 
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+
 #include "Platform/Metal/MetalContext.h"
 
 /**
@@ -40,7 +42,7 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    void* GetPipelineState() const;
+    void* GetOrCreateRenderPipelineState(const std::shared_ptr<FrameBuffer>& framebuffer);
     
     // Argument(s) and Uniform(s)
     // ----------------------------------------
@@ -52,7 +54,6 @@ private:
     // Setter(s)
     // ----------------------------------------
     void SetVertexAttributes(const std::shared_ptr<VertexBuffer>& vbo) override;
-    void SetPipelineState() const;
     
     // Getter(s)
     // ----------------------------------------

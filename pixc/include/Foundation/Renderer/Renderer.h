@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Foundation/Renderer/RendererAPI.h"
-#include "Foundation/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/Utils/RendererUtils.h"
 
 #include "Foundation/Renderer/Camera/Camera.h"
 

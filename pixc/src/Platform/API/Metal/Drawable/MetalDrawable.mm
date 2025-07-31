@@ -2,6 +2,7 @@
 #include "Platform/Metal/Drawable/MetalDrawable.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
+#include "Platform/Metal/Texture/MetalTextureUtils.h"
 
 #include "Platform/Metal/Buffer/MetalVertexBuffer.h"
 #include "Platform/Metal/Buffer/MetalIndexBuffer.h"
@@ -16,17 +17,16 @@ namespace pixc {
 /**
  * @brief An internal structure encapsulating the Metal-specific state of a `MetalDrawable`.
  */
-struct MetalDrawable::DrawableState {
-    ///< The compiled Metal render pipeline state.
-    id<MTLRenderPipelineState> PipelineState;
-    
-    ///< Describes the rendering pipeline.
-    MTLRenderPipelineDescriptor* PipelineDescriptor;
+struct MetalDrawable::DrawableState
+{
     ///< Describes the layout of vertex data.
     MTLVertexDescriptor* VertexDescriptor;
     
-    ///< Uniforms buffer.
+    ///< Per-uniform named buffer storage.
     std::unordered_map<std::string, id<MTLBuffer>> UniformBuffer;
+    
+    ///< Cached pipeline states for different framebuffer attachment configurations.
+    std::unordered_map<AttachmentSpecification, id<MTLRenderPipelineState>> PipelineStates;
 };
 
 /**
@@ -42,8 +42,7 @@ MetalDrawable::MetalDrawable() : Drawable()
     // Initalize the drawing state
     m_State = std::make_shared<DrawableState>();
     
-    // Allocate memory for the descriptors
-    m_State->PipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+    // Allocate memory for the vertex descriptors
     m_State->VertexDescriptor = [[MTLVertexDescriptor alloc] init];
 }
 
@@ -52,8 +51,7 @@ MetalDrawable::MetalDrawable() : Drawable()
  */
 MetalDrawable::~MetalDrawable()
 {
-    // De-allocate memory
-    [m_State->PipelineDescriptor release];
+    // De-allocate memory for the vertex descriptors
     [m_State->VertexDescriptor release];
 }
 
@@ -64,12 +62,6 @@ void MetalDrawable::Bind() const
 {
     // Get the command encoder to encode rendering commands into the buffer
     id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
-    
-    // Define the state of the pipeline if not yet defined
-    if (!m_State->PipelineState)
-        SetPipelineState();
-    // Set the pipeline state
-    [encoder setRenderPipelineState:m_State->PipelineState];
     
     // Define the vertex buffers in the command encoder
     for (size_t i = 0; i < m_VertexBuffers.size(); ++i)
@@ -100,22 +92,30 @@ void MetalDrawable::SetShader(const std::shared_ptr<Shader>& shader)
     m_Shader = shader;
     // Define the uniforms
     InitUniformBuffers();
-    
-    // Set the pipeline state
-    SetPipelineState();
 }
 
 /**
- * @brief Creates and configures the Metal render pipeline state.
+ * @brief Retrieves or creates a Metal render pipeline state.
+ *
+ * @return A pointer to the Metal render pipeline state.
  */
-void MetalDrawable::SetPipelineState() const
+void* MetalDrawable::GetOrCreateRenderPipelineState(const std::shared_ptr<FrameBuffer>& framebuffer)
 {
-    // Check that a shader has been defined in the drawable object
-    PIXEL_CORE_ASSERT(m_Shader, "Shader needs to be defined in drawable object for Metal API!");
+    // Determine attachment specification from framebuffer (fallback to generic if null)
+    static const AttachmentSpecification kGenericAttachments = {
+        { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
+        { TextureType::TEXTURE2D, TextureFormat::DEPTH16 }
+    };
+    auto attachments = framebuffer ? framebuffer->GetSpec().AttachmentsSpec : kGenericAttachments;
     
-    // Get the Metal device from the context
+    // Return cached pipeline state if already created
+    auto it = m_State->PipelineStates.find(attachments);
+    if (it != m_State->PipelineStates.end())
+        return reinterpret_cast<void*>(it->second);
+    
+    // Get Metal device
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-    
+
     // Dynamic cast the shader to a Metal shader
     auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
     PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
@@ -124,19 +124,39 @@ void MetalDrawable::SetPipelineState() const
     id<MTLFunction> vertexFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetVertexFunction());
     id<MTLFunction> fragmentFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetFragmentFunction());
     
-    // Assign to pipeline descriptor
-    m_State->PipelineDescriptor.vertexFunction = vertexFunction;
-    m_State->PipelineDescriptor.fragmentFunction = fragmentFunction;
-    m_State->PipelineDescriptor.vertexDescriptor = m_State->VertexDescriptor;
+    // Create and configure pipeline descriptor
+    MTLRenderPipelineDescriptor* descriptor = [[MTLRenderPipelineDescriptor alloc] init];
     
-    // TODO: needs to be defined by the framebuffer information directly.
-    m_State->PipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatRGBA8Unorm;
-    m_State->PipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
+    descriptor.vertexFunction = vertexFunction;
+    descriptor.fragmentFunction = fragmentFunction;
+    descriptor.vertexDescriptor = m_State->VertexDescriptor;
     
-    // Define the pipeline state
+    // Configure color attachment(s)
+    size_t colorAttachmentCount = framebuffer ? framebuffer->GetColorAttachments().size() : 1;
+    for (size_t i = 0; i < colorAttachmentCount; ++i)
+    {
+        descriptor.colorAttachments[i].pixelFormat = framebuffer ?
+            utils::textures::mtl::ToMetalPixelFormat(framebuffer->GetColorAttachment((unsigned int)i)->GetSpecification().Format) :
+            MTLPixelFormatRGBA8Unorm;
+    }
+    // Configure depth attachment format
+    if(!framebuffer || framebuffer->GetActiveRenderTargets().Depth)
+    {
+        descriptor.depthAttachmentPixelFormat = framebuffer ?
+            utils::textures::mtl::ToMetalPixelFormat(framebuffer->GetDepthAttachment()->GetSpecification().Format) :
+            MTLPixelFormatDepth16Unorm;
+    }
+        
+    // Create the pipeline state
     NSError* error = nil;
-    m_State->PipelineState = [device newRenderPipelineStateWithDescriptor:m_State->PipelineDescriptor error:&error];
-    PIXEL_CORE_ASSERT(!error, "Failed to define the pipeline state!");
+    id<MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:descriptor error:&error];
+    [descriptor release];
+
+    PIXEL_CORE_ASSERT(!error, "Failed to create Metal render pipeline state!");
+
+    // Cache and return the pipeline state
+    m_State->PipelineStates[attachments] = pipelineState;
+    return reinterpret_cast<void*>(pipelineState);
 }
 
 /**
@@ -168,14 +188,6 @@ void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo
     
     auto *layouts = m_State->VertexDescriptor.layouts[indexVertexBuffer];
     layouts.stride = layout.GetStride();
-}
-
-/**
- * @brief Retrieves the Metal render pipeline state.
- */
-void* MetalDrawable::GetPipelineState() const
-{
-    return reinterpret_cast<void*>(m_State->PipelineState);
 }
 
 /**

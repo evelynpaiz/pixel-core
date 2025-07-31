@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Foundation/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/Utils/RendererUtils.h"
 
 #include <GL/glew.h>
 
@@ -90,13 +90,13 @@ inline DataType ToDataType(GLenum glType)
 inline GLbitfield ToOpenGLClearMask(const RenderTargetBuffers& targets)
 {
     GLbitfield mask = 0;
-    if (targets.colorBufferActive) {
+    if (targets.Color) {
         mask |= GL_COLOR_BUFFER_BIT;
     }
-    if (targets.depthBufferActive) {
+    if (targets.Depth) {
         mask |= GL_DEPTH_BUFFER_BIT;
     }
-    if (targets.stencilBufferActive) {
+    if (targets.Stencil) {
         mask |= GL_STENCIL_BUFFER_BIT;
     }
     return mask;

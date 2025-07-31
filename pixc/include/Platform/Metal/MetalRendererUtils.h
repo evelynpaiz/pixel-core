@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Foundation/Renderer/RendererUtils.h"
+#include "Foundation/Renderer/Utils/RendererUtils.h"
 
 #include <Metal/Metal.h>
 

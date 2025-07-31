@@ -80,7 +80,8 @@ MetalTextureCube::MetalTextureCube(const std::vector<const void *>& data,
  */
 MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
                                    const std::vector<std::string>& files, bool flip)
-: TextureCube(directory, files, flip), MetalTexture()
+// Metal textures are flipped in the y-axis
+: TextureCube(directory, files, !flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     
@@ -99,7 +100,8 @@ MetalTextureCube::MetalTextureCube(const std::filesystem::path& directory,
                                    const std::vector<std::string>& files,
                                    const TextureSpecification& spec,
                                    bool flip)
-: TextureCube(directory, files, spec, flip), MetalTexture()
+// Metal textures are flipped in the y-axis
+: TextureCube(directory, files, spec, !flip), MetalTexture()
 {
     m_Spec.Type = TextureType::TEXTURECUBE;
     

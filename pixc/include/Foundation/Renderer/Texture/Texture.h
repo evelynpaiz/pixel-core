@@ -100,6 +100,25 @@ struct TextureSpecification
     ///< precalculated versions of the texture at different levels of detail, providing smoother
     ///< rendering at varying distances.
     bool MipMaps = true;
+    
+    // Operator(s)
+    // ----------------------------------------
+    /// @brief Equality operator for comparing two texture specifications.
+    /// @param other Another texture specification to compare against.
+    /// @return True if both specifications match.
+    inline bool operator==(const TextureSpecification& other) const
+    {
+        return Width == other.Width &&
+               Height == other.Height &&
+               Depth == other.Depth &&
+               Type == other.Type &&
+               Format == other.Format &&
+               Filter.Min == other.Filter.Min &&
+               Filter.Mag == other.Filter.Mag &&
+               Filter.Mip == other.Filter.Mip &&
+               Wrap == other.Wrap &&
+               MipMaps == other.MipMaps;
+    }
 };
 
 // Forward declarations
@@ -266,3 +285,34 @@ struct TextureHelper
 } // namespace textures
 } // namespace utils
 } // namespace pixc
+
+namespace std {
+
+/**
+ * @brief Hash function specialization for `TextureSpecification`.
+ *
+ * @note: Allows `MetalRendererDescriptor` to be used as a key in unordered_map.
+ */
+template<>
+struct hash<pixc::TextureSpecification>
+{
+    /// @brief Generates a hash for a given `TextureSpecification`.
+    /// @param key The descriptor to hash.
+    /// @return A combined hash of each specification hash.
+    size_t operator()(const pixc::TextureSpecification& key) const
+    {
+        size_t h = std::hash<int>()(key.Width);
+        h ^= std::hash<int>()(key.Height) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(key.Depth) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Type)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Format)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Filter.Min)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Filter.Mag)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Filter.Mip)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<int>()(static_cast<int>(key.Wrap)) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        h ^= std::hash<bool>()(key.MipMaps) + 0x9e3779b9 + (h << 6) + (h >> 2);
+        return h;
+    }
+};
+
+} // namespace std

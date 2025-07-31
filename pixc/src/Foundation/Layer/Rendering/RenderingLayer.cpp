@@ -61,7 +61,7 @@ void RenderingLayer::OnAttach()
     
     // Define the framebuffer(s)
     FrameBufferSpecification spec;
-    spec.SetFrameBufferSize(m_Camera->GetWidth(), m_Camera->GetHeight());
+    spec.SetFrameBufferSize(m_Camera->GetWidth() * 2, m_Camera->GetHeight() * 2);
     spec.AttachmentsSpec = {
         { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
         { TextureType::TEXTURE2D, TextureFormat::DEPTH16}
@@ -118,6 +118,7 @@ void RenderingLayer::OnUpdate(Timestep ts)
     // -------
     
     RendererCommand::BeginRenderPass();
+    RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
     RendererCommand::SetClearColor(glm::vec4(0.0f));
     RendererCommand::Clear();
     

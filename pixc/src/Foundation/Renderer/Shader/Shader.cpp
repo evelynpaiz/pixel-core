@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Shader/Shader.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
 #ifdef __APPLE__

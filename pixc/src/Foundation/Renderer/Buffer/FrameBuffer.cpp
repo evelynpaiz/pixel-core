@@ -7,7 +7,7 @@
 #include "Foundation/Renderer/Texture/TextureCube.h"
 
 #include "Foundation/Renderer/Renderer.h"
-#include "Foundation/Renderer/FactoryUtils.h"
+#include "Foundation/Renderer/Utils/FactoryUtils.h"
 #include "Foundation/Renderer/RendererCommand.h"
 
 #include "Platform/OpenGL/Buffer/OpenGLFrameBuffer.h"
@@ -79,7 +79,7 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
             
             // TODO: Add the stencil buffer activation too.
             m_DepthAttachmentSpec = spec;
-            m_ActiveTargets.depthBufferActive = true;
+            m_ActiveTargets.Depth = true;
         }
         // Color attachment
         else
@@ -89,7 +89,7 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
             spec.Filter.Mip = TextureFilter::Linear;
             
             m_ColorAttachmentsSpec.emplace_back(spec);
-            m_ActiveTargets.colorBufferActive = true;
+            m_ActiveTargets.Color = true;
         }
     }
 }

@@ -3,9 +3,11 @@
 
 #include "Platform/Metal/Buffer/MetalIndexBuffer.h"
 #include "Platform/Metal/Texture/MetalTexture.h"
+#include "Platform/Metal/Shader/MetalShader.h"
 #include "Platform/Metal/Drawable/MetalDrawable.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
+#include "Platform/Metal/MetalStateDescriptor.h"
 
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
@@ -29,7 +31,7 @@ struct MetalRenderTarget
 struct MetalRenderCache
 {
     ///< Cache of depth-stencil states keyed by depth descriptor.
-    std::unordered_map<DepthDescriptor, id<MTLDepthStencilState>> Depth;
+    std::unordered_map<MetalDepthDescriptor, id<MTLDepthStencilState>> Depth;
 };
 
 /**
@@ -44,8 +46,11 @@ struct MetalRendererAPI::MetalRendererState
     MTLViewport Viewport;
     ///< Clear color.
     MTLClearColor ClearColor;
+    
+    ///< Rendering configuration.
+    MetalRenderDescriptor RenderDescriptor;
     ///< Depth configuration.
-    DepthDescriptor DepthState;
+    MetalDepthDescriptor DepthDescriptor;
     
     /// Cache of render-related GPU states (e.g., depth-stencil).
     MetalRenderCache Cache;
@@ -118,11 +123,11 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
 void MetalRendererAPI::SetDepthTesting(const bool enabled,
                                        const DepthFunction function)
 {
-    m_State->DepthState.Enabled = enabled;
+    m_State->DepthDescriptor.Enabled = enabled;
     
     if (function != DepthFunction::None)
     {
-        m_State->DepthState.Function = function;
+        m_State->DepthDescriptor.Function = function;
     }
 }
 
@@ -193,7 +198,7 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
     }
     
     // Configure depth attachment (if depth buffer is active)
-    if (targets.depthBufferActive)
+    if (targets.Depth)
     {
         // Create the depth texture for the screen target if it doesn't exist or needs to be updated
         CreateDepthTexture();
@@ -221,7 +226,7 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
     m_Context->InitCommandEncoder(descriptor, m_ActiveFramebuffer ? "FB" : "SB");
     
     // Defines a depth stencil state into the current command encoder
-    SetDepthTesting(targets.depthBufferActive, DepthFunction::None);
+    SetDepthTesting(targets.Depth, DepthFunction::None);
     m_Context->SetDepthStencilState(GetOrCreateDepthState());
 }
 
@@ -237,8 +242,13 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
     // Get the command encoder to encode rendering commands into the buffer
     id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
 
+     // Set the pipeline state
+     auto metalDrawable = std::reinterpret_pointer_cast<MetalDrawable>(drawable);
+     auto renderPipelineState = reinterpret_cast<id<MTLRenderPipelineState>>(metalDrawable->GetOrCreateRenderPipelineState(m_ActiveFramebuffer));
+     [encoder setRenderPipelineState:renderPipelineState];
+     
     // Bind the drawable object
-     drawable->Bind();
+    drawable->Bind();
     // Draw primitives
     auto metalIndexBuffer = std::dynamic_pointer_cast<MetalIndexBuffer>(drawable->GetIndexBuffer());
     PIXEL_CORE_ASSERT(metalIndexBuffer, "Invalid buffer cast - not a Metal index buffer!");
@@ -291,12 +301,13 @@ void MetalRendererAPI::CreateDepthTexture()
 }
 
 /**
- * @brief Creates a default depth-stencil state.
+ * @brief Retrieves or creates a Metal depth state.
+ * @return A pointer to the Metal depth state.
  */
 void* MetalRendererAPI::GetOrCreateDepthState()
 {
     // Verify that the state has not been created yet
-    auto it = m_State->Cache.Depth.find(m_State->DepthState);
+    auto it = m_State->Cache.Depth.find(m_State->DepthDescriptor);
         if (it != m_State->Cache.Depth.end())
             return reinterpret_cast<void*>(it->second);
     
@@ -305,13 +316,13 @@ void* MetalRendererAPI::GetOrCreateDepthState()
     
     // Define the depth stencil descriptor and create the pipeline
     MTLDepthStencilDescriptor *descriptor = [[MTLDepthStencilDescriptor alloc] init];
-    descriptor.depthWriteEnabled = m_State->DepthState.Enabled;
-    descriptor.depthCompareFunction = utils::graphics::mtl::ToMetalCompareFunction(m_State->DepthState.Function);
+    descriptor.depthWriteEnabled = m_State->DepthDescriptor.Enabled;
+    descriptor.depthCompareFunction = utils::graphics::mtl::ToMetalCompareFunction(m_State->DepthDescriptor.Function);
     id<MTLDepthStencilState> depthState = [device newDepthStencilStateWithDescriptor:descriptor];
     [descriptor release];
     
     // Cache the newly created state and return it
-    m_State->Cache.Depth[m_State->DepthState] = depthState;
+    m_State->Cache.Depth[m_State->DepthDescriptor] = depthState;
     return reinterpret_cast<void*>(depthState);
 }
 
