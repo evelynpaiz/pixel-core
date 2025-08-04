@@ -76,6 +76,9 @@ void RenderingLayer::OnAttach()
  */
 void RenderingLayer::OnUpdate(Timestep ts)
 {
+    // Reset rendering statistics
+    Renderer::ResetStats();
+    
     // Define rendering texture(s)
     static auto &white = utils::textures::WhiteTexture2D();
     static auto container = Texture2D::CreateFromFile(ResourcesManager::SpecificPath("textures/sample/container.jpg"));
@@ -95,7 +98,6 @@ void RenderingLayer::OnUpdate(Timestep ts)
     Renderer::ResetStats();
     
     // Render
-    
     // -------
     RendererCommand::BeginRenderPass(m_Framebuffer);
     RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
@@ -116,7 +118,6 @@ void RenderingLayer::OnUpdate(Timestep ts)
     RendererCommand::EndRenderPass();
     
     // -------
-    
     RendererCommand::BeginRenderPass();
     RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
     RendererCommand::SetClearColor(glm::vec4(0.0f));
@@ -133,7 +134,6 @@ void RenderingLayer::OnUpdate(Timestep ts)
     RendererCommand::EndRenderPass();
     
     // -------
-    
     // Update camera
     m_Camera->OnUpdate(ts);
 }
@@ -166,7 +166,7 @@ bool RenderingLayer::OnWindowResize(WindowResizeEvent &e)
     m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
     
     // Update the framebuffer(s)
-    m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
+    //m_Framebuffer->Resize(e.GetWidth(), e.GetHeight());
     
     // Notify of the change
     PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());

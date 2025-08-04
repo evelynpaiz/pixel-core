@@ -33,7 +33,7 @@ void MetalGuiBackend::Init()
     // Get the Metal device from the context
     id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
     
-    // Initialize
+    // Initialize ImGui Glfw and Metal
     ImGui_ImplGlfw_InitForOther(window, true);
     ImGui_ImplMetal_Init(device);
 }
@@ -54,20 +54,26 @@ void MetalGuiBackend::BeginFrame()
     // Define command buffer if necessary
     bool clear = m_Context->InitCommandBuffer();
     
-    // Get the drawable
-    auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
-    
-    // Define render pass descriptor
-    MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-    descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
-    descriptor.colorAttachments[0].texture = drawable.texture;
-    descriptor.colorAttachments[0].loadAction = clear ? MTLLoadActionClear : MTLLoadActionLoad;
-    descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    
-    // Define render encoder
-    m_Context->InitCommandEncoder(descriptor, "ImGui");
-    // Define the imgui frame
-    ImGui_ImplMetal_NewFrame(descriptor);
+    @autoreleasepool
+    {
+        // Create a render pass descriptor
+        MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+        
+        // Get the drawable texture for the color attachment
+        id<MTLTexture> texture = reinterpret_cast<id<MTLTexture>>(m_Context->GetBackbufferTexture());
+        
+        // Configure the color attachment 0
+        descriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+        descriptor.colorAttachments[0].texture = texture;
+        descriptor.colorAttachments[0].loadAction = clear ? MTLLoadActionClear : MTLLoadActionLoad;
+        descriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+        
+        //TODO: Check why there is a leak inside the imgui new frame function
+        // Define render encoder
+        m_Context->InitCommandEncoder(descriptor, "ImGui");
+        // Define the imgui frame
+        ImGui_ImplMetal_NewFrame(descriptor);
+    }
 }
 
 /**
@@ -75,12 +81,15 @@ void MetalGuiBackend::BeginFrame()
  */
 void MetalGuiBackend::EndFrame()
 {
-    // Get the command buffer and encoder used to render the frame
-    auto commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
-    auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
-    
-    // Render the imgui data
-    ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, encoder);
+    @autoreleasepool
+    {
+        // Get the command buffer and encoder used to render the frame
+        auto commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
+        auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+        
+        // Render the imgui data
+        ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, encoder);
+    }
 }
 
 } // namespace pixc

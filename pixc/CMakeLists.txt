@@ -7,7 +7,7 @@ file(
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     #   src/Foundation/*.cpp src/Foundation/*.mm
 
-    src/Foundation/Core/*.cpp
+    src/Foundation/Core/*.cpp src/Foundation/Core/*.mm
     src/Foundation/Input/*.cpp
     src/Foundation/Layer/*.cpp
 

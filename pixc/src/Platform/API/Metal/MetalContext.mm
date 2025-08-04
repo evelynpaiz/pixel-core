@@ -135,21 +135,24 @@ void* MetalContext::GetCommandEncoder() const
 }
 
 /**
- * Retrieves the native texture of the current drawable.
+ * @brief Get the current texture of the screen's backbuffer drawable.
  *
- * @return A pointer to the drawable texture, or `nullptr` if no command queue is available.
+ * @return A pointer to the Metal texture (id<MTLTexture>), or `nullptr` if no drawable is currently available.
  */
-void* MetalContext::GetDrawable() const
+void* MetalContext::GetBackbufferTexture() const
 {
-    return reinterpret_cast<void*>(m_State->SwapChain.Drawable);
+    if (!m_State->SwapChain.Drawable)
+        return nullptr;
+        
+    return reinterpret_cast<void*>(m_State->SwapChain.Drawable.texture);
 }
 
 /**
- * Retrieves the current drawable size.
+ * Retrieves the current backbuffer size.
  *
- * @return A vector with the width and height of the drawable.
+ * @return A vector with the width and height of the backbuffer.
  */
-glm::vec2 MetalContext::GetDrawableSize() const
+glm::vec2 MetalContext::GetBackbufferSize() const
 {
     auto size = m_State->SwapChain.Layer.drawableSize;
     return glm::vec2(size.width, size.height);
@@ -176,7 +179,8 @@ void MetalContext::SetWindowHints()
 void MetalContext::SetVerticalSync(bool enabled)
 {
     // Make sure the swap chain has been initialized
-    if (!m_State->SwapChain.Layer) {
+    if (!m_State->SwapChain.Layer)
+    {
         PIXEL_CORE_WARN("MetalContext::SetVerticalSync() called before swap chain initialization!");
         return;
     }
@@ -194,21 +198,30 @@ void MetalContext::SwapBuffers()
     // Finalize the encoding if necessary
     EndEncoding();
     
+    // If there's no command buffer, there's nothing to commit or present
     if (!m_State->Frame.CommandBuffer)
         return;
     
-    // Present the drawable to the screen. This schedules the presentation
-    // of the current framebuffer to the display
-    [m_State->Frame.CommandBuffer presentDrawable:m_State->SwapChain.Drawable];
-    
-    // Commit the command buffer (this submits all the commands to the GPU)
-    [m_State->Frame.CommandBuffer commit];
-    
-    // Nullify the command buffer after committing to prepare for the next frame
-    m_State->Frame.CommandBuffer = nil;
-    
-    // Get the next drawable to be used
-    m_State->SwapChain.Drawable = [m_State->SwapChain.Layer nextDrawable];
+    @autoreleasepool
+    {
+        // Present the current drawable (framebuffer) to the screen if defined
+        if (m_State->SwapChain.Drawable)
+        {
+            [m_State->Frame.CommandBuffer presentDrawable:m_State->SwapChain.Drawable];
+            [m_State->SwapChain.Drawable release];
+            m_State->SwapChain.Drawable = nil;
+        }
+        
+        // Commit and wait for completion to ensure GPU finishes rendering this frame
+        [m_State->Frame.CommandBuffer commit];
+        [m_State->Frame.CommandBuffer waitUntilCompleted];
+        
+        // Release the command buffer now that it's no longer needed
+        [m_State->Frame.CommandBuffer release];
+        m_State->Frame.CommandBuffer = nil;
+        
+        m_State->SwapChain.Drawable = [[m_State->SwapChain.Layer nextDrawable] retain];
+    } // autoreleasepool
 }
 
 /**
@@ -256,9 +269,6 @@ void MetalContext::InitSwapChain()
     glfwGetFramebufferSize(m_WindowHandle, &width, &height);
     // TODO: verify
     UpdateBufferSize(width, height);
-    
-    // Get the surface to output the render result in the screen
-    m_State->SwapChain.Drawable = [m_State->SwapChain.Layer nextDrawable];
 }
 
 /**
@@ -268,7 +278,12 @@ bool MetalContext::InitCommandBuffer()
 {
     if (!m_State->Frame.CommandBuffer)
     {
-        m_State->Frame.CommandBuffer = [m_State->Device.RenderQueue commandBuffer];
+        @autoreleasepool
+        {
+            // Create a command buffer and retain it to persist outside the autorelease scope
+            m_State->Frame.CommandBuffer = [[m_State->Device.RenderQueue commandBuffer] retain];
+        } // autoreleasepool
+        // Label for debugging/profiling in Xcode
         m_State->Frame.CommandBuffer.label = @"Main";
         return true;
     }
@@ -276,7 +291,7 @@ bool MetalContext::InitCommandBuffer()
 }
 
 /**
- * Initialize a command encoder for a rendering pass using a descriptor.
+ * @brief Initialize a command encoder for a rendering pass using a descriptor.
  *
  * @param descriptor Render pass descriptor.
  */
@@ -284,17 +299,21 @@ void MetalContext::InitCommandEncoder(const void *descriptor, const std::string&
 {
     PIXEL_CORE_ASSERT(!m_State->Frame.Encoder, "Render encoder still active! — call EndEncoding first");
     
-    // Create the command encoder
-    MTLRenderPassDescriptor* passDescriptor = (__bridge MTLRenderPassDescriptor*)descriptor;
-    m_State->Frame.Encoder = [m_State->Frame.CommandBuffer renderCommandEncoderWithDescriptor:passDescriptor];
+    @autoreleasepool
+    {
+        // Create the encoder and manually retain it to extend lifetime
+        MTLRenderPassDescriptor* passDescriptor = (__bridge MTLRenderPassDescriptor*)descriptor;
+        id<MTLRenderCommandEncoder> encoder = [m_State->Frame.CommandBuffer renderCommandEncoderWithDescriptor:passDescriptor];
+        m_State->Frame.Encoder = [encoder retain];
+    } // autoreleasepool
     
-    // Set debug label if provided
+    // Label for debugging/profiling in Xcode
     if (!name.empty())
         m_State->Frame.Encoder.label = [NSString stringWithUTF8String:name.c_str()];
 }
 
 /**
- * Finalizes the current rendering pass by ending encoding.
+ * @brief Finalizes the current rendering pass by ending encoding.
  */
 void MetalContext::EndEncoding()
 {
@@ -304,6 +323,9 @@ void MetalContext::EndEncoding()
 
     // End encoding in the command encoder
     [m_State->Frame.Encoder endEncoding];
+    
+    // Release the retained encoder
+    [m_State->Frame.Encoder release];
     m_State->Frame.Encoder = nil;
 }
 
@@ -330,7 +352,7 @@ void MetalContext::UpdateViewport(const void* descriptor)
     // Get the viewport descriptor
     auto viewport = reinterpret_cast<const MTLViewport *>(descriptor);
     
-    // Update the drawable and the encoder if necessary
+    // Update the encoder if necessary
     if (m_State->Frame.Encoder)
         [m_State->Frame.Encoder setViewport:*viewport];
 }

@@ -61,7 +61,7 @@ MetalDrawable::~MetalDrawable()
 void MetalDrawable::Bind() const
 {
     // Get the command encoder to encode rendering commands into the buffer
-    id<MTLRenderCommandEncoder> encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+    auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
     
     // Define the vertex buffers in the command encoder
     for (size_t i = 0; i < m_VertexBuffers.size(); ++i)
@@ -106,57 +106,61 @@ void* MetalDrawable::GetOrCreateRenderPipelineState(const std::shared_ptr<FrameB
         { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
         { TextureType::TEXTURE2D, TextureFormat::DEPTH16 }
     };
-    auto attachments = framebuffer ? framebuffer->GetSpec().AttachmentsSpec : kGenericAttachments;
     
-    // Return cached pipeline state if already created
-    auto it = m_State->PipelineStates.find(attachments);
-    if (it != m_State->PipelineStates.end())
-        return reinterpret_cast<void*>(it->second);
-    
-    // Get Metal device
-    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-
-    // Dynamic cast the shader to a Metal shader
-    auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
-    PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
-    
-    // Get Metal functions
-    id<MTLFunction> vertexFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetVertexFunction());
-    id<MTLFunction> fragmentFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetFragmentFunction());
-    
-    // Create and configure pipeline descriptor
-    MTLRenderPipelineDescriptor* descriptor = [[MTLRenderPipelineDescriptor alloc] init];
-    
-    descriptor.vertexFunction = vertexFunction;
-    descriptor.fragmentFunction = fragmentFunction;
-    descriptor.vertexDescriptor = m_State->VertexDescriptor;
-    
-    // Configure color attachment(s)
-    size_t colorAttachmentCount = framebuffer ? framebuffer->GetColorAttachments().size() : 1;
-    for (size_t i = 0; i < colorAttachmentCount; ++i)
+    @autoreleasepool
     {
-        descriptor.colorAttachments[i].pixelFormat = framebuffer ?
+        auto attachments = framebuffer ? framebuffer->GetSpec().AttachmentsSpec : kGenericAttachments;
+        
+        // Return cached pipeline state if already created
+        auto it = m_State->PipelineStates.find(attachments);
+        if (it != m_State->PipelineStates.end())
+            return reinterpret_cast<void*>(it->second);
+        
+        // Get Metal device
+        id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+        
+        // Dynamic cast the shader to a Metal shader
+        auto* metalShader = dynamic_cast<MetalShader*>(m_Shader.get());
+        PIXEL_CORE_ASSERT(metalShader, "Invalid shader cast - not a Metal shader!");
+        
+        // Get Metal functions
+        id<MTLFunction> vertexFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetVertexFunction());
+        id<MTLFunction> fragmentFunction = reinterpret_cast<id<MTLFunction>>(metalShader->GetFragmentFunction());
+        
+        // Create and configure pipeline descriptor
+        MTLRenderPipelineDescriptor* descriptor = [[MTLRenderPipelineDescriptor alloc] init];
+        
+        descriptor.vertexFunction = vertexFunction;
+        descriptor.fragmentFunction = fragmentFunction;
+        descriptor.vertexDescriptor = m_State->VertexDescriptor;
+        
+        // Configure color attachment(s)
+        size_t colorAttachmentCount = framebuffer ? framebuffer->GetColorAttachments().size() : 1;
+        for (size_t i = 0; i < colorAttachmentCount; ++i)
+        {
+            descriptor.colorAttachments[i].pixelFormat = framebuffer ?
             utils::textures::mtl::ToMetalPixelFormat(framebuffer->GetColorAttachment((unsigned int)i)->GetSpecification().Format) :
             MTLPixelFormatRGBA8Unorm;
-    }
-    // Configure depth attachment format
-    if(!framebuffer || framebuffer->GetActiveRenderTargets().Depth)
-    {
-        descriptor.depthAttachmentPixelFormat = framebuffer ?
+        }
+        // Configure depth attachment format
+        if(!framebuffer || framebuffer->GetActiveRenderTargets().Depth)
+        {
+            descriptor.depthAttachmentPixelFormat = framebuffer ?
             utils::textures::mtl::ToMetalPixelFormat(framebuffer->GetDepthAttachment()->GetSpecification().Format) :
             MTLPixelFormatDepth16Unorm;
-    }
+        }
         
-    // Create the pipeline state
-    NSError* error = nil;
-    id<MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:descriptor error:&error];
-    [descriptor release];
-
-    PIXEL_CORE_ASSERT(!error, "Failed to create Metal render pipeline state!");
-
-    // Cache and return the pipeline state
-    m_State->PipelineStates[attachments] = pipelineState;
-    return reinterpret_cast<void*>(pipelineState);
+        // Create the pipeline state
+        NSError* error = nil;
+        id<MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:descriptor error:&error];
+        [descriptor release];
+        
+        PIXEL_CORE_ASSERT(!error, "Failed to create Metal render pipeline state!");
+        
+        // Cache and return the pipeline state
+        m_State->PipelineStates[attachments] = pipelineState;
+        return reinterpret_cast<void*>(pipelineState);
+    }
 }
 
 /**
@@ -199,26 +203,29 @@ void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo
  */
 void MetalDrawable::InitUniformBuffers()
 {
-    // Clear the current buffer if necessary
-    if(!m_State->UniformBuffer.empty())
-        m_State->UniformBuffer.clear();
-    
-    // Retrieve the Metal device from the rendering context
-    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-    // Iterate over each uniform block layout defined for the shader
-    auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
-    for (auto& [uniform, layout] : shader->m_Uniforms)
+    @autoreleasepool
     {
-        // Determine the required buffer size for this uniform layout
-        uint32_t stride = layout.GetStride();
-        // Create a new Metal buffer for this uniform block
-        id<MTLBuffer> buffer = [device
+        // Clear the current buffer if necessary
+        if(!m_State->UniformBuffer.empty())
+            m_State->UniformBuffer.clear();
+        
+        // Retrieve the Metal device from the rendering context
+        auto device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+        // Iterate over each uniform block layout defined for the shader
+        auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
+        for (auto& [uniform, layout] : shader->m_Uniforms)
+        {
+            // Determine the required buffer size for this uniform layout
+            uint32_t stride = layout.GetStride();
+            // Create a new Metal buffer for this uniform block
+            id<MTLBuffer> buffer = [device
                                     newBufferWithLength:stride
                                     options:MTLResourceStorageModeShared
-        ];
-        // Store the buffer in the shader source's uniform buffer list
-        m_State->UniformBuffer[uniform] = buffer;
-    }
+            ];
+            // Store the buffer in the shader source's uniform buffer list
+            m_State->UniformBuffer[uniform] = buffer;
+        }
+    } // autoreleasepool
 }
 
 /**
@@ -234,8 +241,7 @@ void MetalDrawable::BindUniformBuffers() const
     UpdateUniformBuffers();
     
     // Get the current command encoder
-    id<MTLRenderCommandEncoder> encoder =
-            reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
+    auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
     
     // Iterate over all uniform groups and their layouts stored
     auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);

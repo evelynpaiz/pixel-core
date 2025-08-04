@@ -143,44 +143,47 @@ void MetalTexture::MTLCreateTexture(const void *data,
 void MetalTexture::MTLDefineTexture(const TextureSpecification& spec,
                                     unsigned int samples)
 {
-    // Get the Metal device from the context
-    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-    
-    // Create a new texture descriptor
-    MTLTextureDescriptor *descriptor = [[MTLTextureDescriptor alloc] init];
-    
-    // Set texture properties based on the provided specification
-    descriptor.textureType = utils::textures::mtl::ToMetalTextureType(spec.Type);
-    descriptor.pixelFormat = utils::textures::mtl::ToMetalPixelFormat(spec.Format);
-    descriptor.width = spec.Width;
-    
-    // Set optional texture dimensions if provided
-    if (spec.Height > 0)
-        descriptor.height = spec.Height;
-    if (spec.Depth > 0)
-        descriptor.depth = spec.Depth;
-    
-    // Set optional multi-sampling size
-    if (samples > 1)
-        descriptor.sampleCount = samples;
-    
-    // Calculate and set the number of mipmap levels
-    descriptor.mipmapLevelCount = spec.MipMaps
-    ? floor(log2f((float)MAX(MAX(spec.Width, spec.Height), spec.Depth))) + 1
-    : 1;
-    
-    // Set the texture's storage and usage modes
-    descriptor.storageMode = utils::textures::IsDepthFormat(spec.Format) ?
-    MTLStorageModePrivate : MTLStorageModeShared;
-    descriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite |
-    MTLTextureUsageRenderTarget;
-    
-    // Create the texture
-    m_TextureData->Texture = [device newTextureWithDescriptor:descriptor];
-    PIXEL_CORE_ASSERT(m_TextureData->Texture, "Error creating texture!");
-    
-    // Release the memory of the descriptor
-    [descriptor release];
+    @autoreleasepool
+    {
+        // Get the Metal device from the context
+        id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+        
+        // Create a new texture descriptor
+        MTLTextureDescriptor *descriptor = [[MTLTextureDescriptor alloc] init];
+        
+        // Set texture properties based on the provided specification
+        descriptor.textureType = utils::textures::mtl::ToMetalTextureType(spec.Type);
+        descriptor.pixelFormat = utils::textures::mtl::ToMetalPixelFormat(spec.Format);
+        descriptor.width = spec.Width;
+        
+        // Set optional texture dimensions if provided
+        if (spec.Height > 0)
+            descriptor.height = spec.Height;
+        if (spec.Depth > 0)
+            descriptor.depth = spec.Depth;
+        
+        // Set optional multi-sampling size
+        if (samples > 1)
+            descriptor.sampleCount = samples;
+        
+        // Calculate and set the number of mipmap levels
+        descriptor.mipmapLevelCount = spec.MipMaps
+        ? floor(log2f((float)MAX(MAX(spec.Width, spec.Height), spec.Depth))) + 1
+        : 1;
+        
+        // Set the texture's storage and usage modes
+        descriptor.storageMode = utils::textures::IsDepthFormat(spec.Format) ?
+        MTLStorageModePrivate : MTLStorageModeShared;
+        descriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite |
+        MTLTextureUsageRenderTarget;
+        
+        // Create the texture
+        m_TextureData->Texture = [device newTextureWithDescriptor:descriptor];
+        PIXEL_CORE_ASSERT(m_TextureData->Texture, "Error creating texture!");
+        
+        // Release the memory of the descriptor
+        [descriptor release];
+    } // autoreleasepool
 }
 
 /**
@@ -190,31 +193,34 @@ void MetalTexture::MTLDefineTexture(const TextureSpecification& spec,
  */
 void MetalTexture::MTLDefineSampler(const TextureSpecification &spec)
 {
-    // Get the Metal device from the context
-    id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
-    
-    // Create a new texture descriptor
-    MTLSamplerDescriptor *descriptor = [[MTLSamplerDescriptor alloc] init];
-    
-    // Define the filter apply when sampling
-    descriptor.minFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Min);
-    descriptor.magFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Mag);
-    descriptor.mipFilter = utils::textures::mtl::ToMetalMipFilter(spec.Filter.Mip, spec.MipMaps);
-    
-    // Define the wrapping mode
-    descriptor.sAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
-    
-    if (spec.Height > 0)
-        descriptor.tAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
-    if (spec.Depth > 0)
-        descriptor.rAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
-    
-    // Create the sampler
-    m_TextureData->Sampler = [device newSamplerStateWithDescriptor:descriptor];
-    PIXEL_CORE_ASSERT(m_TextureData->Sampler, "Error creating texture sampler!");
-    
-    // Release the memory of the descriptor
-    [descriptor release];
+    @autoreleasepool
+    {
+        // Get the Metal device from the context
+        id<MTLDevice> device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
+        
+        // Create a new texture descriptor
+        MTLSamplerDescriptor *descriptor = [[MTLSamplerDescriptor alloc] init];
+        
+        // Define the filter apply when sampling
+        descriptor.minFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Min);
+        descriptor.magFilter = utils::textures::mtl::ToMetalMinMaxFilter(spec.Filter.Mag);
+        descriptor.mipFilter = utils::textures::mtl::ToMetalMipFilter(spec.Filter.Mip, spec.MipMaps);
+        
+        // Define the wrapping mode
+        descriptor.sAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
+        
+        if (spec.Height > 0)
+            descriptor.tAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
+        if (spec.Depth > 0)
+            descriptor.rAddressMode = utils::textures::mtl::ToMetalWrap(spec.Wrap);
+        
+        // Create the sampler
+        m_TextureData->Sampler = [device newSamplerStateWithDescriptor:descriptor];
+        PIXEL_CORE_ASSERT(m_TextureData->Sampler, "Error creating texture sampler!");
+        
+        // Release the memory of the descriptor
+        [descriptor release];
+    } // autoreleasepool
 }
 
 /**
@@ -224,48 +230,51 @@ void MetalTexture::MTLDefineSampler(const TextureSpecification &spec)
  */
 void MetalTexture::MTLGenerateMipMaps(bool isOffscreenResource)
 {
-    // Define the command buffer to be used
-    id<MTLCommandBuffer> commandBuffer = nullptr;
-    
-    if (isOffscreenResource)
+    @autoreleasepool
     {
-        // Use a separate command queue for resource-related textures
-        id<MTLCommandQueue> queue = reinterpret_cast<id<MTLCommandQueue>>(m_Context->GetResourceQueue());
-        commandBuffer = [queue commandBuffer];
-    }
-    else
-    {
-        // Ensure the render command buffer is valid and not encoding anything
-        PIXEL_CORE_ASSERT(m_Context->GetCommandBuffer(), "Command buffer is null!");
-        PIXEL_CORE_ASSERT(!m_Context->GetCommandEncoder(), "Command buffer is still encoding!");
+        // Define the command buffer to be used
+        id<MTLCommandBuffer> commandBuffer = nullptr;
         
-        // Use the existing render command buffer for on-screen textures (framebuffer attachments)
-        commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
-    }
-    
-    // Create a blit command encoder to handle mipmap generation
-    id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
-    blitEncoder.label = @"MipMap";
-    
-    // Get the internal Metal texture object
-    id<MTLTexture> texture = reinterpret_cast<id<MTLTexture>>(m_TextureData->Texture);
-    
-    // Synchronize the texture data before generating mipmaps
-    [blitEncoder synchronizeResource:texture];
-    
-    // Generate mipmaps
-    [blitEncoder generateMipmapsForTexture:texture];
-    
-    // End encoding
-    [blitEncoder endEncoding];
-    
-    // Only commit if using the offscreen resource queue (framebuffers handle
-    // commit in the swapBuffer function)
-    if (isOffscreenResource)
-    {
-        [commandBuffer commit];
-        [commandBuffer waitUntilCompleted];
-    }
+        if (isOffscreenResource)
+        {
+            // Use a separate command queue for resource-related textures
+            id<MTLCommandQueue> queue = reinterpret_cast<id<MTLCommandQueue>>(m_Context->GetResourceQueue());
+            commandBuffer = [queue commandBuffer];
+        }
+        else
+        {
+            // Ensure the render command buffer is valid and not encoding anything
+            PIXEL_CORE_ASSERT(m_Context->GetCommandBuffer(), "Command buffer is null!");
+            PIXEL_CORE_ASSERT(!m_Context->GetCommandEncoder(), "Command buffer is still encoding!");
+            
+            // Use the existing render command buffer for on-screen textures (framebuffer attachments)
+            commandBuffer = reinterpret_cast<id<MTLCommandBuffer>>(m_Context->GetCommandBuffer());
+        }
+        
+        // Create a blit command encoder to handle mipmap generation
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+        blitEncoder.label = @"MipMap";
+        
+        // Get the internal Metal texture object
+        id<MTLTexture> texture = reinterpret_cast<id<MTLTexture>>(m_TextureData->Texture);
+        
+        // Synchronize the texture data before generating mipmaps
+        [blitEncoder synchronizeResource:texture];
+        
+        // Generate mipmaps
+        [blitEncoder generateMipmapsForTexture:texture];
+        
+        // End encoding
+        [blitEncoder endEncoding];
+        
+        // Only commit if using the offscreen resource queue (framebuffers handle
+        // commit in the swapBuffer function)
+        if (isOffscreenResource)
+        {
+            [commandBuffer commit];
+            [commandBuffer waitUntilCompleted];
+        }
+    } // autoreleasepool
 }
 
 /**

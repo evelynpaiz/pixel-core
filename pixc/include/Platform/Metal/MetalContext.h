@@ -37,10 +37,9 @@ public:
     
     void* GetCommandBuffer() const;
     void* GetCommandEncoder() const;
-    
-    void* GetDrawable() const;
-    glm::vec2 GetDrawableSize() const;
-    
+
+    void* GetBackbufferTexture() const;
+    glm::vec2 GetBackbufferSize() const;
     
     // Setter(s)
     // ----------------------------------------
