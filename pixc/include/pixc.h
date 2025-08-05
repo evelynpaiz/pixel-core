@@ -52,7 +52,7 @@
 
 #include "Foundation/Renderer/Buffer/VertexBuffer.h"
 #include "Foundation/Renderer/Buffer/IndexBuffer.h"
-//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 #include "Foundation/Renderer/Shader/Shader.h"
 #include "Foundation/Renderer/Texture/Texture.h"
@@ -61,8 +61,8 @@
 #include "Foundation/Renderer/Texture/Texture3D.h"
 #include "Foundation/Renderer/Texture/TextureCube.h"
 
-//#include "Foundation/Renderer/Light/ShadowCamera.h"
-//#include "Foundation/Renderer/Light/Light.h"
+#include "Foundation/Renderer/Light/Shadow.h"
+#include "Foundation/Renderer/Light/Light.h"
 //#include "Foundation/Renderer/Light/PositionalLight.h"
 //#include "Foundation/Renderer/Light/DirectionalLight.h"
 //#include "Foundation/Renderer/Light/EnvironmentLight.h"

@@ -37,12 +37,12 @@ class Layer
     
     // Layer handlers
     // ----------------------------------------
-    /// @brief Attach (add) this layer to the rendering engine.
+    /// @brief Called when the layer is attached to the application.
     virtual void OnAttach() {}
-    /// @brief Detach (remove) this layer from the rendering engine.
+    /// @brief Called when the layer is detached from the application.
     virtual void OnDetach() {}
-    /// @brief Render this layer.
-    /// @param deltaTime Times passed since the last update.
+    /// @brief Render this layer.  The method is called every frame
+    /// @param deltaTime Time elapsed since the last frame, in seconds.
     virtual void OnUpdate(Timestep ts) {}
     /// @brief Handle an event that possibly occurred inside the layer.
     /// @param e Event.

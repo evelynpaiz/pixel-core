@@ -1,13 +1,21 @@
 #pragma once
 
-#include "Common/Renderer/Shader/Shader.h"
-#include "Common/Renderer/Material/Material.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Core/Resources.h"
 
-#include "Common/Renderer/Light/ShadowCamera.h"
-#include "Common/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Shader/Shader.h"
+#include "Foundation/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
+
+#include "Foundation/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Light/Shadow.h"
 
 #include <glm/glm.hpp>
+
+/**
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
 
 /**
  * @brief Flags representing properties of a lighted object.
@@ -28,7 +36,7 @@ struct LightFlags
 };
 
 /**
- * Base class for light.
+ * @brief Base class defining a light.
  *
  * Copying or moving `BaseLight` objects is disabled to ensure single ownership and prevent unintended
  * duplication of light resources.
@@ -72,7 +80,7 @@ protected:
         // Define the depth material if it has not been define yet
         auto& library = Renderer::GetMaterialLibrary();
         if (!library.Exists("Depth"))
-            library.Create<Material>("Depth", "Resources/shaders/depth/DepthMap");
+            library.Create<Material>("Depth", ResourcesManager::GeneralPath("pixc/shaders/depth/DepthMap"));
     }
     
     // Light variables
@@ -88,7 +96,7 @@ public:
 };
 
 /**
- * Base class for light sources used in a scene.
+ * @brief Base class for light sources used in a scene.
  *
  * The `Light` class serves as a base class for defining different types of light sources used in 3D
  * rendering. It provides common functionality for defining and retrieving the color of the light source.
@@ -207,7 +215,7 @@ protected:
     /// @param color The color of the light source.
     Light(const glm::vec4 &vector,
           const glm::vec3 &color = glm::vec3(1.0f))
-        : BaseLight(), m_ID(s_IndexCount++), m_Vector(vector), m_Color(color)
+    : BaseLight(), m_ID(s_IndexCount++), m_Vector(vector), m_Color(color)
     {};
     /// @brief Initialize the shadow map framebuffer.
     /// @param width Framebuffer's width.
@@ -315,3 +323,5 @@ private:
     ///< Number of light casters in the library.
     int m_Casters;
 };
+
+} // namespace pixc

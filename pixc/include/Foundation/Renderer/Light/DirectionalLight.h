@@ -1,11 +1,17 @@
 #pragma once
 
-#include "Common/Renderer/Light/Light.h"
+#include "Foundation/Renderer/Light/Light.h"
 
 #include <glm/glm.hpp>
 
 /**
- * Represents a directional light source in 3D rendering.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a directional light source in 3D rendering.
  *
  * The `DirectionalLight` class extends the `Light` base class to define a directional light source.
  * It provides methods to set and retrieve the light's direction, distance, and additional properties
@@ -30,7 +36,7 @@ public:
                      const glm::vec3& color = glm::vec3(1.0f),
                      const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
                      float distance = 15.0f, float orthoSize = 20.0f)
-        : Light(glm::vec4(direction, 0.0f), color), m_Distance(distance)
+    : Light(glm::vec4(direction, 0.0f), color), m_Distance(distance)
     {
         // Set the shadow camera parameters
         auto shadowCamera = std::make_shared<OrthographicShadow>();
@@ -90,3 +96,5 @@ private:
 public:
     DISABLE_COPY_AND_MOVE(DirectionalLight);
 };
+
+} // namespace pixc

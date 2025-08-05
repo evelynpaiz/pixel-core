@@ -23,7 +23,7 @@ GuiLayer::GuiLayer(const std::string& name) : Layer(name)
 }
 
 /**
- * @brief Attach (add) the GUI layer to the rendering engine.
+ * @brief Called when the GUI layer is attached to the application.
  */
 void GuiLayer::OnAttach()
 {
@@ -41,7 +41,7 @@ void GuiLayer::OnAttach()
 }
 
 /**
- * @brief Detach (remove) the GUI layer from the rendering engine.
+ * @brief Called when the GUI layer is detached from the application.
  */
 void GuiLayer::OnDetach()
 {
@@ -51,6 +51,19 @@ void GuiLayer::OnDetach()
     // Shut down the GLFW platform backend and destroy the ImGui context
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+/**
+ * @brief Renders the GUI interface.
+ *
+ * @param deltaTime Time elapsed since the last frame, in seconds.
+ */
+void GuiLayer::OnUpdate(Timestep ts)
+{
+    // Render a simple GUI showing rendering stats
+    Begin();
+    GUIStats(ts);
+    End();
 }
 
 /**
@@ -69,19 +82,6 @@ void GuiLayer::OnEvent(Event& e)
     // Mark the event as handled if ImGui wants to capture mouse or keyboard input
     e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
     e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-}
-
-/**
- * @brief Render the GUI layer.
- *
- * @param deltaTime Times passed since the last update.
- */
-void GuiLayer::OnUpdate(Timestep ts)
-{
-    // Render a simple GUI showing rendering stats
-    Begin();
-    GUIStats(ts);
-    End();
 }
 
 /**
@@ -140,6 +140,18 @@ void GuiLayer::GUIStats(Timestep ts)
     ImGui::Text("Draw Calls: %d", stats.drawCalls);
     
     ImGui::End();
+}
+
+/**
+ * @brief Check if the GUI is currently active or hovered in.
+ *
+ * @return `true` if the GUI is active.
+ */
+bool GuiLayer::IsActive()
+{
+    return ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow) ||
+           ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) ||
+           ImGui::IsItemActive();
 }
 
 /**

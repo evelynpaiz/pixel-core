@@ -55,6 +55,10 @@ protected:
     // ----------------------------------------
     void GUIStats(Timestep ts);
     
+    // Getter(s)
+    // ----------------------------------------
+    bool IsActive();
+    
     // Setter(s)
     // ----------------------------------------
     virtual void SetGeneralFlags();

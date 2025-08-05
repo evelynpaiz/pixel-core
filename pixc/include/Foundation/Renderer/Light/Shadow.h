@@ -1,12 +1,16 @@
 #pragma once
 
-#include "Common/Renderer/Camera/OrthographicCamera.h"
-#include "Common/Renderer/Camera/PerspectiveCamera.h"
-
-using namespace pixc;
+#include "Foundation/Renderer/Camera/OrthographicCamera.h"
+#include "Foundation/Renderer/Camera/PerspectiveCamera.h"
 
 /**
- * Represents an orthographic shadow camera projection.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents an orthographic projection used for shadow mapping.
  *
  * The `OrthographicShadow` class extends the `OrthographicCamera` class to define a
  * camera projection suitable for rendering shadows. It inherits the functionality of the orthographic
@@ -43,7 +47,7 @@ public:
 };
 
 /**
- * Represents a perspective shadow camera projection.
+ * @brief Represents a perspective projection used for shadow mapping.
  *
  * The `PerspectiveShadow` class extends the `PerspectiveCamera` class to define a
  * camera projection suitable for rendering shadows. It inherits the functionality of the perspective
@@ -78,3 +82,5 @@ public:
 public:
     DISABLE_COPY_AND_MOVE(PerspectiveShadow);
 };
+
+} // namespace pixc

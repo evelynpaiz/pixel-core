@@ -81,6 +81,9 @@ file(
     include/Foundation/Renderer/RendererCommand.h
     include/Foundation/Renderer/Renderer.h
     
+    include/Foundation/Renderer/Light/Shadow.h
+    include/Foundation/Renderer/Light/Light.h
+    
     include/Foundation/Renderer/Material/Material.h
     include/Foundation/Renderer/Material/SimpleMaterial.h
 

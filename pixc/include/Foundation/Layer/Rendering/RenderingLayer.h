@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Foundation/Core/ClassUtils.h"
-
 #include "Foundation/Layer/Layer.h"
 
+#include "Foundation/Event/WindowEvent.h"
+
 #include "Foundation/Renderer/Camera/Camera.h"
+#include "Foundation/Renderer/Light/Light.h"
 #include "Foundation/Renderer/Drawable/Model/Model.h"
-#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 /**
  * @namespace pixc
@@ -14,38 +14,100 @@
  */
 namespace pixc {
 
-class WindowResizeEvent;
-
+/**
+ * @brief Base class for rendering layers within the application.
+ *
+ * The `RenderingLayer` class extends the `Layer` system to define a structured and extensible interface
+ * for managing rendering logic in the application. It provides a high-level setup for rendering scenes, including the
+ * definition of frame buffers, materials, lights, and geometry.
+ *
+ * Subclasses should override the `DefineBuffers()`, `DefineMaterials()`, `DefineLights()`,
+ * and `DefineGeometry()` methods to configure the rendering pipeline for specific use cases.
+ *
+ * Copying or moving `RenderingLayer` objects is disabled to ensure single ownership and prevent unintended
+ * duplication.
+ */
 class RenderingLayer : public Layer
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    RenderingLayer(int width, int height, const std::string& name = "Rendering Layer");
+    RenderingLayer(int width, int height, const std::string& name = "Rendering Layer") : Layer() {}
     /// @brief Delete the rendering layer.
     virtual ~RenderingLayer() = default;
     
     // Layer handlers
     // ----------------------------------------
-    void OnAttach() override;
-    void OnUpdate(Timestep ts) override;
-    void OnEvent(Event& e) override;
+    /// @brief Called when the rendering layer is attached to the application.
+    void OnAttach() override { Initialize(); }
+    /// @brief Handle an event that possibly occurred inside the viewer layer.
+    /// @param e Event.
+    void OnEvent(Event& e) override
+    {
+        // Define the event dispatcher
+        EventDispatcher dispatcher(e);
+        // Dispatch the event to the application event callbacks
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(RenderingLayer::OnWindowResize));
+        
+        // Handle the events on the camera
+        if (m_Camera && !e.Handled)
+            m_Camera->OnEvent(e);
+    }
     
-private:
+protected:
+    // Initialization
+    // ----------------------------------------
+    /// @brief Define and configure frame buffers used in the rendering pipeline.
+    virtual void DefineBuffers() {}
+    /// @brief Define and register materials used for rendering.
+    virtual void DefineMaterials() {}
+    /// @brief Set up lighting parameters and light sources.
+    virtual void DefineLights() {}
+    /// @brief Define the geometry used in the scene.
+    virtual void DefineGeometry() {}
+    
+    /// @brief Initialize all resources required for rendering.
+    virtual void Initialize()
+    {
+        // Define the frame bufer(s)
+        DefineBuffers();
+        // Define the material(s)
+        DefineMaterials();
+        // Define the light source(s)
+        DefineLights();
+        // Define the mesh(es) & model(s)
+        DefineGeometry();
+    }
+    
     // Events handler(s)
     // ----------------------------------------
-    virtual bool OnWindowResize(WindowResizeEvent &e);
+    virtual bool OnWindowResize(WindowResizeEvent &e)
+    {
+        // Notify of the change
+        PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());
+        
+        // Update the camera
+        if (m_Camera)
+            m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
+        
+        // TODO: update the size of the framebuffers?
+        
+        // Define the event as handled
+        return true;
+    }
     
     // Rendering layer variables
     // ----------------------------------------
-private:
+protected:
     ///< Rendering camera.
     std::shared_ptr<Camera> m_Camera;
+    
+    ///< Light sources in the scene.
+    LightLibrary m_Lights;
     ///< Set of objects in the scene.
     ModelLibrary m_Models;
-    
-    ///< Framebuffers.
-    std::shared_ptr<FrameBuffer> m_Framebuffer;
+    ///< Framebuffer(s) library with all the rendered images.
+    FrameBufferLibrary m_Framebuffers;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
