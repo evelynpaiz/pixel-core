@@ -47,7 +47,27 @@ void SimpleLayer::DefineMaterials()
  */
 void SimpleLayer::DefineLights()
 {
+    unsigned int width = m_Camera->GetWidth();
+    unsigned int height = m_Camera->GetHeight();
     
+    // Define the positional light source(s)
+    auto positional = std::make_shared<pixc::PositionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    positional->InitShadowFrameBuffer(width, height);
+    
+    positional->SetDiffuseStrength(0.6f);
+    positional->SetSpecularStrength(0.4f);
+    positional->GetModel()->SetScale(glm::vec3(0.05f));
+    
+    m_Lights.Add("Positional", positional);
+    
+    // Define the directional light sources
+    auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f), 1.0f, 2.5f);
+    directional->InitShadowFrameBuffer(width, height);
+    
+    directional->SetDiffuseStrength(0.6f);
+    directional->SetSpecularStrength(0.4f);
+    
+    m_Lights.Add("Directional", directional);
 }
 
 /**
@@ -55,25 +75,19 @@ void SimpleLayer::DefineLights()
  */
 void SimpleLayer::DefineGeometry()
 {
-    // Get the material(s)
-    auto& simple = pixc::Renderer::GetMaterialLibrary().Get("Simple");
-    
     // Define the model(s)
     auto planet = std::make_shared<pixc::AssimpModel>(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
     planet->SetScale(glm::vec3(0.12f));
-    planet->SetMaterial(simple);
     planet->SetPosition(glm::vec3(-0.5f, 0.0f, 0.0f));
     m_Models.Add("Planet", planet);
     
     auto cube = pixc::utils::geometry::ModelCube<pixc::GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
     cube->SetScale(glm::vec3(0.5f));
     cube->SetPosition(glm::vec3(0.5f, 0.0f, 0.0f));
-    cube->SetMaterial(simple);
     m_Models.Add("Cube", cube);
     
     auto viewport = pixc::utils::geometry::ModelPlane<pixc::GeoVertexData<glm::vec4, glm::vec2>>();
     viewport->SetScale(glm::vec3(2.0f));
-    viewport->SetMaterial(simple);
     m_Models.Add("Viewport", viewport);
 }
 
@@ -96,6 +110,8 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     auto material = std::dynamic_pointer_cast<pixc::SimpleMaterial>(
                         pixc::Renderer::GetMaterialLibrary().Get("Simple"));
     
+    auto& depth = pixc::Renderer::GetMaterialLibrary().Get("Depth");
+    
     // Get the model(s)
     auto& planet = m_Models.Get("Planet");
     auto& cube = m_Models.Get("Cube");
@@ -110,6 +126,25 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     
     // Render
     // -------
+    auto light = std::dynamic_pointer_cast<pixc::LightCaster>(m_Lights.Get("Directional"));
+    
+    pixc::RendererCommand::BeginRenderPass(light->GetShadowFramebuffer());
+    pixc::RendererCommand::SetClearColor(glm::vec4(0.0f));
+    pixc::RendererCommand::Clear();
+    
+    pixc::Renderer::BeginScene(light->GetShadowCamera());
+    
+    planet->SetMaterial(depth);
+    planet->DrawModel();
+    
+    cube->SetMaterial(depth);
+    cube->DrawModel();
+    
+    pixc::Renderer::EndScene();
+
+    pixc::RendererCommand::EndRenderPass();
+    
+    // -------
     pixc::RendererCommand::BeginRenderPass(sceneFB);
     pixc::RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
     pixc::RendererCommand::Clear();
@@ -118,11 +153,15 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(ground);
+    planet->SetMaterial(material);
     planet->DrawModel();
     
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(container);
+    cube->SetMaterial(material);
     cube->DrawModel();
+    
+    m_Lights.Get("Positional")->DrawLight();
     
     pixc::Renderer::EndScene();
 
@@ -138,6 +177,7 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     
     material->SetColor(glm::vec4(1.0f));
     material->SetTextureMap(sceneFB->GetColorAttachment(0));
+    viewport->SetMaterial(material);
     viewport->DrawModel();
     
     pixc::Renderer::EndScene();

@@ -20,31 +20,30 @@ namespace pixc {
  * Copying or moving `DirectionalLight` objects is disabled to ensure single ownership and prevent
  * unintended duplication of light resources.
  */
-class DirectionalLight : public Light
+class DirectionalLight : public LightCaster
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Generate a light source defined by a direction.
-    /// @param width The width that the light source covers.
-    /// @param height The height that the light source covers.
+    /// @param width The width of the shadow map in pixels.
+    /// @param height The height of the shadow map in pixels.
     /// @param color The color of the light source.
     /// @param direction The direction of the light source.
     /// @param distance The distance from the target position to the light source.
     /// @param orthoSize The orthographic size for shadow calculations.
-    DirectionalLight(const unsigned int width, const unsigned int height,
-                     const glm::vec3& color = glm::vec3(1.0f),
+    DirectionalLight(const glm::vec3& color = glm::vec3(1.0f),
                      const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
+                     // TODO: needs to be defined based on the type of the scene
                      float distance = 15.0f, float orthoSize = 20.0f)
-    : Light(glm::vec4(direction, 0.0f), color), m_Distance(distance)
+    : LightCaster(glm::vec4(direction, 0.0f), color), m_Distance(distance)
     {
         // Set the shadow camera parameters
-        auto shadowCamera = std::make_shared<OrthographicShadow>();
-        shadowCamera->SetOrthographicSize(orthoSize);
-        m_ShadowCamera = shadowCamera;
+        auto camera = std::make_shared<OrthographicShadow>();
+        camera->SetOrthographicSize(orthoSize);
+        m_Shadow.Camera = camera;
         
         UpdateShadowCamera();
-        InitShadowMapBuffer(width, height);
     }
     /// @brief Destructor for the directional light.
     ~DirectionalLight() override = default;
@@ -81,8 +80,8 @@ private:
     /// @brief Update the shadow camera based on the properties of the light source.
     void UpdateShadowCamera()
     {
-        glm::vec3 position = m_ShadowCamera->GetTarget() - (glm::normalize(glm::vec3(m_Vector)) * m_Distance);
-        m_ShadowCamera->SetPosition(position);
+        glm::vec3 position = m_Shadow.Camera->GetTarget() - (glm::normalize(glm::vec3(m_Vector)) * m_Distance);
+        m_Shadow.Camera->SetPosition(position);
     }
     
     // Light variables

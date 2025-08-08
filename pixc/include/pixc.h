@@ -62,9 +62,10 @@
 #include "Foundation/Renderer/Texture/TextureCube.h"
 
 #include "Foundation/Renderer/Light/Shadow.h"
+#include "Foundation/Renderer/Light/LightProperty.h"
 #include "Foundation/Renderer/Light/Light.h"
-//#include "Foundation/Renderer/Light/PositionalLight.h"
-//#include "Foundation/Renderer/Light/DirectionalLight.h"
+#include "Foundation/Renderer/Light/PositionalLight.h"
+#include "Foundation/Renderer/Light/DirectionalLight.h"
 //#include "Foundation/Renderer/Light/EnvironmentLight.h"
 
 #include "Foundation/Renderer/Material/Material.h"

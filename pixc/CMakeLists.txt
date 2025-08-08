@@ -75,17 +75,20 @@ file(
     include/Foundation/Renderer/Camera/*.h
     include/Foundation/Renderer/Drawable/*.h
     include/Foundation/Renderer/Utils/*.h
+    
+    include/Foundation/Renderer/Light/LightProperty.h
+    include/Foundation/Renderer/Light/Shadow.h
+    include/Foundation/Renderer/Light/Light.h
+    include/Foundation/Renderer/Light/DirectionalLight.h
+    include/Foundation/Renderer/Light/PositionalLight.h
+    
+    include/Foundation/Renderer/Material/Material.h
+    include/Foundation/Renderer/Material/SimpleMaterial.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h
     include/Foundation/Renderer/RendererCommand.h
     include/Foundation/Renderer/Renderer.h
-    
-    include/Foundation/Renderer/Light/Shadow.h
-    include/Foundation/Renderer/Light/Light.h
-    
-    include/Foundation/Renderer/Material/Material.h
-    include/Foundation/Renderer/Material/SimpleMaterial.h
 
     include/Platform/OpenGL/Buffer/*.h
     include/Platform/OpenGL/Texture/*.h

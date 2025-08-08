@@ -5,8 +5,9 @@
 #include "Foundation/Renderer/Shader/Shader.h"
 #include "Foundation/Renderer/Material/Material.h"
 #include "Foundation/Renderer/Buffer/FrameBuffer.h"
-
 #include "Foundation/Renderer/Drawable/Model/Model.h"
+
+#include "Foundation/Renderer/Light/LightProperty.h"
 #include "Foundation/Renderer/Light/Shadow.h"
 
 #include <glm/glm.hpp>
@@ -18,36 +19,21 @@
 namespace pixc {
 
 /**
- * @brief Flags representing properties of a lighted object.
+ * @brief Abstract base class for all light sources in the engine.
  *
- * The `LightFlags` struct defines various flags indicating properties of a lighted object,
- * such as whether general properties, transformation properties, ambient lighting, diffuse
- * lighting, and specular lighting are enabled.
- */
-struct LightFlags
-{
-    bool GeneralProperties = true;          ///< Indicates whether general properties are enabled.
-    bool ShadowProperties = false;          ///< Indicates whether shadows properties are enabled.
-    
-    bool DiffuseLighting = true;            ///< Indicates whether diffuse lighting is enabled.
-    bool SpecularLighting = true;           ///< Indicates whether specular lighting is enabled.
-    
-    bool IsotropicShading = true;           ///< Indicates whether to use normal-based isotropic shading or tangent-based anisotropic shading.
-};
-
-/**
- * @brief Base class defining a light.
+ * The `Light`class defines the minimal interface and common data shared by all light types, including
+ * both shadow-casting and non-shadow-casting lights (e.g., environment lighting).
  *
- * Copying or moving `BaseLight` objects is disabled to ensure single ownership and prevent unintended
+ * Copying or moving `Light` objects is disabled to ensure single ownership and prevent unintended
  * duplication of light resources.
  */
-class BaseLight
+class Light
 {
 public:
     // Destructor
     // ----------------------------------------
     /// @brief Delete the base light.
-    virtual ~BaseLight() = default;
+    virtual ~Light() = default;
     
     // Getter(s)
     // ----------------------------------------
@@ -68,51 +54,54 @@ public:
     /// @param shader The shader program.
     /// @param flags The flags indicating which light properties should be defined.
     virtual void DefineLightProperties(const std::shared_ptr<Shader>& shader,
-                                       const LightFlags& flags,
+                                       LightProperty properties,
                                        unsigned int& slot) = 0;
     
 protected:
     // Constructor(s)
     // ----------------------------------------
     /// @brief Define a base light.
-    BaseLight()
+    Light() = default;
+    
+    /// @brief Check whether a set of `LightProperty` flags contains a specific flag.
+    /// @param value The combined set of flags.
+    /// @param flag The flag to check.
+    /// @return `true` if `flag` is set in `value`; `false` otherwise.
+    static bool HasFlag(LightProperty value, LightProperty flag)
     {
-        // Define the depth material if it has not been define yet
-        auto& library = Renderer::GetMaterialLibrary();
-        if (!library.Exists("Depth"))
-            library.Create<Material>("Depth", ResourcesManager::GeneralPath("pixc/shaders/depth/DepthMap"));
+        return (value & flag) != LightProperty::None;
     }
     
     // Light variables
     // ----------------------------------------
 protected:
-    ///< Light model (visible in the scene).
+    ///< Overall brightness multiplier for the light.
+    float m_Intensity = 1.0f;
+    ///< Light model (visible in the scene if defined).
     std::shared_ptr<BaseModel> m_Model;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(BaseLight);
+    DISABLE_COPY_AND_MOVE(Light);
 };
 
 /**
- * @brief Base class for light sources used in a scene.
+ * @brief Base class for all shadow-casting lights (directional, point, and spot).
  *
- * The `Light` class serves as a base class for defining different types of light sources used in 3D
- * rendering. It provides common functionality for defining and retrieving the color of the light source.
- * Derived classes can override the `DefineLightProperties` method to set additional light
- * properties in the shader, such as position or direction.
+ * The `LightCaster` class extends the generic `Light` interface by adding physical light attributes such as
+ * color, diffuse strength, specular strength, and optional shadow mapping capabilities.
  *
- * Copying or moving `Light` objects is disabled to ensure single ownership and prevent unintended
+ * Copying or moving `LightCaster` objects is disabled to ensure single ownership and prevent unintended
  * duplication of light resources.
  */
-class Light : public BaseLight
+class LightCaster : public Light
 {
 public:
     // Destructor
     // ----------------------------------------
     /// @brief Destructor for the light type.
-    virtual ~Light() = default;
+    virtual ~LightCaster() = default;
     
     // Setter(s)
     // ----------------------------------------
@@ -147,15 +136,75 @@ public:
     /// @return The shadow map.
     const std::shared_ptr<Texture>& GetShadowMap() const
     {
-        return m_Framebuffer->GetDepthAttachment();
+        return m_Shadow.Framebuffer->GetDepthAttachment();
     }
     
     /// @brief Get the camera used for shadow mapping to generate depth maps for shadow calculations.
     /// @return The viewpoint of the light source.
-    const std::shared_ptr<Camera>& GetShadowCamera() const { return m_ShadowCamera; }
+    const std::shared_ptr<Camera>& GetShadowCamera() const { return m_Shadow.Camera; }
     /// @brief Get the framebuffer with the rendered shadow map.
     /// @return The shadow map framebuffer.
-    const std::shared_ptr<FrameBuffer>&  GetFramebuffer() const { return m_Framebuffer; }
+    const std::shared_ptr<FrameBuffer>&  GetShadowFramebuffer() const { return m_Shadow.Framebuffer; }
+    
+    // Properties
+    // ----------------------------------------
+    /// @brief Define light properties into the uniforms of the shader program.
+    /// @param shader The shader program.
+    /// @param flags The flags indicating which light properties should be defined.
+    void DefineLightProperties(const std::shared_ptr<Shader>& shader,
+                               LightProperty properties,
+                               unsigned int& slot) override
+    {
+        // Define general light properties if specified by the flags
+        if (HasFlag(properties, LightProperty::GeneralProperties))
+            DefineGeneralProperties(shader);
+        
+        // Define strength properties for the light
+        DefineStrenghtProperties(shader, properties);
+        
+        // Define transformation properties if specified by the flags
+        if (HasFlag(properties, LightProperty::ShadowProperties))
+        {
+            DefineTranformProperties(shader);
+            shader->SetTexture("u_Light[" + std::to_string(GetID()) + "].ShadowMap",
+                               GetShadowMap(), slot++);
+        }
+    }
+    
+    // Shadow
+    // ----------------------------------------
+    /// @brief Initialize the shadow map framebuffer.
+    /// @param width The width of the shadow map in pixels.
+    /// @param height The height of the shadow map in pixels.
+    /// @param format The depth texture format.
+    void InitShadowFrameBuffer(int width, int height, TextureFormat format = TextureFormat::DEPTH24)
+    {
+        m_Shadow.Camera->SetViewportSize(width, height);
+        
+        FrameBufferSpecification spec;
+        spec.SetFrameBufferSize(width, height);
+        spec.AttachmentsSpec = {
+            { TextureType::TEXTURE2D, format }
+        };
+        m_Shadow.Framebuffer = FrameBuffer::Create(spec);
+    }
+    
+protected:
+    // Constructor(s)
+    // ----------------------------------------
+    /// @brief Generate a light source.
+    /// @param color The color of the light source.
+    LightCaster(const glm::vec4 &vector,
+                const glm::vec3 &color = glm::vec3(1.0f))
+    : Light(), m_ID(s_IndexCount++), m_Vector(vector), m_Color(color)
+    {
+        // Define the depth material if it has not been define yet
+        auto& library = Renderer::GetMaterialLibrary();
+        if (!library.Exists("Depth"))
+        {
+            library.Create<Material>("Depth", ResourcesManager::GeneralPath("pixc/shaders/depth/DepthMap"));
+        }
+    }
     
     // Properties
     // ----------------------------------------
@@ -169,11 +218,11 @@ public:
     /// @brief Define the strength properties (from the light) into the uniforms of the shader program.
     /// @param shader Shader program to be used.
     void DefineStrenghtProperties(const std::shared_ptr<Shader> &shader,
-                                  const LightFlags& flags)
+                                  LightProperty properties)
     {
-        if (flags.DiffuseLighting)
+        if (HasFlag(properties, LightProperty::DiffuseLighting))
             shader->SetFloat("u_Light[" + std::to_string(m_ID) + "].Ld", m_DiffuseStrength);
-        if (flags.SpecularLighting)
+        if (HasFlag(properties, LightProperty::SpecularLighting))
             shader->SetFloat("u_Light[" + std::to_string(m_ID) + "].Ls", m_SpecularStrength);
     }
     /// @brief Define the transformation properties (from the light) into the uniforms of the shader program.
@@ -181,53 +230,8 @@ public:
     void DefineTranformProperties(const std::shared_ptr<Shader> &shader)
     {
         shader->SetMat4("u_Light[" + std::to_string(m_ID) + "].Transform",
-                        m_ShadowCamera->GetProjectionMatrix() *
-                        m_ShadowCamera->GetViewMatrix());
-    }
-    
-    /// @brief Define light properties into the uniforms of the shader program.
-    /// @param shader The shader program.
-    /// @param flags The flags indicating which light properties should be defined.
-    void DefineLightProperties(const std::shared_ptr<Shader>& shader,
-                               const LightFlags& flags,
-                               unsigned int& slot) override
-    {
-        // Define general light properties if specified by the flags
-        if (flags.GeneralProperties)
-            DefineGeneralProperties(shader);
-        
-        // Define strength properties for the light
-        DefineStrenghtProperties(shader, flags);
-        
-        // Define transformation properties if specified by the flags
-        if (flags.ShadowProperties)
-        {
-            DefineTranformProperties(shader);
-            shader->SetTexture("u_Light[" + std::to_string(GetID()) + "].ShadowMap",
-                               GetShadowMap(), slot++);
-        }
-    }
-    
-protected:
-    // Constructor(s)
-    // ----------------------------------------
-    /// @brief Generate a light source.
-    /// @param color The color of the light source.
-    Light(const glm::vec4 &vector,
-          const glm::vec3 &color = glm::vec3(1.0f))
-    : BaseLight(), m_ID(s_IndexCount++), m_Vector(vector), m_Color(color)
-    {};
-    /// @brief Initialize the shadow map framebuffer.
-    /// @param width Framebuffer's width.
-    /// @param height Framebuffer's height.
-    void InitShadowMapBuffer(int width, int height)
-    {
-        FrameBufferSpecification spec;
-        spec.SetFrameBufferSize(width, height);
-        spec.AttachmentsSpec = {
-            { TextureType::TEXTURE2D, TextureFormat::DEPTH24 }
-        };
-        m_Framebuffer = FrameBuffer::Create(spec);
+                        m_Shadow.Camera->GetProjectionMatrix() *
+                        m_Shadow.Camera->GetViewMatrix());
     }
     
 protected:
@@ -247,27 +251,34 @@ protected:
     float m_DiffuseStrength = 0.6f;
     float m_SpecularStrength = 0.4f;
     
-    ///< The light viewpoint (used for rendering shadows).
-    std::shared_ptr<Camera> m_ShadowCamera;
-    ///< Framebuffer to render into the shadow map.
-    std::shared_ptr<FrameBuffer> m_Framebuffer;
+    /// @brief Encapsulates shadow-related data for the light caster.
+    struct ShadowMap
+    {
+        ///< Camera representing the light’s viewpoint for shadow mapping.
+        std::shared_ptr<Camera> Camera;
+        ///< Framebuffer used to render the shadow map texture.
+        std::shared_ptr<FrameBuffer> Framebuffer;
+    };
+
+    ///< Shadow data container.
+    ShadowMap m_Shadow;
     
     static inline unsigned int s_IndexCount = 0;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(Light);
+    DISABLE_COPY_AND_MOVE(LightCaster);
 };
 
 /**
- * A library for managing lights used in rendering.
+ * @brief A library for managing lights used in rendering.
  *
  * The `LightLibrary` class provides functionality to add, load, retrieve, and check
  * for the existence of lights within the library. Each light is associated with
  * a unique name.
  */
-class LightLibrary : public Library<std::shared_ptr<BaseLight>>
+class LightLibrary : public Library<std::shared_ptr<Light>>
 {
 public:
     // Constructor
@@ -283,13 +294,13 @@ public:
     /// @note If an object with the same name already exists in the library, an assertion failure
     /// will occur.
     void Add(const std::string& name,
-             const std::shared_ptr<BaseLight>& light) override
+             const std::shared_ptr<Light>& light) override
     {
         // Add the light to the library
         Library::Add(name, light);
         
         // Count it as light caster if necessary
-        if (std::dynamic_pointer_cast<Light>(light))
+        if (std::dynamic_pointer_cast<LightCaster>(light))
             m_Casters++;
     }
     
@@ -305,7 +316,7 @@ public:
         auto light = std::make_shared<Type>(std::forward<Args>(args)...);
         
         std::string message = GetTypeName() + " '" + name + "' is not of the specified type!";
-        CORE_ASSERT(std::dynamic_pointer_cast<BaseLight>(light), message);
+        CORE_ASSERT(std::dynamic_pointer_cast<Light>(light), message);
         
         Add(name, light);
         return light;
