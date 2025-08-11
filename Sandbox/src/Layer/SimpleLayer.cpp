@@ -61,7 +61,7 @@ void SimpleLayer::DefineLights()
     m_Lights.Add("Positional", positional);
     
     // Define the directional light sources
-    auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f), 1.0f, 2.5f);
+    auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f), 1.0f, 2.0f);
     directional->InitShadowFrameBuffer(width, height);
     
     directional->SetDiffuseStrength(0.6f);
@@ -107,10 +107,10 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
     
     // Get the material(s)
+    auto& depth = pixc::Renderer::GetMaterialLibrary().Get("Depth");
+    
     auto material = std::dynamic_pointer_cast<pixc::SimpleMaterial>(
                         pixc::Renderer::GetMaterialLibrary().Get("Simple"));
-    
-    auto& depth = pixc::Renderer::GetMaterialLibrary().Get("Depth");
     
     // Get the model(s)
     auto& planet = m_Models.Get("Planet");
@@ -121,28 +121,31 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     // Get the frame buffer(s)
     auto& sceneFB = m_Framebuffers.Get("Scene");
     
-    // Reset rendering statistics
-    pixc::Renderer::ResetStats();
-    
     // Render
     // -------
-    auto light = std::dynamic_pointer_cast<pixc::LightCaster>(m_Lights.Get("Directional"));
-    
-    pixc::RendererCommand::BeginRenderPass(light->GetShadowFramebuffer());
-    pixc::RendererCommand::SetClearColor(glm::vec4(0.0f));
-    pixc::RendererCommand::Clear();
-    
-    pixc::Renderer::BeginScene(light->GetShadowCamera());
-    
-    planet->SetMaterial(depth);
-    planet->DrawModel();
-    
-    cube->SetMaterial(depth);
-    cube->DrawModel();
-    
-    pixc::Renderer::EndScene();
+    for(auto& light : m_Lights)
+    {
+        auto caster = std::dynamic_pointer_cast<pixc::LightCaster>(light.second);
+        
+        if (!caster)
+            continue;
+        
+        pixc::RendererCommand::BeginRenderPass(caster->GetShadowFramebuffer());
+        pixc::RendererCommand::SetClearColor(glm::vec4(0.0f));
+        pixc::RendererCommand::Clear();
+        
+        pixc::Renderer::BeginScene(caster->GetShadowCamera());
+        
+        planet->SetMaterial(depth);
+        planet->DrawModel();
+        
+        cube->SetMaterial(depth);
+        cube->DrawModel();
+        
+        pixc::Renderer::EndScene();
 
-    pixc::RendererCommand::EndRenderPass();
+        pixc::RendererCommand::EndRenderPass();
+    }
     
     // -------
     pixc::RendererCommand::BeginRenderPass(sceneFB);
@@ -185,6 +188,7 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     pixc::RendererCommand::EndRenderPass();
     
     // -------
+    
     // Update camera
     m_Camera->OnUpdate(ts);
 }

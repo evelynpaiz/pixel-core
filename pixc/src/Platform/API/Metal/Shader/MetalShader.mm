@@ -22,7 +22,7 @@ struct MetalShader::MetalShaderSource
     id<MTLFunction> FragmentFunction;
     
     ///< Uniforms buffer.
-    std::vector<id<MTLBuffer>> UniformBuffer;
+    std::vector<id<MTLBuffer>> UniformBuffers;
 };
 
 /**
@@ -573,7 +573,7 @@ void MetalShader::InitUniformBuffers()
                                         options:MTLResourceStorageModeShared
             ];
             // Store the buffer in the shader source's uniform buffer list
-            m_ShaderSource->UniformBuffer.emplace_back(buffer);
+            m_ShaderSource->UniformBuffers.emplace_back(buffer);
             // Link the buffer to the uniform
             layout.SetBufferOfData(reinterpret_cast<void*>(buffer));
         }

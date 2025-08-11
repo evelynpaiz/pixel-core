@@ -14,6 +14,10 @@
 
 namespace pixc {
 
+// Alias for a map that associates uniform names with their corresponding Metal buffers.
+// NOTE: This represents all uniform buffers for a single shader.
+using UniformBufferMap = std::unordered_map<std::string, id<MTLBuffer>>;
+
 /**
  * @brief An internal structure encapsulating the Metal-specific state of a `MetalDrawable`.
  */
@@ -22,11 +26,12 @@ struct MetalDrawable::DrawableState
     ///< Describes the layout of vertex data.
     MTLVertexDescriptor* VertexDescriptor;
     
-    ///< Per-uniform named buffer storage.
-    std::unordered_map<std::string, id<MTLBuffer>> UniformBuffer;
-    
     ///< Cached pipeline states for different framebuffer attachment configurations.
     std::unordered_map<AttachmentSpecification, id<MTLRenderPipelineState>> PipelineStates;
+    
+    ///< Cached per-shader, per-uniform named buffer storage.
+    ///  Key: Shader name → map of uniform name → MTLBuffer.
+    std::unordered_map<std::string, UniformBufferMap> UniformBuffers;
 };
 
 /**
@@ -203,16 +208,20 @@ void MetalDrawable::SetVertexAttributes(const std::shared_ptr<VertexBuffer> &vbo
  */
 void MetalDrawable::InitUniformBuffers()
 {
+    // If the shader already has buffers cached for this drawable, skip
+    if (m_State->UniformBuffers.find(m_Shader->GetName()) != m_State->UniformBuffers.end())
+        return;
+    
     @autoreleasepool
     {
-        // Clear the current buffer if necessary
-        if(!m_State->UniformBuffer.empty())
-            m_State->UniformBuffer.clear();
-        
         // Retrieve the Metal device from the rendering context
         auto device = reinterpret_cast<id<MTLDevice>>(m_Context->GetDevice());
         // Iterate over each uniform block layout defined for the shader
         auto shader = std::dynamic_pointer_cast<MetalShader>(m_Shader);
+        
+        // Create a new map for this shader's uniform buffers
+        std::unordered_map<std::string, id<MTLBuffer>> buffers;
+        
         for (auto& [uniform, layout] : shader->m_Uniforms)
         {
             // Determine the required buffer size for this uniform layout
@@ -223,8 +232,11 @@ void MetalDrawable::InitUniformBuffers()
                                     options:MTLResourceStorageModeShared
             ];
             // Store the buffer in the shader source's uniform buffer list
-            m_State->UniformBuffer[uniform] = buffer;
+            buffers[uniform] = buffer;
         }
+        // Store in the per-shader cache
+        m_State->UniformBuffers.emplace(m_Shader->GetName(), std::move(buffers));
+        
     } // autoreleasepool
 }
 
@@ -252,7 +264,8 @@ void MetalDrawable::BindUniformBuffers() const
         int32_t index = layout.GetIndex();
         
         // Get the Metal buffer associated with the current uniform group by index
-        id<MTLBuffer> buffer = m_State->UniformBuffer[uniform];
+        id<MTLBuffer> buffer = m_State->UniformBuffers[m_Shader->GetName()][uniform];
+        PIXEL_CORE_ASSERT(buffer, "Uniform buffer not defined!");
 
         // Iterate over all shader stages that use this uniform layout (e.g., vertex, fragment, etc.)
         for (const auto& type : layout.GetShaderType())
@@ -291,7 +304,9 @@ void MetalDrawable::UpdateUniformBuffers() const
     {
         // Get the source and destination buffer associated with the current uniform
         id<MTLBuffer> src = reinterpret_cast<id<MTLBuffer>>(layout.GetBufferOfData());
-        id<MTLBuffer> dst = m_State->UniformBuffer[uniform];
+        id<MTLBuffer> dst = m_State->UniformBuffers[m_Shader->GetName()][uniform];
+        
+        PIXEL_CORE_ASSERT(src && dst, "Uniform buffer not defined!");
         
         NSUInteger copySize = std::min(src.length, dst.length);
         std::memcpy(dst.contents, src.contents, copySize);
