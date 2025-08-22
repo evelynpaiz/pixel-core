@@ -222,17 +222,17 @@ void MetalDrawable::InitUniformBuffers()
         // Create a new map for this shader's uniform buffers
         std::unordered_map<std::string, id<MTLBuffer>> buffers;
         
-        for (auto& [uniform, layout] : shader->m_Uniforms)
+        for (auto& [name, uniform] : shader->m_Uniforms)
         {
             // Determine the required buffer size for this uniform layout
-            uint32_t stride = layout.GetStride();
+            uint32_t stride = uniform.GetStride();
             // Create a new Metal buffer for this uniform block
             id<MTLBuffer> buffer = [device
                                     newBufferWithLength:stride
                                     options:MTLResourceStorageModeShared
             ];
             // Store the buffer in the shader source's uniform buffer list
-            buffers[uniform] = buffer;
+            buffers[name] = buffer;
         }
         // Store in the per-shader cache
         m_State->UniformBuffers.emplace(m_Shader->GetName(), std::move(buffers));

@@ -3,7 +3,7 @@
  */
 struct VertexIn
 {
-    float4 a_Position [[ attribute(0) ]];     ///< Vertex position in model space.
+    float4 a_Position [[ attribute(0) ]];       ///< Vertex position in model space.
 };
 
 /**
@@ -11,13 +11,14 @@ struct VertexIn
  */
 struct VertexOut
 {
-    float4 Position [[position]];
-    float3 v_Position;
+    float4 Position [[position]];               ///< Final vertex position in clip space.
+    
+    float3 v_Position;                          ///< Vertex position in world space.
 };
 
 // Entry point of the vertex shader
 vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
-                             constant Transform &u_Transform [[ buffer(BufferIndex::Transformations) ]])
+                             constant Transform &u_Transform [[ buffer(BufferIndex::TransformBuffer) ]])
 {
     // Transform the vertex position from object space to world space
     float4 worldPosition = u_Transform.Model * in.a_Position;

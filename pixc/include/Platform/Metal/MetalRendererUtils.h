@@ -39,7 +39,7 @@ inline MTLVertexFormat ToMetalFormat(DataType dataType)
         case DataType::Vec3:  return MTLVertexFormatFloat3;
         case DataType::Vec4:  return MTLVertexFormatFloat4;
             
-            // Not supported by Metal
+        // Not supported by Metal
         case DataType::Mat2:  return MTLVertexFormatInvalid;
         case DataType::Mat3:  return MTLVertexFormatInvalid;
         case DataType::Mat4:  return MTLVertexFormatInvalid;

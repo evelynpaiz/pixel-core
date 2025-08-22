@@ -69,11 +69,12 @@ private:
     
     // Argument(s) and Uniform(s)
     // ----------------------------------------
-    void ProcessShaderArgument(void* arg, ShaderType type);
-    void ProcessTextureArgument(const char* name, int32_t index,
-                                ShaderType type);
-    void ProcessBufferArgument(void* arg, const char* name,
-                               int32_t index, ShaderType type);
+    void ReflectShaderBinding(void* arg, ShaderType type);
+    void ReflectTextureBinding(const char* name, int32_t index, ShaderType type);
+    void ReflectBufferBinding(void* arg, const char* name, int32_t index,
+                              ShaderType type);
+    void ReflectStructMembers(const std::string &uniformName, const std::string &parentName,
+                              void* type);
     
     void ExtractShaderResources() override;
     

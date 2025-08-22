@@ -9,7 +9,7 @@ SimpleLayer::SimpleLayer(int width, int height, const std::string& name)
 {
     // Define the rendering camera
     m_Camera = std::make_shared<pixc::PerspectiveCamera>(width, height);
-    m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.5f));
+    m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 3.0f));
 }
 
 /**
@@ -40,6 +40,7 @@ void SimpleLayer::DefineMaterials()
     
     // Define the new material(s)
     materialLibrary.Create<pixc::SimpleMaterial>("Simple");
+    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor");
 }
 
 /**
@@ -107,10 +108,12 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
     
     // Get the material(s)
-    auto& depth = pixc::Renderer::GetMaterialLibrary().Get("Depth");
+    auto& depthMaterial = pixc::Renderer::GetMaterialLibrary().Get("Depth");
     
-    auto material = std::dynamic_pointer_cast<pixc::SimpleMaterial>(
-                        pixc::Renderer::GetMaterialLibrary().Get("Simple"));
+    auto simpleMaterial = std::dynamic_pointer_cast<pixc::SimpleMaterial>(
+                          pixc::Renderer::GetMaterialLibrary().Get("Simple"));
+    auto phongMaterial =  std::dynamic_pointer_cast<pixc::PhongColorMaterial>(
+                          pixc::Renderer::GetMaterialLibrary().Get("PhongColor"));
     
     // Get the model(s)
     auto& planet = m_Models.Get("Planet");
@@ -136,10 +139,10 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
         
         pixc::Renderer::BeginScene(caster->GetShadowCamera());
         
-        planet->SetMaterial(depth);
+        planet->SetMaterial(depthMaterial);
         planet->DrawModel();
         
-        cube->SetMaterial(depth);
+        cube->SetMaterial(depthMaterial);
         cube->DrawModel();
         
         pixc::Renderer::EndScene();
@@ -154,14 +157,17 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     
     pixc::Renderer::BeginScene(m_Camera);
     
-    material->SetColor(glm::vec4(1.0f));
-    material->SetTextureMap(ground);
-    planet->SetMaterial(material);
+    simpleMaterial->SetColor(glm::vec4(1.0f));
+    simpleMaterial->SetTextureMap(ground);
+    planet->SetMaterial(simpleMaterial);
     planet->DrawModel();
     
-    material->SetColor(glm::vec4(1.0f));
-    material->SetTextureMap(container);
-    cube->SetMaterial(material);
+    phongMaterial->SetAmbientColor(glm::vec3(0.8f, 0.2f, 0.4f));
+    phongMaterial->SetDiffuseColor(glm::vec3(0.8f, 0.2f, 0.4f));
+    phongMaterial->SetSpecularColor(glm::vec3(1.0f));
+    phongMaterial->SetShininess(100.0f);
+    phongMaterial->DefineLightProperties(m_Lights);
+    cube->SetMaterial(phongMaterial);
     cube->DrawModel();
     
     m_Lights.Get("Positional")->DrawLight();
@@ -178,9 +184,9 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     
     pixc::Renderer::BeginScene();
     
-    material->SetColor(glm::vec4(1.0f));
-    material->SetTextureMap(sceneFB->GetColorAttachment(0));
-    viewport->SetMaterial(material);
+    simpleMaterial->SetColor(glm::vec4(1.0f));
+    simpleMaterial->SetTextureMap(sceneFB->GetColorAttachment(0));
+    viewport->SetMaterial(simpleMaterial);
     viewport->DrawModel();
     
     pixc::Renderer::EndScene();

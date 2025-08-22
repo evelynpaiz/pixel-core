@@ -67,7 +67,7 @@ protected:
     /// @param value The combined set of flags.
     /// @param flag The flag to check.
     /// @return `true` if `flag` is set in `value`; `false` otherwise.
-    static bool HasFlag(LightProperty value, LightProperty flag)
+    static bool HasProperty(LightProperty value, LightProperty flag)
     {
         return (value & flag) != LightProperty::None;
     }
@@ -155,18 +155,19 @@ public:
                                LightProperty properties,
                                unsigned int& slot) override
     {
+
         // Define general light properties if specified by the flags
-        if (HasFlag(properties, LightProperty::GeneralProperties))
+        if (HasProperty(properties, LightProperty::GeneralProperties))
             DefineGeneralProperties(shader);
-        
+    
         // Define strength properties for the light
         DefineStrenghtProperties(shader, properties);
         
         // Define transformation properties if specified by the flags
-        if (HasFlag(properties, LightProperty::ShadowProperties))
+        if (HasProperty(properties, LightProperty::ShadowProperties))
         {
             DefineTranformProperties(shader);
-            shader->SetTexture("u_Light[" + std::to_string(GetID()) + "].ShadowMap",
+            shader->SetTexture("u_Environment.Lights[" + std::to_string(GetID()) + "].ShadowMap",
                                GetShadowMap(), slot++);
         }
     }
@@ -212,24 +213,24 @@ protected:
     /// @param shader Shader program to be used.
     void DefineGeneralProperties(const std::shared_ptr<Shader> &shader)
     {
-        shader->SetVec3("u_Light[" + std::to_string(m_ID) + "].Color", m_Color);
-        shader->SetVec4("u_Light[" + std::to_string(m_ID) + "].Vector", m_Vector);
+        shader->SetVec3("u_Environment.Lights[" + std::to_string(m_ID) + "].Color", m_Color);
+        shader->SetVec4("u_Environment.Lights[" + std::to_string(m_ID) + "].Vector", m_Vector);
     }
     /// @brief Define the strength properties (from the light) into the uniforms of the shader program.
     /// @param shader Shader program to be used.
     void DefineStrenghtProperties(const std::shared_ptr<Shader> &shader,
                                   LightProperty properties)
     {
-        if (HasFlag(properties, LightProperty::DiffuseLighting))
-            shader->SetFloat("u_Light[" + std::to_string(m_ID) + "].Ld", m_DiffuseStrength);
-        if (HasFlag(properties, LightProperty::SpecularLighting))
-            shader->SetFloat("u_Light[" + std::to_string(m_ID) + "].Ls", m_SpecularStrength);
+        if (HasProperty(properties, LightProperty::DiffuseLighting))
+            shader->SetFloat("u_Environment.Lights[" + std::to_string(m_ID) + "].Ld", m_DiffuseStrength);
+        if (HasProperty(properties, LightProperty::SpecularLighting))
+            shader->SetFloat("u_Environment.Lights[" + std::to_string(m_ID) + "].Ls", m_SpecularStrength);
     }
     /// @brief Define the transformation properties (from the light) into the uniforms of the shader program.
     /// @param shader Shader program to be used.
     void DefineTranformProperties(const std::shared_ptr<Shader> &shader)
     {
-        shader->SetMat4("u_Light[" + std::to_string(m_ID) + "].Transform",
+        shader->SetMat4("u_Environment.Lights[" + std::to_string(m_ID) + "].Transform",
                         m_Shadow.Camera->GetProjectionMatrix() *
                         m_Shadow.Camera->GetViewMatrix());
     }

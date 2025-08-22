@@ -1,7 +1,8 @@
 /**
  * Represents the material properties of an object.
  */
-struct Material {
+struct Material
+{
     vec3 Ka;          ///< Ambient reflectance/color of the material.
     vec3 Kd;          ///< Diffuse reflectance/color of the material.
     vec3 Ks;          ///< Specular reflectance/color of the material.

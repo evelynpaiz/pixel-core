@@ -1,9 +1,17 @@
 #pragma once
 
-#include "Common/Renderer/Material/LightedMaterial.h"
+#include "Foundation/Core/Resources.h"
+
+#include "Foundation/Renderer/Material/LightedMaterial.h"
 
 /**
- * A base class for implementing Phong shading properties.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief A base class for implementing Phong shading properties.
  *
  * The `Phong` class provides a base class for defining material properties used in Phong
  * shading. It is intended to be inherited by specific material classes to add Phong support.
@@ -52,7 +60,7 @@ protected:
 };
 
 /**
- * A subclass of Phong implementing Phong shading with color-based lighting.
+ * @brief A subclass of Phong implementing Phong shading with color-based lighting.
  *
  * The `PhongColor` class is a subclass of `Phong` and provides a material definition for
  * shading 3D models using Phong lighting with color-based illumination. It allows setting the
@@ -73,7 +81,8 @@ public:
     /// @param color Albedo color in RGBA.
     /// @brief Set the albedo color.
     /// @param color Albedo color in RGBA.
-    virtual void SetColor (const glm::vec4& color) {
+    virtual void SetColor (const glm::vec4& color)
+    {
         // Set the color as the ambient and diffuse coefficients
         m_Ka = color;
         m_Kd = color;
@@ -81,7 +90,7 @@ public:
         // Set the alpha value
         m_Alpha = color.a;
     }
-
+    
     /// @brief Set the ambient coefficient for the material.
     /// @param k The ambient coefficient representing the RGB color components.
     void SetAmbientColor(const glm::vec3 &k) { m_Ka = k; }
@@ -145,7 +154,7 @@ protected:
 };
 
 /**
- * A subclass of Phong implementing Phong shading with texture-based lighting.
+ * @brief A subclass of Phong implementing Phong shading with texture-based lighting.
  *
  * The `PhongTexture` class is a subclass of `Phong` and provides a material definition for
  * shading 3D models using Phong lighting with texture-based illumination. It allows setting the
@@ -213,7 +222,7 @@ protected:
 };
 
 /**
- * A material class for Phong shading with color-based lighting.
+ * @brief A material class for Phong shading with color-based lighting.
  *
  * The `PhongColorMaterial` class is a subclass of `LightedMaterial` and `PhongColor`,
  * providing a material definition for shading 3D models using Phong lighting with color-based
@@ -231,12 +240,11 @@ public:
     /// @param light The light source to be used for shading.
     /// @param filePath The file path to the shader used by the material.
     PhongColorMaterial(const std::filesystem::path& filePath =
-                       std::filesystem::path("Resources/shaders/phong/PhongColor"))
-        : LightedMaterial(filePath), PhongColor()
+                       ResourcesManager::GeneralPath("pixc/shaders/phong/PhongColor"))
+    : LightedMaterial(filePath), PhongColor()
     {
-        // Update material flags
-        m_Flags.ViewDirection = true;
-        m_Flags.NormalMatrix = true;
+        // Update material properties
+        m_Properties = MaterialProperty::ViewDirection | MaterialProperty::NormalMatrix;
     }
     /// @brief Destructor for the phong color material.
     ~PhongColorMaterial() override = default;
@@ -258,7 +266,7 @@ public:
 };
 
 /**
- * A material class for Phong shading with texture-based lighting.
+ * @brief A material class for Phong shading with texture-based lighting.
  *
  * The `PhongTextureMaterial` class is a subclass of `LightedMaterial` and `PhongTexture`,
  * providing a material definition for shading 3D models using Phong lighting with texture-based
@@ -276,12 +284,11 @@ public:
     /// @param environment The light source to be used for shading.
     /// @param filePath The file path to the shader used by the material.
     PhongTextureMaterial(const std::filesystem::path& filePath =
-                         std::filesystem::path("Resources/shaders/phong/PhongTexture.glsl"))
-        : LightedMaterial(filePath), PhongTexture()
+                         ResourcesManager::GeneralPath("pixc/shaders/phong/PhongTexture"))
+    : LightedMaterial(filePath), PhongTexture()
     {
-        // Update material flags
-        m_Flags.ViewDirection = true;
-        m_Flags.NormalMatrix = true;
+        // Update material properties
+        m_Properties = MaterialProperty::ViewDirection | MaterialProperty::NormalMatrix;
     }
     /// @brief Destructor for the phong texture material.
     ~PhongTextureMaterial() override = default;
@@ -301,3 +308,5 @@ protected:
 public:
     DISABLE_COPY_AND_MOVE(PhongTextureMaterial);
 };
+
+} // namespace pixc

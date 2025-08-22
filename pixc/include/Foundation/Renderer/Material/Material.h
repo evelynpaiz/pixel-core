@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Foundation/Core/Library.h"
+
+#include "Foundation/Renderer/Material/MaterialProperty.h"
 #include "Foundation/Renderer/Shader/Shader.h"
 #include "Foundation/Renderer/Texture/Texture.h"
 
@@ -9,18 +11,6 @@
  * @brief Main namespace of the Pixel Core rendering engine.
  */
 namespace pixc {
-
-/**
- * @brief Flags representing properties of a material.
- */
-struct MaterialFlags
-{
-    ///< Boolean flag indicating whether view direction is used in the shader.
-    bool ViewDirection = false;
-    
-    ///< Boolean flag indicating whether the normal matrix is used in the shader.
-    bool NormalMatrix = false;
-};
 
 /**
  * @brief Base class representing a material used for rendering.
@@ -44,8 +34,8 @@ public:
     {
         // Define the shader for the material
         std::string name = filePath.stem().string();
-        auto shader = s_ShaderLibrary->Exists(name) ?
-            s_ShaderLibrary->Get(name) : s_ShaderLibrary->Load(name, filePath);
+        auto shader = s_ShaderLibrary.Exists(name) ?
+            s_ShaderLibrary.Get(name) : s_ShaderLibrary.Load(name, filePath);
         m_Shader = shader;
     }
     /// @brief Destructor for the material.
@@ -74,7 +64,14 @@ public:
     
     /// @brief Returns the active flags for the material.
     /// @return Shading flags.
-    MaterialFlags& GetMaterialFlags() { return m_Flags; }
+    MaterialProperty GetMaterialProperties() { return m_Properties; }
+    /// @brief Checks whether a specific `MaterialProperty` flag is set in the current properties.
+    /// @param flag The `MaterialProperty` flag to check for.
+    /// @return `true` if the `flag` is set in `m_Properties`; otherwise, `false`.
+    bool HasProperty(MaterialProperty flag)
+    {
+        return (m_Properties & flag) != MaterialProperty::None;
+    }
     
     // Properties
     // ----------------------------------------
@@ -88,13 +85,13 @@ protected:
     ///< The shader used for shading the specific material.
     std::shared_ptr<Shader> m_Shader;
     
+    ///< Properties of the material used for shading.
+    MaterialProperty m_Properties = MaterialProperty::None;
     ///< Texture unit index.
     unsigned int m_Slot = 0;
-    ///< Flags for shading.
-    MaterialFlags m_Flags;
     
     ///< Library containing all shader that have been loaded.
-    static inline std::unique_ptr<ShaderLibrary> s_ShaderLibrary = std::make_unique<ShaderLibrary>();
+    static inline ShaderLibrary s_ShaderLibrary;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

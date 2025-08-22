@@ -15,7 +15,7 @@ using namespace metal;
 #import "pixc/shaders/shared/structure/material/ColorMaterial.metal"
 
 fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
-                              constant Material &u_Material [[ buffer(BufferIndex::Materials) ]],
+                              constant Material &u_Material [[ buffer(BufferIndex::MaterialBuffer) ]],
                               texture2d<float> u_Material_TextureMap [[ texture(MaterialIndex::TextureMap) ]],
                               sampler s_Material_TextureMap [[ sampler(MaterialIndex::TextureMap) ]])
 {

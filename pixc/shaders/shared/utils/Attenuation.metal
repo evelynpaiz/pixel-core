@@ -8,8 +8,8 @@
  * @return The attenuation factor, which represents how much the light intensity diminishes with distance.
  *         A value of 1.0f means no attenuation, and smaller values mean greater attenuation.
  */
-float calculateAttenuation(vec3 position, vec4 lightVector,
-                           float linear, float quadratic, float maxValue)
+inline float calculateAttenuation(float3 position, float4 lightVector,
+                                  float linear, float quadratic, float maxValue)
 {
     // For directional lights, no distance attenuation is applied,
     // so we return a fixed attenuation factor of 0.8f
@@ -23,4 +23,3 @@ float calculateAttenuation(vec3 position, vec4 lightVector,
     
     return min(maxValue, attenuation);
 }
-

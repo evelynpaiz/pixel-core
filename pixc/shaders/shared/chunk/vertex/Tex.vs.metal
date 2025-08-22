@@ -13,13 +13,14 @@ struct VertexIn
  */
 struct VertexOut
 {
-    float4 Position [[position]];
-    float2 v_TextureCoord;
+    float4 Position [[position]];           ///< Final vertex position in clip space.
+    
+    float2 v_TextureCoord;                  ///< Texture coordinate.
 };
 
 // Entry point of the vertex shader
 vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
-                             constant Transform &u_Transform [[ buffer(BufferIndex::Transformations) ]])
+                             constant Transform &u_Transform [[ buffer(BufferIndex::TransformBuffer) ]])
 {
     // Calculate the final position of the vertex in clip space
     // by transforming the vertex position from object space to clip space

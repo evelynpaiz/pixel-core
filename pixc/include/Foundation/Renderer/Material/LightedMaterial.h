@@ -1,13 +1,18 @@
 #pragma once
 
-#include "Common/Renderer/Material/Material.h"
-#include "Common/Renderer/Buffer/FrameBuffer.h"
+#include "Foundation/Renderer/Light/Light.h"
+#include "Foundation/Renderer/Material/Material.h"
 
-#include "Common/Renderer/Light/Light.h"
-#include "Common/Renderer/Light/EnvironmentLight.h"
+#include "Foundation/Renderer/Buffer/FrameBuffer.h"
 
 /**
- * A base class for materials that are affected by lighting.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief A base class for materials that are affected by lighting.
  *
  * The `LightedMaterial` class extends the base `Material` class to provide additional
  * functionality for handling lighting and shadow properties. It allows setting a light
@@ -31,13 +36,11 @@ public:
     {
         // Get the file name from the path
         std::string filename = filePath.filename().string();
-
         // Convert the filename to lowercase for case-insensitive comparison
         std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
-
         // Check if the filename contains the word "shadow"
         if (filename.find("shadow") != std::string::npos)
-            m_LightFlags.ShadowProperties = true;
+            m_LightProperties |= LightProperty::ShadowProperties;
     }
     
     /// @brief Destructor for the (lighted) material.
@@ -45,9 +48,9 @@ public:
     
     // Getter(s)
     // ----------------------------------------
-    /// @brief Returns the active flags for the lighted material.
-    /// @return Light flags.
-    LightFlags& GetLightFlags() { return m_LightFlags; }
+    /// @brief Retrieves the currently active light properties for the material.
+    /// @return The combined `LightProperty` flags representing active light properties.
+    LightProperty GetLightProperties() { return m_LightProperties; }
     
     // Properties
     // ----------------------------------------
@@ -56,7 +59,7 @@ public:
     void DefineLightProperties(LightLibrary& lights)
     {
         m_Shader->Bind();
-        m_Shader->SetInt("u_Environment.LightsNumber", lights.GetLightCastersNumber());
+        m_Shader->SetInt("u_Environment.LightCount", lights.GetLightCastersNumber());
         
         // Iterate through each light in the scene
         for (auto& pair : lights)
@@ -66,19 +69,23 @@ public:
 protected:
     /// @brief Define the light properties linked to the material.
     /// @param light The light object containing the light properties.
-    virtual void DefineLightProperties(const std::shared_ptr<BaseLight>& light)
+    virtual void DefineLightProperties(const std::shared_ptr<Light>& light)
     {
-        light->DefineLightProperties(m_Shader, m_LightFlags, m_Slot);
+        light->DefineLightProperties(m_Shader, m_LightProperties, m_Slot);
     }
     
     // Lighted color variables
     // ----------------------------------------
 protected:
     ///< Flags for shading.
-    LightFlags m_LightFlags;
+    LightProperty m_LightProperties = LightProperty::GeneralProperties |
+                                      LightProperty::DiffuseLighting |
+                                      LightProperty::SpecularLighting;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
     DISABLE_COPY_AND_MOVE(LightedMaterial);
 };
+
+} // namespace pixc

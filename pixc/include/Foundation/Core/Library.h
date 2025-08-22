@@ -21,7 +21,7 @@ namespace utils {
  */
 inline std::pair<std::string, std::string> SplitString(const std::string& combinedString,
                                                        char delimiter = '.') {
-    size_t delimiterPos = combinedString.find(delimiter);
+    size_t delimiterPos = combinedString.find(delimiter);  // find first occurrence
     
     // No need for a separate 'else' block - simplifies the logic
     return (delimiterPos != std::string::npos)

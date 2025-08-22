@@ -8,7 +8,7 @@ struct VertexIn
 
 // Entry point of the vertex shader
 vertex float4 vertex_main(const VertexIn in [[ stage_in ]],
-                          constant Transform &u_Transform [[ buffer(BufferIndex::Transformations) ]])
+                          constant Transform &u_Transform [[ buffer(BufferIndex::TransformBuffer) ]])
 {
     // Calculate the final position of the vertex in clip space
     // by transforming the vertex position from object space to clip space

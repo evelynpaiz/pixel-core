@@ -79,11 +79,10 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     material->GetShader()->SetMat4("u_Transform.Projection", s_SceneData->ProjectionMatrix);
     
     // Check the flags for the material
-    auto& flags = material->GetMaterialFlags();
-    if (flags.ViewDirection)
+    if (material->HasProperty(MaterialProperty::ViewDirection))
         material->GetShader()->SetVec3("u_View.Position", s_SceneData->ViewPosition);
-    if (flags.NormalMatrix)
-        material->GetShader()->SetMat3("u_Transform.Normal", glm::mat3(glm::transpose(glm::inverse(transform))));
+    if (material->HasProperty(MaterialProperty::NormalMatrix))
+        material->GetShader()->SetMat4("u_Transform.Normal", glm::transpose(glm::inverse(transform)));
     
     //TODO: uncomment when lighted material is added
     /*

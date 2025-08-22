@@ -100,9 +100,10 @@ protected:
         
         // Get the uniform from the buffer of uniforms
         auto [group, member] = utils::SplitString(name);
+
         auto& uniform = m_Uniforms.Get(group, member);
         // Do not update the uniform and check if it will be necessary to do
-        uniform.Update = false;
+        //uniform.Update = false;
         
         // Verify that the type of data is the same
         if (uniform.Type != utils::data::GetDataType<T>())
@@ -127,7 +128,7 @@ protected:
         {
             *reinterpret_cast<T*>(uniform.Data) = value;
         }
-        uniform.Update = true;
+        //uniform.Update = true;
         return uniform;
     }
     
@@ -146,6 +147,8 @@ protected:
     ///< Vertex attributes supported by the shader.
     BufferLayout m_Attributes;
     ///< Uniforms supported by the shader.
+    //UniformLib m_Uniforms;
+    
     UniformLibrary m_Uniforms;
     
     // Disable the copying or moving of this resource

@@ -69,9 +69,9 @@
 //#include "Foundation/Renderer/Light/EnvironmentLight.h"
 
 #include "Foundation/Renderer/Material/Material.h"
-//#include "Foundation/Renderer/Material/LightedMaterial.h"
+#include "Foundation/Renderer/Material/LightedMaterial.h"
 #include "Foundation/Renderer/Material/SimpleMaterial.h"
-//#include "Foundation/Renderer/Material/PhongMaterial.h"
+#include "Foundation/Renderer/Material/PhongMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Drawable.h"
 #include "Foundation/Renderer/Drawable/Mesh/Mesh.h"
