@@ -147,6 +147,47 @@ struct BlitSpecification
 };
 
 /**
+ * @brief Encapsulates the draw target state for a framebuffer, including attachment index,
+ *        cube map face, and mipmap level.
+ */
+struct FrameBufferDrawTarget
+{
+    // Framebuffer draw target variables
+    // ----------------------------------------
+    // Sentinel value to indicate "not defined"
+    static constexpr uint32_t UNDEFINED = UINT32_MAX;
+
+    uint32_t AttachmentIndex = UNDEFINED;       ///< Color attachment index.
+    uint32_t CubeFace        = UNDEFINED;       ///< Cube map face index (0–5).
+    uint32_t MipLevel        = UNDEFINED;       ///< Mipmap level.
+
+    // Getter(s)
+    // ----------------------------------------
+    /// @brief Check if a custom cube-face binding has been set.
+    /// @return `True` if cubeFace is defined, false otherwise.
+    bool IsCubeFaceDefined() const { return CubeFace != UNDEFINED; }
+    
+    /// @brief Check if the attachment index is defined.
+    /// @return `true` if AttachmentIndex is defined, false otherwise.
+    bool IsAttachmentDefined() const { return AttachmentIndex != UNDEFINED; }
+
+    /// @brief Check if any custom draw binding has been set.
+    /// @return `True` if attachmentIndex, cubeFace, or mipLevel is defined, false otherwise.
+    bool IsDefined() const
+    {
+        return AttachmentIndex != UNDEFINED || CubeFace != UNDEFINED || MipLevel != UNDEFINED;
+    }
+
+    /// @brief Reset all fields to the "not defined" state.
+    void Reset()
+    {
+        AttachmentIndex = UNDEFINED;
+        CubeFace = UNDEFINED;
+        MipLevel = UNDEFINED;
+    }
+};
+
+/**
  * @brief Represents a framebuffer object for rendering off-screen.
  *
  * The `FrameBuffer` class provides functionality to create, bind, unbind, and resize a framebuffer.
@@ -190,19 +231,49 @@ class FrameBuffer
     
     /// @brief Get the active rendering targets for this framebuffer.
     /// @return The state of the color, depth and stencil targets state.
-    RenderTargetBuffers GetActiveRenderTargets() const { return m_ActiveTargets; }
+    RenderTargetBuffers GetEnabledTargets() const { return m_EnabledTargets; }
+    /// @brief Get the current draw target override for this framebuffer.
+    /// @return Reference to the current `FrameBufferDrawTarget` override.
+    FrameBufferDrawTarget& GetDrawTargetOverride() { return m_DrawTargetOverride; }
     
-    virtual std::vector<char> GetAttachmentData(const uint32_t index) const = 0;
+    virtual std::vector<char> GetAttachmentData(const uint32_t index) = 0;
     
     // Usage
     // ----------------------------------------
     virtual void Bind() const;
-    virtual void BindForDrawAttachment(const uint32_t index) const = 0;
-    virtual void BindForReadAttachment(const uint32_t index) const = 0;
-    virtual void BindForDrawAttachmentCube(const uint32_t index, const uint32_t face,
-                                           const uint32_t level = 0) const = 0;
     
-    virtual void Unbind(const bool& genMipMaps = true) const = 0;
+    /// @brief Bind the framebuffer to draw in a specific color attachment.
+    /// @param index The color attachment index.
+    virtual void BindForDrawAttachment(const uint32_t index)
+    {
+        m_DrawTargetOverride.AttachmentIndex = index;
+        FrameBuffer::Bind();
+    }
+    /// @brief Bind the framebuffer to read a specific color attachment.
+    /// @param index The color attachment index.
+    virtual void BindForReadAttachment(const uint32_t index)
+    {
+        m_DrawTargetOverride.AttachmentIndex = index;
+    }
+    /// @brief Bind the framebuffer to draw in a specific (cube) color attachment.
+    /// @param index The color attachment index.
+    /// @param face The face to be selected from the cube attachment.
+    /// @param level The mipmap level of the texture image to be attached.
+    virtual void BindForDrawAttachmentCube(const uint32_t index, const uint32_t face,
+                                           const uint32_t level = 0)
+    {
+        if (m_ColorAttachmentsSpec[index].Type != TextureType::TEXTURECUBE)
+        {
+            PIXEL_CORE_WARN("Trying to bind for drawing an incorrect attachment type!");
+            return;
+        }
+        m_DrawTargetOverride.CubeFace = face;
+        m_DrawTargetOverride.MipLevel = level;
+        FrameBuffer::BindForDrawAttachment(index);
+    }
+    /// @brief Unbind the framebuffer and generate the mipmaps if necessary.
+    /// @param genMipMaps Mip map generation flag.
+    virtual void Unbind(const bool& genMipMaps = true) { m_DrawTargetOverride.Reset(); }
     
     // Draw
     // ----------------------------------------
@@ -253,8 +324,11 @@ class FrameBuffer
     ///< Depth attachment specification.
     TextureSpecification m_DepthAttachmentSpec;
     
-    ///< The states active in the framebuffer.
-    RenderTargetBuffers m_ActiveTargets = { false, false, false };
+    ///< Which buffers (color/depth/stencil) are currently active/enabled.
+    RenderTargetBuffers m_EnabledTargets = { false, false, false };
+
+    ///< Optional override for the specific draw target (attachment, cube face, mip level).
+    FrameBufferDrawTarget m_DrawTargetOverride;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

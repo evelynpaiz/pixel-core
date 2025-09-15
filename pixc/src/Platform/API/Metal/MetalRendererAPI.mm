@@ -5,6 +5,7 @@
 #include "Platform/Metal/Texture/MetalTexture.h"
 #include "Platform/Metal/Shader/MetalShader.h"
 #include "Platform/Metal/Drawable/MetalDrawable.h"
+#include "Platform/Metal/Buffer/MetalFrameBuffer.h"
 
 #include "Platform/Metal/MetalRendererUtils.h"
 #include "Platform/Metal/MetalStateDescriptor.h"
@@ -166,34 +167,42 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
     @autoreleasepool
     {
-        // Create the render pass descriptor
+        // Create a new Metal render pass descriptor
         MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
         
-        // Configure color attachment(s)
-        size_t colorAttachmentCount = m_ActiveFramebuffer ? m_ActiveFramebuffer->GetColorAttachments().size() : 1;
+        // Determine the active draw target override (attachment, cube face, mip level)
+        auto drawTarget = m_ActiveFramebuffer ? m_ActiveFramebuffer->GetDrawTargetOverride() : FrameBufferDrawTarget{0};
+        
+        // Determine the number of color attachments to clear
+        size_t colorAttachmentCount = drawTarget.IsAttachmentDefined() ? 1 : m_ActiveFramebuffer->GetColorAttachments().size();
+        
+        // Lambda to retrieve the Metal texture for a given color attachment index
+        auto getColorAttachment = [&](size_t i) -> id<MTLTexture>
+        {
+            if (!m_ActiveFramebuffer)
+                return reinterpret_cast<id<MTLTexture>>(m_Context->GetBackbufferTexture());
+
+            uint32_t index = drawTarget.IsAttachmentDefined() ? drawTarget.AttachmentIndex : static_cast<uint32_t>(i);
+            auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(m_ActiveFramebuffer->GetColorAttachment(index));
+            return reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
+        };
+        
+        // Configure and clear all color attachments
         for (size_t i = 0; i < colorAttachmentCount; ++i)
         {
-            // Define the color attachment to be used
-            id<MTLTexture> attachment;
-            if (!m_ActiveFramebuffer)
-            {
-                // Create the color texture for the screen target if it doesn't exist or needs to be updated
-                //m_Context->CreateColorTexture();
-                attachment = reinterpret_cast<id<MTLTexture>>(m_Context->GetBackbufferTexture());
-            }
-            else
-            {
-                // Get the color attachment texture from the framebuffer
-                auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(
-                                                                                     m_ActiveFramebuffer->GetColorAttachment((unsigned int)i));
-                
-                attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
-            }
+            auto attachment = getColorAttachment(i);
             
             descriptor.colorAttachments[i].clearColor = m_State->ClearColor;
             descriptor.colorAttachments[i].loadAction  = MTLLoadActionClear;
             descriptor.colorAttachments[i].storeAction = MTLStoreActionStore;
             descriptor.colorAttachments[i].texture = attachment;
+            
+            // Apply cube map face/mip level override if defined
+            if (drawTarget.IsCubeFaceDefined())
+            {
+                descriptor.colorAttachments[i].slice   = m_ActiveFramebuffer->GetDrawTargetOverride().CubeFace;
+                descriptor.colorAttachments[i].level   = m_ActiveFramebuffer->GetDrawTargetOverride().MipLevel;
+            }
         }
         
         // Configure depth attachment (if depth buffer is active)
@@ -222,11 +231,8 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
             descriptor.depthAttachment.texture = attachment;
         }
         
-        // Define a new command encoder
+        // Create command encoder and setup depth-stencil
         m_Context->InitCommandEncoder(descriptor, m_ActiveFramebuffer ? "FB" : "SB");
-        
-        
-        // Defines a depth stencil state into the current command encoder
         SetDepthTesting(targets.Depth, DepthFunction::None);
         m_Context->SetDepthStencilState(GetOrCreateDepthState());
     } // autoreleasepool

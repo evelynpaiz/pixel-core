@@ -29,16 +29,11 @@ class MetalFrameBuffer : public FrameBuffer
     
     // Getter(s)
     // ----------------------------------------
-    std::vector<char> GetAttachmentData(const uint32_t index) const override;
+    std::vector<char> GetAttachmentData(const uint32_t index) override;
     
     // Usage
     // ----------------------------------------
-    void BindForDrawAttachment(const uint32_t index) const override {};
-    void BindForReadAttachment(const uint32_t index) const override {};
-    void BindForDrawAttachmentCube(const uint32_t index, const uint32_t face,
-                                   const uint32_t level = 0) const override {};
-    
-    void Unbind(const bool& genMipMaps = true) const override;
+    void Unbind(const bool& genMipMaps = true) override;
     
     // Draw
     // ----------------------------------------

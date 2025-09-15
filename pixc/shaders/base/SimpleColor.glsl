@@ -19,6 +19,6 @@
 // Entry point of the fragment shader
 void main()
 {
-    // Set the output color of the fragment shader to the material color
+    // Set the output color of the fragment shader to the input material color
     color = u_Material.Color;
 }

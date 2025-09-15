@@ -21,6 +21,6 @@ void main()
 {
     // Sample the color from the texture using the provided texture coordinates
     vec4 textureColor = texture(u_Material.TextureMap, v_TextureCoord);
-    // Set the output color of the fragment shader to the color from the texture
+    // Output the sampled texture color as the final fragment color
     color = textureColor;
 }

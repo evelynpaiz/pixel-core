@@ -52,7 +52,7 @@ public:
     
     /// @brief Define light properties into the uniforms of the shader program.
     /// @param shader The shader program.
-    /// @param flags The flags indicating which light properties should be defined.
+    /// @param properties The flags indicating which light properties should be defined.
     virtual void DefineLightProperties(const std::shared_ptr<Shader>& shader,
                                        LightProperty properties,
                                        unsigned int& slot) = 0;
@@ -150,7 +150,7 @@ public:
     // ----------------------------------------
     /// @brief Define light properties into the uniforms of the shader program.
     /// @param shader The shader program.
-    /// @param flags The flags indicating which light properties should be defined.
+    /// @param properties The flags indicating which light properties should be defined.
     void DefineLightProperties(const std::shared_ptr<Shader>& shader,
                                LightProperty properties,
                                unsigned int& slot) override

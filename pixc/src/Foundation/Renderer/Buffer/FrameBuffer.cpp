@@ -79,7 +79,7 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
             
             // TODO: Add the stencil buffer activation too.
             m_DepthAttachmentSpec = spec;
-            m_ActiveTargets.Depth = true;
+            m_EnabledTargets.Depth = true;
         }
         // Color attachment
         else
@@ -89,7 +89,7 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& spec)
             spec.Filter.Mip = TextureFilter::Linear;
             
             m_ColorAttachmentsSpec.emplace_back(spec);
-            m_ActiveTargets.Color = true;
+            m_EnabledTargets.Color = true;
         }
     }
 }

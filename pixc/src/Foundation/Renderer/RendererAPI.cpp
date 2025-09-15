@@ -75,12 +75,10 @@ void RendererAPI::EndRenderPass()
 void RendererAPI::Clear()
 {
     RenderTargetBuffers clearTargets = m_ActiveFramebuffer
-            ? m_ActiveFramebuffer->GetActiveRenderTargets()     // Clear buffers in the active framebuffer
+            ? m_ActiveFramebuffer->GetEnabledTargets()          // Clear buffers in the active framebuffer
             : RenderTargetBuffers{ true, false, false };        // Clear color only for screen
     
     Clear(clearTargets);
 }
-
-
 
 } // namespace pixc

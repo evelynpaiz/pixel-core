@@ -39,7 +39,7 @@ MetalFrameBuffer::~MetalFrameBuffer()
  *
  * @param genMipMaps Mip map generation flag.
  */
-void MetalFrameBuffer::Unbind(const bool& genMipMaps) const
+void MetalFrameBuffer::Unbind(const bool& genMipMaps)
 {
     // Verify if the mip maps are necessary
     if (!m_Spec.MipMaps || !genMipMaps)
@@ -51,6 +51,9 @@ void MetalFrameBuffer::Unbind(const bool& genMipMaps) const
         auto texture = std::dynamic_pointer_cast<MetalTexture>(attachment);
         texture->MTLGenerateMipMaps(false);
     }
+    
+    // Reset the draw information
+    FrameBuffer::Unbind(genMipMaps);
 }
 
 /**
@@ -168,7 +171,7 @@ void MetalFrameBuffer::Invalidate()
  *
  * @return A vector containing the pixel data of the color attachment, with each channel.
  */
-std::vector<char> MetalFrameBuffer::GetAttachmentData(const uint32_t index) const
+std::vector<char> MetalFrameBuffer::GetAttachmentData(const uint32_t index)
 {
     // Verify the index for the attachment
     PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");

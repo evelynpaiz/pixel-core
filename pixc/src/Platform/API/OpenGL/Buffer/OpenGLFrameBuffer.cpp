@@ -43,7 +43,7 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
  *
  * @return A vector containing the pixel data of the color attachment, with each channel.
  */
-std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index) const
+std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index)
 {
     // Verify the index for the attachment
     PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
@@ -90,12 +90,12 @@ void OpenGLFrameBuffer::Bind() const
  *
  * @param index The color attachment index.
  */
-void OpenGLFrameBuffer::BindForDrawAttachment(const uint32_t index) const
+void OpenGLFrameBuffer::BindForDrawAttachment(const uint32_t index)
 {
     PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
-    FrameBuffer::Bind();
+    FrameBuffer::BindForDrawAttachment(index);
     glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
 }
 
@@ -104,9 +104,10 @@ void OpenGLFrameBuffer::BindForDrawAttachment(const uint32_t index) const
  *
  * @param index The color attachment index.
  */
-void OpenGLFrameBuffer::BindForReadAttachment(const uint32_t index) const
+void OpenGLFrameBuffer::BindForReadAttachment(const uint32_t index)
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_ID);
+    FrameBuffer::BindForReadAttachment(index);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 }
 
@@ -119,18 +120,12 @@ void OpenGLFrameBuffer::BindForReadAttachment(const uint32_t index) const
  */
 void OpenGLFrameBuffer::BindForDrawAttachmentCube(const uint32_t index,
                                                   const uint32_t face,
-                                                  const uint32_t level) const
+                                                  const uint32_t level)
 {
-    if (m_ColorAttachmentsSpec[index].Type != TextureType::TEXTURECUBE)
-    {
-        PIXEL_CORE_WARN("Trying to bind for drawing an incorrect attachment type!");
-        return;
-    }
-    
     auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_ColorAttachments[index]);
     
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ID);
-    FrameBuffer::Bind();
+    FrameBuffer::BindForDrawAttachmentCube(index, face, level);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
                            attachment->m_ID, level);
 }
@@ -140,7 +135,7 @@ void OpenGLFrameBuffer::BindForDrawAttachmentCube(const uint32_t index,
  *
  * @param genMipMaps Mip map generation flag.
  */
-void OpenGLFrameBuffer::Unbind(const bool& genMipMaps) const
+void OpenGLFrameBuffer::Unbind(const bool& genMipMaps)
 {
     // Generate mipmaps if necesary
     if (m_Spec.MipMaps && genMipMaps)
@@ -154,6 +149,8 @@ void OpenGLFrameBuffer::Unbind(const bool& genMipMaps) const
     
     // Bind to the default buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // Reset the draw information
+    FrameBuffer::Unbind(genMipMaps);
 }
 
 /**

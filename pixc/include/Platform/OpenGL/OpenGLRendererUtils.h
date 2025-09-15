@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Foundation/Renderer/Utils/RendererUtils.h"
+#include "Foundation/Renderer/RendererTypes.h"
 
 #include <GL/glew.h>
 

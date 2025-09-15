@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Foundation/Renderer/Utils/RendererUtils.h"
+#include "Foundation/Renderer/RendererTypes.h"
 
 #include "Foundation/Renderer/Drawable/Drawable.h"
 #include "Foundation/Renderer/Buffer/FrameBuffer.h"
@@ -85,6 +85,7 @@ protected:
 protected:
     ///< The currently bound framebuffer. If null, rendering goes to the screen (default framebuffer).
     std::shared_ptr<FrameBuffer> m_ActiveFramebuffer = nullptr;
+    
     
 private:
     ///< The currently active rendering API.

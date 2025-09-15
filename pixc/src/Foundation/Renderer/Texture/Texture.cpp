@@ -30,9 +30,13 @@ void Texture::Update(const unsigned int width, const unsigned int height,
     else if (!isHDR && channels == 3)
         m_Spec.Format = TextureFormat::RGB8;
     else if (isHDR && channels == 3)
-        m_Spec.Format = TextureFormat::RGB16F;
+        m_Spec.Format = TextureFormat::RGB32F;
     else
+    {
+        PIXEL_CORE_WARN("Trying to load a texture not supported!");
         m_Spec.Format = TextureFormat::None;
+    }
+        
     
     // Set default wrap mode if needed
     m_Spec.Wrap = (m_Spec.Wrap != TextureWrap::None) ? m_Spec.Wrap :

@@ -148,7 +148,7 @@ void* MetalDrawable::GetOrCreateRenderPipelineState(const std::shared_ptr<FrameB
             MTLPixelFormatRGBA8Unorm;
         }
         // Configure depth attachment format
-        if(!framebuffer || framebuffer->GetActiveRenderTargets().Depth)
+        if(!framebuffer || framebuffer->GetEnabledTargets().Depth)
         {
             descriptor.depthAttachmentPixelFormat = framebuffer ?
             utils::textures::mtl::ToMetalPixelFormat(framebuffer->GetDepthAttachment()->GetSpecification().Format) :

@@ -20,7 +20,7 @@ namespace pixc {
  * @note Copying and moving `MetalTextureCube` objects is disabled to prevent
  * unintended resource ownership issues.
  */
-class MetalTextureCube : public TextureCube, MetalTexture
+class MetalTextureCube : public TextureCube, public MetalTexture
 {
 public:
     // Constructor(s)/Destructor

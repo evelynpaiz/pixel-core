@@ -16,6 +16,7 @@ file(
     src/Foundation/Renderer/Shader/*.cpp
     src/Foundation/Renderer/Camera/*.cpp
     src/Foundation/Renderer/Drawable/*.cpp
+    src/Foundation/Renderer/Light/*.cpp
 
     src/Foundation/Renderer/GraphicsContext.cpp
     src/Foundation/Renderer/RendererAPI.cpp
@@ -75,13 +76,8 @@ file(
     include/Foundation/Renderer/Camera/*.h
     include/Foundation/Renderer/Drawable/*.h
     include/Foundation/Renderer/Material/*.h
+    include/Foundation/Renderer/Light/*.h
     include/Foundation/Renderer/Utils/*.h
-    
-    include/Foundation/Renderer/Light/LightProperty.h
-    include/Foundation/Renderer/Light/Shadow.h
-    include/Foundation/Renderer/Light/Light.h
-    include/Foundation/Renderer/Light/DirectionalLight.h
-    include/Foundation/Renderer/Light/PositionalLight.h
 
     include/Foundation/Renderer/GraphicsContext.h
     include/Foundation/Renderer/RendererAPI.h

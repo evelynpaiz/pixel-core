@@ -51,7 +51,7 @@ void main()
     //vec3 irradiance = calculateIrradiance(u_Environment.IrradianceMatrix, normal, INV_PI);
     //vec3 ambient = irradiance * u_Environment.La * u_Material.Ka;
     // TODO: introduce the use of environment light
-    vec3 ambient = 0.3f * u_Material.Ka;
+    vec3 ambient = u_Environment.La * u_Material.Ka;
     
     // Set the fragment color with the calculated result and material's alpha
     vec3 result = reflectance + ambient;

@@ -24,7 +24,7 @@ void SimpleLayer::DefineBuffers()
     spec.SetFrameBufferSize(m_Camera->GetWidth() * 2, m_Camera->GetHeight() * 2);
     spec.AttachmentsSpec = {
         { pixc::TextureType::TEXTURE2D, pixc::TextureFormat::RGBA8 },
-        { pixc::TextureType::TEXTURE2D, pixc::TextureFormat::DEPTH16}
+        { pixc::TextureType::TEXTURE2D, pixc::TextureFormat::DEPTH16 }
     };
     
     m_Framebuffers.Create("Scene", spec);
@@ -50,6 +50,15 @@ void SimpleLayer::DefineLights()
 {
     unsigned int width = m_Camera->GetWidth();
     unsigned int height = m_Camera->GetHeight();
+    
+    // Define the environment light
+    auto environment = std::make_shared<pixc::EnvironmentLight>();
+    environment->SetEnvironmentSize(60.0f);
+    
+    static auto envMap = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("environment/env.hdr"));
+    environment->SetEnvironmentMap(envMap);
+    
+    m_Lights.Add("Environment", environment);
     
     // Define the positional light source(s)
     auto positional = std::make_shared<pixc::PositionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -170,6 +179,7 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     cube->SetMaterial(phongMaterial);
     cube->DrawModel();
     
+    m_Lights.Get("Environment")->DrawLight();
     m_Lights.Get("Positional")->DrawLight();
     
     pixc::Renderer::EndScene();

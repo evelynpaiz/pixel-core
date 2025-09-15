@@ -2,7 +2,7 @@
 #version 330 core
 
 // Include transformation matrices
-#include "Resources/shaders/shared/structure/matrix/SimpleMatrix.glsl"
+#include "pixc/shaders/shared/structure/matrix/SimpleMatrix.glsl"
 
 // Input vertex attributes
 layout (location = 0) in vec4 a_Position;   // Vertex position in object space
@@ -34,7 +34,8 @@ void main()
 /**
  * Represents the material properties of an object.
  */
-struct Material {
+struct Material
+{
     samplerCube TextureMap;                 ///< Texture map applied to the material.
 };
 

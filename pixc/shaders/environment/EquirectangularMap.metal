@@ -1,29 +1,20 @@
-#shader vertex
-#version 330 core
+#include <metal_stdlib>
+using namespace metal;
+
+// Include indices enumeration
+#import "pixc/shaders/shared/enum/buffer/Buffer.metal"
+#import "pixc/shaders/shared/enum/material/TextureMaterial.metal"
 
 // Include transformation matrices
-#include "pixc/shaders/shared/structure/matrix/SimpleMatrix.glsl"
+#import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
 
 // Include vertex shader
-#include "pixc/shaders/shared/chunk/vertex/Pos.vs.glsl"
+#import "pixc/shaders/shared/chunk/vertex/Pos.vs.metal"
 
-#shader fragment
-#version 330 core
-
-// Include material properties
-#include "pixc/shaders/shared/structure/material/TextureMaterial.glsl"
-
-// Specify the output color of the fragment shader
-layout (location = 0) out vec4 color;
-
-// Uniform buffer blocks
-uniform Material u_Material;                ///< Material properties
-
-// Input variables from the vertex shader
-in vec3 v_Position;                         ///< Vertex position in object space
+// ----------------------------------
 
 // Define constant variables
-const vec2 invAtan = vec2(0.1591f, 0.3183f);
+constant float2 invAtan = float2(0.1591f, 0.3183f);
 
 /**
  * Inverse tangent and spherical mapping function.
@@ -37,11 +28,11 @@ const vec2 invAtan = vec2(0.1591f, 0.3183f);
  *
  * @return The 2D texture coordinates (UV) mapped to the spherical map.
  */
-vec2 sampleSphericalMap(vec3 v)
+float2 sampleSphericalMap(float3 v)
 {
     // Calculate the azimuth (horizontal angle) and inclination (vertical angle)
     // of the input 3D vector and map them to UV coordinates.
-    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    float2 uv = float2(atan2(v.z, v.x), asin(v.y));
     
     // Scale the UV coordinates using the provided inverse tangent values.
     uv *= invAtan;
@@ -49,14 +40,19 @@ vec2 sampleSphericalMap(vec3 v)
     // Offset the UV coordinates to ensure they are in the [0, 1] range.
     uv += 0.5f;
     
+    // Flip Y to account for Metal’s coordinate system
+    uv.y = 1.0f - uv.y;
+    
     return uv;
 }
 
 // Entry point of the fragment shader
-void main()
+fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
+                              texture2d<float> u_Material_TextureMap [[ texture(MaterialIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(MaterialIndex::TextureMap) ]])
 {
     // Compute spherical UVs from the normalized fragment position, then sample the texture
-    vec4 textureColor = texture(u_Material.TextureMap, sampleSphericalMap(normalize(v_Position)));
+    float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, sampleSphericalMap(normalize(in.v_Position)));
     // Output the sampled texture color as the final fragment color
-    color = textureColor;
+    return color;
 }

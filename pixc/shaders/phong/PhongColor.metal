@@ -44,7 +44,7 @@ fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
     //vec3 irradiance = calculateIrradiance(u_Environment.IrradianceMatrix, normal, INV_PI);
     //vec3 ambient = irradiance * u_Environment.La * u_Material.Ka;
     // TODO: introduce the use of environment light
-    float3 ambient = 0.3f * u_Material.Ka;
+    float3 ambient = u_Environment.La * u_Material.Ka;
     
     // Set the fragment color with the calculated result and material's alpha
     float3 result = reflectance + ambient;
