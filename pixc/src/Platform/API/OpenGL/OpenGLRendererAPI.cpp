@@ -46,25 +46,31 @@ void OpenGLRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
 }
 
 /**
- * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ * @brief Enable or disable depth testing.
  *
- * @param enable Enable or not the depth testing.
- * @param function Depth function to be used for depth computation.
+ * @param enabled Pass true to enable depth testing, false to disable it.
  */
-void OpenGLRendererAPI::SetDepthTesting(const bool enabled,
-                                        const DepthFunction function)
+void OpenGLRendererAPI::EnableDepthTesting(const bool enabled)
 {
     // Define depth test
     if (enabled)
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
+}
+
+/**
+ * @brief Set the depth comparison function used during depth testing.
+ *
+ * @param function The depth function to use (e.g., Less, LessEqual, Greater, Always).
+ */
+void OpenGLRendererAPI::SetDepthFunction(const DepthFunction function)
+{
+    if (function == DepthFunction::None)
+        return;
     
-    // Define depth function
-    if (function != DepthFunction::None)
-    {
-        glDepthFunc(utils::graphics::gl::ToOpenGLDepthFunc(function));
-    }
+    // Change the depth function
+    glDepthFunc(utils::graphics::gl::ToOpenGLDepthFunc(function));
 }
 
 /**
@@ -93,7 +99,7 @@ void OpenGLRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& fram
 void OpenGLRendererAPI::Clear(const RenderTargetBuffers& targets)
 {
     // Set depth testing state so it's in the correct state
-    SetDepthTesting(targets.Depth, DepthFunction::None);
+    EnableDepthTesting(targets.Depth);
     // Clear buffers
     glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
 }

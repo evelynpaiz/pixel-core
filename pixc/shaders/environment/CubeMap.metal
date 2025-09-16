@@ -47,7 +47,7 @@ vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
     
     // Pass the input attributes to the fragment shader
     VertexOut out {
-        .Position = clipPosition,   // TODO: use position instead when depth function incorporated
+        .Position = position,
         .v_Position = worldPosition.xyz
     };
     return out;

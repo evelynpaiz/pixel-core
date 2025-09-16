@@ -180,7 +180,7 @@ void EnvironmentLight::DrawLight()
     if (!(m_Model && m_EnvironmentMap))
         return;
     
-    RendererCommand::SetDepthTesting(true, DepthFunction::LEqual);
+    RendererCommand::SetDepthFunction(DepthFunction::LEqual);
     
     auto environment = m_Framebuffers.Get("Environment")->GetColorAttachment(0);
     auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(Renderer::GetMaterialLibrary().Get("CubeMap"));
@@ -191,7 +191,7 @@ void EnvironmentLight::DrawLight()
     
     m_Model->DrawModel();
     
-    RendererCommand::SetDepthTesting(true, DepthFunction::Less);
+    RendererCommand::SetDepthFunction(DepthFunction::Less);
 }
 
 /**

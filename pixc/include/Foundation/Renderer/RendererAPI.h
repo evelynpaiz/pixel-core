@@ -61,7 +61,16 @@ public:
     virtual void SetViewport(const unsigned int x, const unsigned int y,
                              const unsigned int width, const unsigned int height) = 0;
     
-    virtual void SetDepthTesting(const bool enabled, const DepthFunction function) = 0;
+    virtual void EnableDepthTesting(const bool enabled) = 0;
+    virtual void SetDepthFunction(const DepthFunction function) = 0;
+    /// @brief Configure the full depth test state in one call.
+    /// @param enabled Pass true to enable depth testing, false to disable it.
+    /// @param function The depth function to use for depth comparisons.
+    virtual void ConfigureDepthTesting(const bool enabled, const DepthFunction function)
+    {
+        EnableDepthTesting(enabled);
+        SetDepthFunction(function);
+    }
     
     // Render
     // ----------------------------------------

@@ -86,71 +86,35 @@ void RendererCommand::Draw(const std::shared_ptr<Drawable>& drawable,
 }
 
 /**
- * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ * @brief Enable or disable depth testing.
  *
- * @param enable Enable or not the depth testing.
- * @param function Depth function to be used for depth computation.
+ * @param enabled Pass true to enable depth testing, false to disable it.
  */
-void RendererCommand::SetDepthTesting(const bool enabled, const DepthFunction function)
+void RendererCommand::EnableDepthTesting(const bool enabled)
 {
-    s_API->SetDepthTesting(enabled, function);
+    s_API->EnableDepthTesting(enabled);
 }
 
 /**
- * Sets the active rendering targets and clears the specified buffers.
+ * @brief Set the depth comparison function used during depth testing.
  *
- * @param targets Active rendering targets.
-
-void RendererCommand::SetRenderTarget(const RenderTargetBuffers& targets)
-{
-    s_API->SetRenderTarget(targets);
-}
+ * @param function The depth function to use (e.g., Less, LessEqual, Greater, Always).
  */
-/**
- * Sets the active rendering targets and clears the specified buffers.
- *
- * @param color Background color.
- * @param targets Active rendering targets.
-
-void RendererCommand::SetRenderTarget(const glm::vec4& color,
-                                      const RenderTargetBuffers& targets)
+void RendererCommand::SetDepthFunction(const DepthFunction function)
 {
-    s_API->SetRenderTarget(color, targets);
+    s_API->SetDepthFunction(function);
 }
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param framebuffer Framebuffer whose targets should be activated.
-
-void RendererCommand::SetRenderTarget(const std::shared_ptr<FrameBuffer>& framebuffer,
-                                      const std::optional<RenderTargetBuffers>& targets)
-{
-    s_API->SetRenderTarget(targets.has_value() ? targets.value() : framebuffer->GetActiveRenderTargets(),
-                           framebuffer);
-}
- */
-/**
- * Sets the active rendering targets and clears the specified buffers of a framebuffer.
- *
- * @param color Background color.
- * @param framebuffer Framebuffer whose targets should be activated and cleared.
-
-void RendererCommand::SetRenderTarget(const glm::vec4& color,
-                                      const std::shared_ptr<FrameBuffer>& framebuffer,
-                                      const std::optional<RenderTargetBuffers>& targets)
-{
-    s_API->SetRenderTarget(color, targets.has_value() ? targets.value() : framebuffer->GetActiveRenderTargets(),
-                           framebuffer);
-}
- */
 
 /**
- * Finalize the current rendering pass.
-
-void RendererCommand::EndRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer)
-{
-    s_API->EndRenderPass(framebuffer);
-}
+ * @brief Configure the full depth test state in one call.
+ *
+ * @param enabled Pass true to enable depth testing, false to disable it.
+ * @param function The depth function to use for depth comparisons.
  */
+void RendererCommand::ConfigureDepthTesting(const bool enabled,
+                                            const DepthFunction function)
+{
+    s_API->ConfigureDepthTesting(enabled, function);
+}
+
 } // namespace pixc

@@ -37,8 +37,8 @@ public:
     void SetViewport(const unsigned int x, const unsigned int y,
                      const unsigned int width, const unsigned int height) override;
     
-    void SetDepthTesting(const bool enabled,
-                         const DepthFunction function) override;
+    void EnableDepthTesting(const bool enabled) override;
+    void SetDepthFunction(const DepthFunction function) override;
     
     // Render
     // ----------------------------------------

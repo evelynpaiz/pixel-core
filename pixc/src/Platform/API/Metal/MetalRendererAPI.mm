@@ -71,10 +71,6 @@ void MetalRendererAPI::Init()
     
     // Initialize the Metal state object for managing Metal resources
     m_State = std::make_shared<MetalRendererState>();
-    
-    // Get the surface to output the render result if rendering to screen
-    //auto drawable = reinterpret_cast<id<CAMetalDrawable>>(m_Context->GetDrawable());
-    //m_State->RenderTarget.ColorAttachment = drawable.texture;
 }
 
 /**
@@ -116,20 +112,33 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
  }
 
 /**
- * @brief Set the depth buffer flag when rendering. If enabled, depth testing is enabled too.
+ * @brief Enable or disable depth testing.
  *
- * @param enable Enable or not the depth testing.
- * @param function Depth function to be used for depth computation.
+ * @param enabled Pass true to enable depth testing, false to disable it.
  */
-void MetalRendererAPI::SetDepthTesting(const bool enabled,
-                                       const DepthFunction function)
+void MetalRendererAPI::EnableDepthTesting(const bool enabled)
 {
+    // Enable/disable the depth state
     m_State->DepthDescriptor.Enabled = enabled;
     
-    if (function != DepthFunction::None)
-    {
-        m_State->DepthDescriptor.Function = function;
-    }
+    // Update the current depth stencil state
+    m_Context->SetDepthStencilState(GetOrCreateDepthState());
+}
+
+/**
+ * @brief Set the depth comparison function used during depth testing.
+ *
+ * @param function The depth function to use (e.g., Less, LessEqual, Greater, Always).
+ */
+void MetalRendererAPI::SetDepthFunction(const DepthFunction function)
+{
+    if (function == DepthFunction::None)
+        return;
+    // Change the depth function
+    m_State->DepthDescriptor.Function = function;
+    
+    // Update the current depth stencil state
+    m_Context->SetDepthStencilState(GetOrCreateDepthState());
 }
 
 /**
@@ -233,8 +242,7 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         
         // Create command encoder and setup depth-stencil
         m_Context->InitCommandEncoder(descriptor, m_ActiveFramebuffer ? "FB" : "SB");
-        SetDepthTesting(targets.Depth, DepthFunction::None);
-        m_Context->SetDepthStencilState(GetOrCreateDepthState());
+        EnableDepthTesting(targets.Depth);
     } // autoreleasepool
 }
 
