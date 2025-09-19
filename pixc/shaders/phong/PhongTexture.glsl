@@ -14,7 +14,7 @@
 #include "Resources/shaders/common/material/PhongTextureMaterial.glsl"
 #include "Resources/shaders/common/view/SimpleView.glsl"
 #include "Resources/shaders/common/light/SimpleLight.glsl"
-#include "Resources/shaders/common/light/EnvironmentLight.glsl"
+#include "Resources/shaders/common/environment/Environment.glsl"
 
 // Include fragment inputs
 #include "Resources/shaders/common/fragment/PTN.fs.glsl"

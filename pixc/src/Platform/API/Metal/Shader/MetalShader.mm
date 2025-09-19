@@ -576,7 +576,7 @@ void MetalShader::ExtractShaderResources()
         pipelineDescriptor.vertexFunction = m_ShaderSource->VertexFunction;
         pipelineDescriptor.fragmentFunction = m_ShaderSource->FragmentFunction;
         pipelineDescriptor.vertexDescriptor = reinterpret_cast<MTLVertexDescriptor*>(GetShaderVertexDescriptor());
-        pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatRGBA8Unorm;
         
         // Obtain shader reflection information
         NSError *error = nil;

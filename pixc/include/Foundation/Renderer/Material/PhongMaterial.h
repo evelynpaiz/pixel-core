@@ -204,10 +204,12 @@ protected:
     // ----------------------------------------
     /// @brief Set the material properties into the uniforms of the shader program.
     /// @param shader The shader program to set the properties for.
-    void SetProperties(const std::shared_ptr<Shader>& shader, unsigned int& slot)
+    void SetProperties(const std::shared_ptr<Shader>& shader)
     {
-        shader->SetTexture("u_Material.DiffuseMap", m_DiffuseTexture, slot++);
-        shader->SetTexture("u_Material.SpecularMap", m_SpecularTexture, slot++);
+        shader->SetTexture("u_Material.DiffuseMap", m_DiffuseTexture,
+                           static_cast<uint32_t>(TextureIndex::DiffuseMap));
+        shader->SetTexture("u_Material.SpecularMap", m_SpecularTexture,
+                           static_cast<uint32_t>(TextureIndex::SpecularMap));
         
         Phong::SetProperties(shader);
     }
@@ -300,7 +302,7 @@ protected:
     void SetMaterialProperties() override
     {
         LightedMaterial::SetMaterialProperties();
-        PhongTexture::SetProperties(m_Shader, m_Slot);
+        PhongTexture::SetProperties(m_Shader);
     }
     
     // Disable the copying or moving of this resource

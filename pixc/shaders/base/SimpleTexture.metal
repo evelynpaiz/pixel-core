@@ -3,7 +3,7 @@ using namespace metal;
 
 // Include indices enumeration
 #import "pixc/shaders/shared/enum/buffer/Buffer.metal"
-#import "pixc/shaders/shared/enum/material/TextureMaterial.metal"
+#import "pixc/shaders/shared/enum/texture/TextureIndex.metal"
 
 // Include transformation matrices
 #import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
@@ -15,8 +15,8 @@ using namespace metal;
 
 // Entry point of the fragment shader
 fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
-                              texture2d<float> u_Material_TextureMap [[ texture(MaterialIndex::TextureMap) ]],
-                              sampler s_Material_TextureMap [[ sampler(MaterialIndex::TextureMap) ]])
+                              texture2d<float> u_Material_TextureMap [[ texture(TextureIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(TextureIndex::TextureMap) ]])
 {
     // Sample the color from the texture using the provided texture coordinates
     float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, in.v_TextureCoord);

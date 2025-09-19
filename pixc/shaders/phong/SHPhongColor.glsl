@@ -14,7 +14,7 @@
 #include "pixc/shaders/shared/structure/material/PhongColorMaterial.glsl"
 #include "pixc/shaders/shared/structure/view/SimpleView.glsl"
 #include "pixc/shaders/shared/structure/light/SimpleLight.glsl"
-#include "pixc/shaders/shared/structure/environment/Environment.glsl"
+#include "pixc/shaders/shared/structure/environment/SHEnvironment.glsl"
 
 // Include fragment inputs
 #include "pixc/shaders/shared/chunk/fragment/PosNorm.fs.glsl"
@@ -26,9 +26,8 @@
 #include "pixc/shaders/phong/chunks/PhongSpecular.glsl"
 #include "pixc/shaders/phong/chunks/Phong.glsl"
 
-///< Mathematical constants.
-const float PI = 3.14159265359f;
-const float INV_PI = 1.0f / PI;
+#include "pixc/shaders/environment/chunks/SHIrradiance.glsl"
+#include "pixc/shaders/environment/chunks/SHAmbientIsotropic.glsl"
 
 // Entry point of the fragment shader
 void main()
@@ -46,7 +45,9 @@ void main()
     }
     
     // Calculate the ambient light
-    vec3 ambient = u_Environment.La * u_Material.Ka;
+    vec3 ambient = calculateAmbientIsotropic(v_Position, v_Normal, u_View.Position,
+                                             u_Material.Ka, u_Material.Shininess, u_Environment.La,
+                                             u_Environment.EnvironmentMap, u_Environment.Irradiance);
     
     // Set the fragment color with the calculated result and material's alpha
     vec3 result = reflectance + ambient;

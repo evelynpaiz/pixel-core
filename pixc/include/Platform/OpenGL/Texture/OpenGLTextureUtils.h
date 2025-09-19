@@ -156,7 +156,7 @@ inline GLenum ToOpenGLDataFormat(TextureFormat format)
         case TextureFormat::R16F:
         case TextureFormat::RG16F:
         case TextureFormat::RGB16F:
-        case TextureFormat::RGBA16F:
+        case TextureFormat::RGBA16F:            return GL_HALF_FLOAT;
             
         case TextureFormat::R32F:
         case TextureFormat::RG32F:

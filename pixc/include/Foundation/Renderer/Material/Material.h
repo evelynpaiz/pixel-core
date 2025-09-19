@@ -53,7 +53,6 @@ public:
     virtual void Unbind()
     {
         m_Shader -> Unbind();
-        m_Slot = 0;
     }
     
     // Getter(s)
@@ -87,8 +86,6 @@ protected:
     
     ///< Properties of the material used for shading.
     MaterialProperty m_Properties = MaterialProperty::None;
-    ///< Texture unit index.
-    unsigned int m_Slot = 0;
     
     ///< Library containing all shader that have been loaded.
     static inline ShaderLibrary s_ShaderLibrary;

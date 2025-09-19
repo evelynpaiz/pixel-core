@@ -3,10 +3,13 @@ using namespace metal;
 
 // Include indices enumeration
 #import "pixc/shaders/shared/enum/buffer/Buffer.metal"
-#import "pixc/shaders/shared/enum/material/TextureMaterial.metal"
+#import "pixc/shaders/shared/enum/texture/TextureIndex.metal"
 
 // Include transformation matrices
 #import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
+
+// Include additional functions
+#import "pixc/shaders/shared/utils/CubemapDir.metal"
 
 /**
  * Represents the layout of incoming vertex data.
@@ -41,13 +44,11 @@ vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
         float4(0.0, 0.0, 0.0, 1.0)
     );
     // Calculate the final position of the vertex in clip space
-    float4 clipPosition = u_Transform.Projection * view * worldPosition;
-    // Manually construct xyww
-    float4 position = float4(clipPosition.x, clipPosition.y, clipPosition.w, clipPosition.w);
+    float4 clipPosition = (u_Transform.Projection * view * worldPosition).xyww;
     
     // Pass the input attributes to the fragment shader
     VertexOut out {
-        .Position = position,
+        .Position = clipPosition,
         .v_Position = worldPosition.xyz
     };
     return out;
@@ -55,15 +56,14 @@ vertex VertexOut vertex_main(const VertexIn in [[ stage_in ]],
 
 // Entry point of the fragment shader
 fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
-                              texturecube<float> u_Material_TextureMap [[ texture(MaterialIndex::TextureMap) ]],
-                              sampler s_Material_TextureMap [[ sampler(MaterialIndex::TextureMap) ]])
+                              texturecube<float> u_Material_TextureMap [[ texture(TextureIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(TextureIndex::TextureMap) ]])
 {
     
     float3 dir = normalize(in.v_Position);
-    dir.y = -dir.y;     // flip the Y coordinate
     
     // Sample the color from the texture using the provided texture coordinates
-    float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, dir);
+    float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, toCubemapDir(dir));
     
     return color;
 }

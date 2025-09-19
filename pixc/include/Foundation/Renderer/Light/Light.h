@@ -54,8 +54,7 @@ public:
     /// @param shader The shader program.
     /// @param properties The flags indicating which light properties should be defined.
     virtual void DefineLightProperties(const std::shared_ptr<Shader>& shader,
-                                       LightProperty properties,
-                                       unsigned int& slot) = 0;
+                                       LightProperty properties) = 0;
     
 protected:
     // Constructor(s)
@@ -152,8 +151,7 @@ public:
     /// @param shader The shader program.
     /// @param properties The flags indicating which light properties should be defined.
     void DefineLightProperties(const std::shared_ptr<Shader>& shader,
-                               LightProperty properties,
-                               unsigned int& slot) override
+                               LightProperty properties) override
     {
 
         // Define general light properties if specified by the flags
@@ -167,8 +165,9 @@ public:
         if (HasProperty(properties, LightProperty::ShadowProperties))
         {
             DefineTranformProperties(shader);
+            uint32_t slot = static_cast<uint32_t>(TextureIndex::ShadowMap0) + GetID();
             shader->SetTexture("u_Environment.Lights[" + std::to_string(GetID()) + "].ShadowMap",
-                               GetShadowMap(), slot++);
+                               GetShadowMap(), slot);
         }
     }
     

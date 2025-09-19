@@ -45,12 +45,12 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
  */
 std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index)
 {
+    
     // Verify the index for the attachment
     PIXEL_CORE_ASSERT(index < m_ColorAttachments.size(), "Attachment index out of bounds!");
     
     // Get the specifications from the attachment
     TextureSpecification spec = m_ColorAttachments[index]->GetSpecification();
-    int channels = m_ColorAttachments[index]->GetAlignedChannels();
     int stride = m_ColorAttachments[index]->GetStride();
     
     // Create a storage buffer for the texture data
@@ -59,7 +59,7 @@ std::vector<char> OpenGLFrameBuffer::GetAttachmentData(const uint32_t index)
     
     // Bind the framebuffer and write the data into the storage buffer
     BindForReadAttachment(index);
-    glPixelStorei(GL_PACK_ALIGNMENT, channels);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     
     glReadPixels(0, 0, spec.Width, (spec.Height > 0 ? spec.Height : 1.0f),
                  utils::textures::gl::ToOpenGLBaseFormat(spec.Format),

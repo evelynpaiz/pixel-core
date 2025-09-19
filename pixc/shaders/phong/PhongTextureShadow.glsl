@@ -3,7 +3,7 @@
 
 // Include transformation matrices
 #include "Resources/shaders/common/light/CompleteLight.glsl"
-#include "Resources/shaders/common/light/EnvironmentLight.glsl"
+#include "Resources/shaders/common/environment/Environment.glsl"
 #include "Resources/shaders/common/matrix/CompleteMatrix.glsl"
 
 // Include vertex shader
@@ -16,7 +16,7 @@
 #include "Resources/shaders/common/material/PhongTextureMaterial.glsl"
 #include "Resources/shaders/common/view/SimpleView.glsl"
 #include "Resources/shaders/common/light/CompleteLight.glsl"
-#include "Resources/shaders/common/light/EnvironmentLight.glsl"
+#include "Resources/shaders/common/environment/Environment.glsl"
 
 // Include fragment inputs
 #include "Resources/shaders/common/fragment/PTN.fs.glsl"

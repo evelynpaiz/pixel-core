@@ -23,7 +23,10 @@ enum class LightProperty : uint32_t
     DiffuseLighting   = 1 << 1,   ///< Diffuse lighting enabled.
     SpecularLighting  = 1 << 2,   ///< Specular lighting enabled.
     
-    ShadowProperties  = 1 << 3    ///< Shadow mapping enabled.
+    ShadowProperties  = 1 << 3,   ///< Shadow mapping enabled.
+    
+    DirectionDependent  = 1 << 4  ///< Lighting depends on surface orientation or tangent space.
+                                  ///< If not set, lighting is isotropic or normal-based.
 };
 
 /**

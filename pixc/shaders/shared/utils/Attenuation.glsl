@@ -23,4 +23,3 @@ float calculateAttenuation(vec3 position, vec4 lightVector,
     
     return min(maxValue, attenuation);
 }
-

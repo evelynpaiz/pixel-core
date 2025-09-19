@@ -71,7 +71,7 @@ protected:
     /// @param light The light object containing the light properties.
     virtual void DefineLightProperties(const std::shared_ptr<Light>& light)
     {
-        light->DefineLightProperties(m_Shader, m_LightProperties, m_Slot);
+        light->DefineLightProperties(m_Shader, m_LightProperties);
     }
     
     // Lighted color variables

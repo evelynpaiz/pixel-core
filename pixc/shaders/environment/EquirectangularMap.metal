@@ -3,15 +3,13 @@ using namespace metal;
 
 // Include indices enumeration
 #import "pixc/shaders/shared/enum/buffer/Buffer.metal"
-#import "pixc/shaders/shared/enum/material/TextureMaterial.metal"
+#import "pixc/shaders/shared/enum/texture/TextureIndex.metal"
 
 // Include transformation matrices
 #import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
 
 // Include vertex shader
 #import "pixc/shaders/shared/chunk/vertex/Pos.vs.metal"
-
-// ----------------------------------
 
 // Define constant variables
 constant float2 invAtan = float2(0.1591f, 0.3183f);
@@ -48,8 +46,8 @@ float2 sampleSphericalMap(float3 v)
 
 // Entry point of the fragment shader
 fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
-                              texture2d<float> u_Material_TextureMap [[ texture(MaterialIndex::TextureMap) ]],
-                              sampler s_Material_TextureMap [[ sampler(MaterialIndex::TextureMap) ]])
+                              texture2d<float> u_Material_TextureMap [[ texture(TextureIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(TextureIndex::TextureMap) ]])
 {
     // Compute spherical UVs from the normalized fragment position, then sample the texture
     float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, sampleSphericalMap(normalize(in.v_Position)));

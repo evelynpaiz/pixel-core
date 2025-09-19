@@ -66,7 +66,10 @@
 #include "Foundation/Renderer/Light/Light.h"
 #include "Foundation/Renderer/Light/PositionalLight.h"
 #include "Foundation/Renderer/Light/DirectionalLight.h"
-#include "Foundation/Renderer/Light/EnvironmentLight.h"
+
+#include "Foundation/Renderer/Light/Environment/EnvironmentLight.h"
+#include "Foundation/Renderer/Light/Environment/SHEnvironmentLight.h"
+#include "Foundation/Renderer/Light/Environment/IBLEnvironmentLight.h"
 
 #include "Foundation/Renderer/Material/Material.h"
 #include "Foundation/Renderer/Material/LightedMaterial.h"

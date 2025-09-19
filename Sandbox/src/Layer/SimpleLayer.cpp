@@ -40,7 +40,8 @@ void SimpleLayer::DefineMaterials()
     
     // Define the new material(s)
     materialLibrary.Create<pixc::SimpleMaterial>("Simple");
-    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor");
+    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor",
+                                                     pixc::ResourcesManager::GeneralPath("pixc/shaders/phong/SHPhongColor"));
 }
 
 /**
@@ -52,8 +53,7 @@ void SimpleLayer::DefineLights()
     unsigned int height = m_Camera->GetHeight();
     
     // Define the environment light
-    auto environment = std::make_shared<pixc::EnvironmentLight>();
-    environment->SetEnvironmentSize(60.0f);
+    auto environment = std::make_shared<pixc::SHEnvironmentLight>();
     
     static auto envMap = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("environment/env.hdr"));
     environment->SetEnvironmentMap(envMap);

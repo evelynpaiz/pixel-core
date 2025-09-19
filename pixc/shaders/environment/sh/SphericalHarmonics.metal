@@ -1,32 +1,18 @@
-#shader vertex
-#version 330 core
+#include <metal_stdlib>
+using namespace metal;
+
+// Include indices enumeration
+#import "pixc/shaders/shared/enum/buffer/Buffer.metal"
+#import "pixc/shaders/shared/enum/texture/TextureIndex.metal"
 
 // Include transformation matrices
-#include "Resources/shaders/common/matrix/SimpleMatrix.glsl"
+#import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
 
 // Include vertex shader
-#include "Resources/shaders/common/vertex/P.vs.glsl"
+#import "pixc/shaders/shared/chunk/vertex/Pos.vs.metal"
 
-#shader fragment
-#version 330 core
-
-/**
- * Represents the material properties of an object.
- */
-struct Material {
-    samplerCube TextureMap;                     ///< Texture map applied to the material.
-};
-
-// Uniform buffer blocks
-uniform Material u_Material;                    ///< Material properties.
-
-layout (location = 0) out vec3 Llm;             ///< Spherical harmonics coefficients (using normals).
-
-///< Mathematical constants.
-const float PI = 3.14159265359f;
-const float INV_PI = 1.0f / PI;
-
-const float SQRT2 = sqrt(2.0f);
+// Define constant variables
+constant float PI = 3.14159265359f;
 
 // -----------------------------------------
 // Sampling
@@ -40,7 +26,7 @@ const float SQRT2 = sqrt(2.0f);
  * @param bits An unsigned integer input.
  * @return The generated radical inverse as a floating-point value.
  */
-float radicalInverseVDC(uint bits)
+inline float radicalInverseVDC(uint bits)
 {
     bits = (bits << 16u) | (bits >> 16u);
     bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -60,9 +46,9 @@ float radicalInverseVDC(uint bits)
  * @param N An unsigned integer representing the total number of samples.
  * @return A 2D point in the Hammersley sequence as a vec2.
  */
-vec2 Hammersley(uint i, uint N)
+inline float2 Hammersley(uint i, uint N)
 {
-    return vec2(float(i)/float(N), radicalInverseVDC(i));
+    return float2(float(i)/float(N), radicalInverseVDC(i));
 }
 
 /**
@@ -72,7 +58,7 @@ vec2 Hammersley(uint i, uint N)
  *
  * @return A 3D vector representing the uniformly sampled point on the unit sphere.
  */
-vec3 SampleSphereUniform(vec2 U)
+inline float3 SampleSphereUniform(float2 U)
 {
     // Maps U.x to [-1, 1] for use as z-coordinate
     float z = 1.0f - 2.0f * U.x;
@@ -83,7 +69,7 @@ vec3 SampleSphereUniform(vec2 U)
     float phi = 2.0 * PI * U.y;
 
     // Returns a point on a unit sphere
-    return vec3(r * cos(phi), r * sin(phi), z);
+    return float3(r * cos(phi), r * sin(phi), z);
 }
 
 // -----------------------------------------
@@ -101,7 +87,7 @@ vec3 SampleSphereUniform(vec2 U)
  *
  * @note Values taken from paper "An Efficient Representation for Irradiance Environment Maps".
  */
-float SH(int l, int m, vec3 n)
+inline float SH(int l, int m, float3 n)
 {
     // Handle the base case for l=0, m=0
     if (l == 0 && m == 0) return 0.282095f;
@@ -118,36 +104,46 @@ float SH(int l, int m, vec3 n)
 }
 
 // Declare the SH coefficients as a constant array
-const ivec2 indices[9] = ivec2[9](
-    ivec2(0, 0),  ivec2(1, -1), ivec2(1,  0),
-    ivec2(1, 1),  ivec2(2, -2), ivec2(2, -1),
-    ivec2(2, 0),  ivec2(2,  1), ivec2(2,  2)
-);
+constant int2 indices[9] = {
+    int2(0, 0),  int2(1, -1), int2(1,  0),
+    int2(1, 1),  int2(2, -2), int2(2, -1),
+    int2(2, 0),  int2(2,  1), int2(2,  2)
+};
+
+// -----------------------------------------
+
+// Include additional functions
+#import "pixc/shaders/shared/utils/CubemapDir.metal"
 
 // Entry point of the fragment shader
-void main()
+fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
+                              texturecube<float> u_Material_TextureMap [[ texture(TextureIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(TextureIndex::TextureMap) ]])
 {
     // Get current pixel location
-    ivec2 pixelCoord = ivec2(gl_FragCoord.xy);
+    int2 pixelCoord = int2(in.Position.xy);
     
-    // Get the spherical harmonics indices to be used in the computation
+    // Get the spherical harmonics indices
     int indx = pixelCoord.y * 3 + pixelCoord.x;
     int l = indices[indx].x;
     int m = indices[indx].y;
     
     // Define the initial values
-    Llm = vec3(0.0f);
+    float3 Llm = float3(0.0);
     
     // Integrate over the hemisphere
-    const uint SAMPLE_COUNT = 8192u;
-    float deltaW = 4.0f * PI / float(SAMPLE_COUNT);
+    const uint SAMPLE_COUNT = 512u;
+    const float deltaW = 4.0f * PI / float(SAMPLE_COUNT);
     
-    for (uint i = 0u; i < SAMPLE_COUNT; ++i)
+    for (uint i = 0; i < SAMPLE_COUNT; ++i)
     {
-        vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-        vec3 wi = SampleSphereUniform(Xi);
-        vec3 Li = texture(u_Material.TextureMap, wi).rgb;
+        float2 Xi = Hammersley(i, SAMPLE_COUNT);
+        float3 wi = SampleSphereUniform(Xi);
+        
+        float3 Li = u_Material_TextureMap.sample(s_Material_TextureMap, toCubemapDir(wi)).rgb;
         
         Llm += SH(l, m, wi) * Li * deltaW;
     }
+    
+    return float4(Llm, 1.0f);
 }
