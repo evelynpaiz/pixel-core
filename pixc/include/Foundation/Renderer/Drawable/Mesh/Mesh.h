@@ -34,7 +34,7 @@ public:
     // ----------------------------------------
     Mesh();
     Mesh(const std::vector<VertexData> &vertices,
-         const std::vector<unsigned int> &indices,
+         const std::vector<uint32_t> &indices,
          const BufferLayout &layout);
     
     /// @brief Delete the mesh.
@@ -43,13 +43,13 @@ public:
     // Mesh definition
     // ----------------------------------------
     void DefineVertices(const std::vector<VertexData> &vertices, const BufferLayout &layout);
-    void DefineIndices(const std::vector<unsigned int> &indices);
+    void DefineIndices(const std::vector<uint32_t> &indices);
     
     /// @brief Define the mesh using the provided vertex and index data.
     /// @param vertices The vertex data of the mesh.
     /// @param indices The index data of the mesh.
     /// @param layout The layout of the vertex data in the buffer.
-    void DefineMesh(const std::vector<VertexData> &vertices, const std::vector<unsigned int> &indices,
+    void DefineMesh(const std::vector<VertexData> &vertices, const std::vector<uint32_t> &indices,
                     const BufferLayout &layout)
     {
         DefineVertices(vertices, layout);
@@ -77,7 +77,7 @@ private:
     ///< Vertex data of the mesh.
     std::vector<std::vector<VertexData>> m_Vertices;
     ///< Index data of the mesh.
-    std::vector<unsigned int> m_Indices;
+    std::vector<uint32_t> m_Indices;
     
     ///< Rendering drawable data/state.
     std::shared_ptr<Drawable> m_Drawable;
@@ -104,7 +104,7 @@ Mesh<VertexData>::Mesh()
  */
 template<typename VertexData>
 Mesh<VertexData>::Mesh(const std::vector<VertexData> &vertices,
-                       const std::vector<unsigned int> &indices, const BufferLayout &layout)
+                       const std::vector<uint32_t> &indices, const BufferLayout &layout)
 : Mesh()
 {
     // Define the mesh information into corresponding buffers
@@ -133,7 +133,7 @@ void Mesh<VertexData>::DefineVertices(const std::vector<VertexData> &vertices,
  * @param indices The index data of the mesh.
  */
 template<typename VertexData>
-void Mesh<VertexData>::DefineIndices(const std::vector<unsigned int> &indices)
+void Mesh<VertexData>::DefineIndices(const std::vector<uint32_t> &indices)
 {
     // Save the raw index information of the mesh
     m_Indices = indices;

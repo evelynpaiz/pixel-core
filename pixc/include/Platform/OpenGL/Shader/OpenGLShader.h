@@ -80,10 +80,10 @@ private:
 private:
     // Compilation
     // ----------------------------------------
-    unsigned int CompileShader(unsigned int type, const std::string& source);
-    unsigned int CreateShader(const std::string& vertexShader,
-                              const std::string& fragmentShader,
-                              const std::string& gemetryShader = "");
+    uint32_t CompileShader(uint32_t type, const std::string& source);
+    uint32_t CreateShader(const std::string& vertexShader,
+                          const std::string& fragmentShader,
+                          const std::string& gemetryShader = "");
     
     // Attributes(s) & Uniform(s)
     // ----------------------------------------
@@ -96,7 +96,7 @@ private:
     // ----------------------------------------
 private:
     ///< ID of the shader program.
-    unsigned int m_ID = 0;
+    uint32_t m_ID = 0;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

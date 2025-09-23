@@ -215,7 +215,7 @@ public:
     /// @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
     void DrawModelWithTransform(const glm::mat4 &transform = glm::mat4(1.0f)) override
     {
-        for(unsigned int i = 0; i < m_Meshes.size(); i++)
+        for(size_t i = 0; i < m_Meshes.size(); i++)
             m_Meshes[i].DrawMesh(transform, m_Primitive);
     }
     
@@ -231,13 +231,13 @@ public:
     /// @param material The material defining the surface of the meshes.
     void SetMaterial(const std::shared_ptr<Material>& material) override
     {
-        for(unsigned int i = 0; i < m_Meshes.size(); i++)
+        for(size_t i = 0; i < m_Meshes.size(); i++)
             m_Meshes[i].SetMaterial(material);
     }
     /// @brief Sets the material for a specific mesh in the model.
     /// @param index The index of the mesh to set the material for.
     /// @param material The material defining the surface of the mesh.
-    void SetMaterialForMesh(unsigned int index, const std::shared_ptr<Material>& material)
+    void SetMaterialForMesh(uint32_t index, const std::shared_ptr<Material>& material)
     {
         if (index >= 0 && index < m_Meshes.size())
             m_Meshes[index].SetMaterial(material);

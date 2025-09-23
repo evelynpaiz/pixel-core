@@ -131,7 +131,7 @@ void MetalTextureCube::CreateTexture(const std::vector<const void *> &data)
     PIXEL_CORE_ASSERT(data.size() == 6, "Invalid data for the texture cube map!");
     
     // Create the texture with its data and specifications
-    for (unsigned int i = 0; i < data.size(); ++i)
+    for (uint32_t i = 0; i < data.size(); ++i)
         MTLCreateTexture(data[0], m_Spec, 1, i);
     
     // Define the texture as loaded

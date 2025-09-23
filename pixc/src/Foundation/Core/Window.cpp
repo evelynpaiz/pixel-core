@@ -15,7 +15,7 @@ namespace pixc {
 // --------------------------------------------
 
 /// Window counter for GLFW.
-static unsigned int g_WindowCount = 0;
+static uint32_t g_WindowCount = 0;
 
 // --------------------------------------------
 // Event management
@@ -45,8 +45,8 @@ static void WindowResizeCallback(GLFWwindow *window, int width, int height) noex
     WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
     
     // Update the size of the window
-    data.Width = static_cast<unsigned int>(width);
-    data.Height = static_cast<unsigned int>(height);
+    data.Width = static_cast<uint32_t>(width);
+    data.Height = static_cast<uint32_t>(height);
     
     // Call the event callback function with a window resize event
     if (data.EventCallback)
@@ -87,7 +87,7 @@ static void KeyCallback(GLFWwindow *window, int key, int scancode,
                         int action, int mods) noexcept
 {
     // Key pressed counter
-    static unsigned int keyCount = 1;
+    static uint32_t keyCount = 1;
     
     // Recover the window information
     WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -201,8 +201,8 @@ static void MouseMovedCallback(GLFWwindow *window, double x, double y) noexcept
  * @param width Size (width) of the window.
  * @param height Size (height) of the window.
  */
-Window::Window(const std::string& title, const unsigned int width,
-               const unsigned int height)
+Window::Window(const std::string& title, const uint32_t width,
+               const uint32_t height)
 : m_Data(title, width, height)
 {
     Init();
@@ -231,7 +231,7 @@ void Window::OnUpdate() const
 /**
  * @brief Update the size information when the window is resized.
  */
-void Window::OnResize(const unsigned int width, const unsigned int height) const
+void Window::OnResize(const uint32_t width, const uint32_t height) const
 {
     m_Context->UpdateBufferSize(width, height);
 }
@@ -297,8 +297,8 @@ void Window::Init()
     int width, height;
     glfwGetFramebufferSize(m_Window, &width, &height);
     
-    m_Data.Width = static_cast<unsigned int>(width);
-    m_Data.Height = static_cast<unsigned int>(height);
+    m_Data.Width = static_cast<uint32_t>(width);
+    m_Data.Height = static_cast<uint32_t>(height);
     
     m_Context->UpdateBufferSize(m_Data.Width, m_Data.Height);
     

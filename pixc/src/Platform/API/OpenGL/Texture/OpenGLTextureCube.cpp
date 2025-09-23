@@ -155,7 +155,7 @@ void OpenGLTextureCube::CreateTexture(const std::vector<const void *> &data)
     // Verify size of the 2D texture
     PIXEL_CORE_ASSERT(m_Spec.Width > 0 && m_Spec.Height > 0, "2D texture size not properly defined!");
     
-    for (unsigned int i = 0; i < data.size(); ++i)
+    for (uint32_t i = 0; i < data.size(); ++i)
     {
         // Create the texture with the data
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, utils::textures::gl::ToOpenGLInternalFormat(m_Spec.Format),

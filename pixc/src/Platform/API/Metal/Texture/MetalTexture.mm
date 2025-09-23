@@ -76,7 +76,7 @@ int MetalTexture::MTLGetChannels(TextureFormat format) const
  */
 void MetalTexture::MTLCreateTexture(const void *data,
                                     const TextureSpecification& spec,
-                                    unsigned int samples, unsigned int slice)
+                                    const uint32_t samples, const uint32_t slice)
 {
     // Create the internal Metal texture object if it doesn't exist
     if (!m_TextureData->Texture)
@@ -141,7 +141,7 @@ void MetalTexture::MTLCreateTexture(const void *data,
  * @param samples The number of samples to use for the texture.
  */
 void MetalTexture::MTLDefineTexture(const TextureSpecification& spec,
-                                    unsigned int samples)
+                                    const uint32_t samples)
 {
     @autoreleasepool
     {

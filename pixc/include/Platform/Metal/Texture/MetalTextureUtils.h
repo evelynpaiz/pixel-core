@@ -195,7 +195,7 @@ inline MTLRegion GetMetalRegion(const TextureSpecification& spec)
  *
  * @note If the input format is not recognized, the function will assert with an error.
  */
-inline unsigned int GetMetalChannelCount(TextureFormat format)
+inline uint32_t GetMetalChannelCount(TextureFormat format)
 {
     switch (format)
     {

@@ -78,8 +78,8 @@ void OpenGLContext::SetVerticalSync(bool enabled)
  * @param width The width of the buffer.
  * @param height The height of the buffer.
  */
-void OpenGLContext::UpdateBufferSize(const unsigned int width,
-                                    const unsigned int height)
+void OpenGLContext::UpdateBufferSize(const uint32_t width,
+                                     const uint32_t height)
 {
     // TODO: to be checked!
     glViewport(0, 0, width, height);

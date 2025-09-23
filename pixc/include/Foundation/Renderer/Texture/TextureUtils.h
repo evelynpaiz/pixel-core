@@ -127,7 +127,7 @@ namespace utils { namespace textures {
  *
  * @note If the input format is not recognized, the function will assert with an error.
  */
-inline unsigned int GetChannelCount(TextureFormat format)
+inline uint32_t GetChannelCount(TextureFormat format)
 {
     switch (format)
     {
@@ -172,7 +172,7 @@ inline unsigned int GetChannelCount(TextureFormat format)
  *
  * @note If the input format is not recognized, the function will assert with an error.
  */
-inline unsigned int GetBytesPerChannel(TextureFormat format)
+inline uint32_t GetBytesPerChannel(TextureFormat format)
 {
     switch (format)
     {
@@ -320,7 +320,7 @@ inline bool IsRGBFormat(TextureFormat format)
  *
  * @note Ensure to delete[] the allocated memory after use to avoid memory leaks.
  */
-inline void* AllocateTextureData(TextureFormat format, unsigned int size)
+inline void* AllocateTextureData(TextureFormat format, size_t size)
 {
     switch (format)
     {

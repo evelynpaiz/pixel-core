@@ -23,7 +23,7 @@ struct WindowData
     ///< Window title.
     std::string Title;
     ///< Window size.
-    unsigned int Width, Height;
+    uint32_t Width, Height;
     ///< Vertical synchronization with the monitor.
     bool VerticalSync;
     
@@ -36,8 +36,8 @@ struct WindowData
     /// @param title Window name.
     /// @param width Size (width) of the window.
     /// @param height Size (height) of the window.
-    WindowData(const std::string& title, const unsigned int width,
-               const unsigned int height, bool verticalSync = true)
+    WindowData(const std::string& title, const uint32_t width,
+               const uint32_t height, bool verticalSync = true)
     : Title(title), Width(width), Height(height), VerticalSync(verticalSync)
     {}
     /// @brief delete the data of the window.
@@ -58,13 +58,13 @@ class Window
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    Window(const std::string& title, const unsigned int width, const unsigned int height);
+    Window(const std::string& title, const uint32_t width, const uint32_t height);
     ~Window();
     
     // Handler(s)
     // ----------------------------------------
     void OnUpdate() const;
-    void OnResize(const unsigned int width, const unsigned int height) const;
+    void OnResize(const uint32_t width, const uint32_t height) const;
     
     // Getter(s)
     // ----------------------------------------

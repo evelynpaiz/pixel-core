@@ -107,7 +107,7 @@ protected:
     /// @param shader The shader program to set the properties for.
     /// @param name The uniform name.
     void SetProperties(const std::shared_ptr<Shader>& shader,
-                       const std::string& name, unsigned int slot)
+                       const std::string& name, uint32_t slot)
     {
         shader->SetTexture(name, m_Texture, slot);
     }

@@ -119,7 +119,7 @@ public:
     // ----------------------------------------
     ///< @brief Get the ID of the light source.
     ///< @return Light ID number.
-    unsigned int GetID() const { return m_ID; }
+    uint32_t GetID() const { return m_ID; }
     /// @brief Get the color of the light source.
     /// @return The color of the light source.
     glm::vec3 GetColor() const { return m_Color; }
@@ -238,7 +238,7 @@ protected:
     // Light variables
     // ----------------------------------------
     ///< The index id of the light source.
-    unsigned int m_ID;
+    uint32_t m_ID;
     
     ///< The position of the light if .w is defined as 1.0f, or
     ///< the direction of the light if .w is defined as 0.0f.
@@ -263,7 +263,7 @@ protected:
     ///< Shadow data container.
     ShadowMap m_Shadow;
     
-    static inline unsigned int s_IndexCount = 0;
+    static inline uint32_t s_IndexCount = 0;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

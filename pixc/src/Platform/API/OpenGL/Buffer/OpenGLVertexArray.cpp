@@ -46,7 +46,7 @@ void OpenGLVertexArray::Unbind() const
  * @param index Attribute index.
  */
 void OpenGLVertexArray::SetVertexAttributes(const std::shared_ptr<VertexBuffer>& vbo,
-                                            unsigned int& index)
+                                            uint32_t& index)
 {
     // Check if the vertex buffer has a layout defined
     PIXEL_CORE_ASSERT(!vbo->GetLayout().IsEmpty(), "Vertex buffer has no layout!");

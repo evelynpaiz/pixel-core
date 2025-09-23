@@ -134,7 +134,7 @@ void TextureCube::LoadFromFile(const std::filesystem::path& directory,
     int width, height, channels;
     std::vector<const void*> data(files.size(), nullptr);
     
-    for(unsigned int i = 0; i < data.size(); i++)
+    for(uint32_t i = 0; i < data.size(); i++)
     {
         // Determine whether to flip the image vertically
         stbi_set_flip_vertically_on_load(m_Flip);
@@ -157,14 +157,14 @@ void TextureCube::LoadFromFile(const std::filesystem::path& directory,
         
         // Save the corresponding image information
         Update(width, height, channels);
-        PIXEL_CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + filePath.filename().string() + " not supported!");
+        PIXEL_CORE_ASSERT((uint32_t)m_Spec.Format, "Data format of " + filePath.filename().string() + " not supported!");
     }
     
     // Generate the cube texture
     CreateTexture(data);
     
     // Free memory
-    for(unsigned int i = 0; i < data.size(); i++)
+    for(uint32_t i = 0; i < data.size(); i++)
         stbi_image_free(const_cast<void*>(data[i]));
 }
 

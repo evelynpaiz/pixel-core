@@ -56,8 +56,8 @@ struct TextureSpecification
     /// @brief Define the size of the texture (in pixels).
     /// @param width The texture size (width).
     /// @param height The texture size (height)
-    void SetTextureSize(unsigned int width, unsigned int height = 0,
-                        unsigned int depth = 0)
+    void SetTextureSize(uint32_t width, uint32_t height = 0,
+                        uint32_t depth = 0)
     {
         Width = width;
         Height = height;
@@ -83,7 +83,7 @@ struct TextureSpecification
     // Texture specification variables
     // ----------------------------------------
     ///< The size (width and height) in pixels.
-    int Width = 0, Height = 0, Depth = 0;
+    uint32_t Width = 0, Height = 0, Depth = 0;
     
     ///< The type (dimension) of the texture.
     TextureType Type = TextureType::None;
@@ -180,8 +180,8 @@ public:
     
     // Update
     // ----------------------------------------
-    void Update(const unsigned int width, const unsigned int height,
-                const unsigned int channels, const std::string& extension = "");
+    void Update(const uint32_t width, const uint32_t height,
+                const uint32_t channels, const std::string& extension = "");
     
     // Friend class definition(s)
     // ----------------------------------------
@@ -253,7 +253,7 @@ struct TextureHelper
     /// @brief Sets the size of the `spec` according to the texture type `T`.
     /// @param spec  The `TextureSpecification` object whose size needs to be set.
     /// @param size The size value. 
-    static void SetSize(TextureSpecification& spec, unsigned int size);
+    static void SetSize(TextureSpecification& spec, uint32_t size);
 };
 
 /**

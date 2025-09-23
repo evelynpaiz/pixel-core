@@ -67,7 +67,7 @@ inline constexpr DataType GetDataType()
  *
  * @return The size of the data (in bytes).
  */
-inline unsigned int GetDataSize(DataType dataType)
+inline uint32_t GetDataSize(DataType dataType)
 {
     switch (dataType)
     {
@@ -94,7 +94,7 @@ inline unsigned int GetDataSize(DataType dataType)
  *
  * @return The number of components that the data has.
  */
-inline unsigned int GetComponentCount(DataType dataType)
+inline uint32_t GetComponentCount(DataType dataType)
 {
     switch (dataType)
     {

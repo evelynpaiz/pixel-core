@@ -335,8 +335,8 @@ void MetalContext::EndEncoding()
  * @param width The width of the buffer.
  * @param height The height of the buffer.
  */
-void MetalContext::UpdateBufferSize(const unsigned int width,
-                                    const unsigned int height)
+void MetalContext::UpdateBufferSize(const uint32_t width,
+                                    const uint32_t height)
 {
     // TODO: to be checked! (maybe the viewport needs to be updated too)
     m_State->SwapChain.Layer.drawableSize = CGSizeMake(width, height);

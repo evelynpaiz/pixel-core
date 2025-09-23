@@ -73,7 +73,7 @@ namespace utils { namespace geometry
  *
  * @return A vector of indices forming a plane.
  */
-inline std::vector<unsigned int> IndicesOfPlane()
+inline std::vector<uint32_t> IndicesOfPlane()
 {
     return
     {
@@ -87,7 +87,7 @@ inline std::vector<unsigned int> IndicesOfPlane()
  *
  * @return A vector of indices forming a basic cube (fewer number of vertices).
  */
-inline std::vector<unsigned int> IndicesOfBasicCube()
+inline std::vector<uint32_t> IndicesOfBasicCube()
 {
     return
     {
@@ -117,7 +117,7 @@ inline std::vector<unsigned int> IndicesOfBasicCube()
  *
  * @return A vector of indices forming a cube.
  */
-inline std::vector<unsigned int> IndicesOfCube()
+inline std::vector<uint32_t> IndicesOfCube()
 {
     return
     {
@@ -148,18 +148,18 @@ inline std::vector<unsigned int> IndicesOfCube()
  * @param resolution The number of horizontal and vertical segments of the sphere.
  * @return A vector of indices forming a sphere.
  */
-inline std::vector<unsigned int> IndicesOfSphere(int resolution)
+inline std::vector<uint32_t> IndicesOfSphere(uint32_t resolution)
 {
-    std::vector<unsigned int> indices;
+    std::vector<uint32_t> indices;
     
-    for (int i = 0; i < resolution; i++)
+    for (uint32_t i = 0; i < resolution; i++)
     {
-        for (int j = 0; j < resolution; j++)
+        for (uint32_t j = 0; j < resolution; j++)
         {
-            int p1 = i * (resolution + 1) + j;
-            int p2 = p1 + 1;
-            int p3 = (i + 1) * (resolution + 1) + j;
-            int p4 = p3 + 1;
+            uint32_t p1 = i * (resolution + 1) + j;
+            uint32_t p2 = p1 + 1;
+            uint32_t p3 = (i + 1) * (resolution + 1) + j;
+            uint32_t p4 = p3 + 1;
             
             indices.push_back(p1);
             indices.push_back(p2);
@@ -183,7 +183,7 @@ inline std::vector<unsigned int> IndicesOfSphere(int resolution)
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                std::vector<uint32_t>& indices)
 {
     vertices = {
         // { position }
@@ -203,7 +203,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                std::vector<uint32_t>& indices)
 {
     vertices = {
         // { position, texture coords }
@@ -223,7 +223,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                std::vector<uint32_t>& indices)
 {
     vertices = {
         // { position, normal }
@@ -243,7 +243,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                                std::vector<unsigned int>& indices)
+                                std::vector<uint32_t>& indices)
 {
     vertices = {
         // { position, texture coords, normal }
@@ -265,7 +265,7 @@ inline void DefinePlaneGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, 
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
-                               std::vector<unsigned int>& indices)
+                               std::vector<uint32_t>& indices)
 {
     vertices = {
         // Front face
@@ -290,7 +290,7 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>& vertices,
-                               std::vector<unsigned int>& indices)
+                               std::vector<uint32_t>& indices)
 {
     vertices = {
         // Front face
@@ -315,7 +315,7 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>&
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>& vertices,
-                               std::vector<unsigned int>& indices)
+                               std::vector<uint32_t>& indices)
 {
     // Define the vertices with positions and normals
     vertices = {
@@ -361,7 +361,7 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>&
  * @param indices Vector to store the indices of the vertices to form triangles.
  */
 inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                               std::vector<unsigned int>& indices)
+                               std::vector<uint32_t>& indices)
 {
     // Define the vertices with positions and normals
     vertices = {
@@ -409,7 +409,7 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, g
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices,
-                                 std::vector<unsigned int>& indices)
+                                 std::vector<uint32_t>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
@@ -442,7 +442,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4>>& vertices
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>>& vertices,
-                                 std::vector<unsigned int>& indices)
+                                 std::vector<uint32_t>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
@@ -475,7 +475,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2>
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>>& vertices,
-                                 std::vector<unsigned int>& indices)
+                                 std::vector<uint32_t>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;
@@ -508,7 +508,7 @@ inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec3>
  * @param resolution The number of horizontal and vertical segments of the sphere.
  */
 inline void DefineSphereGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>& vertices,
-                                 std::vector<unsigned int>& indices)
+                                 std::vector<uint32_t>& indices)
 {
     float radius = 1.0f;
     int resolution = 32;

@@ -58,8 +58,8 @@ class WindowResizeEvent : public WindowEvent
     /// @param title The window title.
     /// @param width Updated window size (width).
     /// @param height Updated window size (height).
-    WindowResizeEvent(const std::string& title, unsigned int width,
-                      unsigned int height)
+    WindowResizeEvent(const std::string& title, uint32_t width,
+                      uint32_t height)
     : WindowEvent(title), m_Width(width), m_Height(height)
     {}
     
@@ -67,10 +67,10 @@ class WindowResizeEvent : public WindowEvent
     // ----------------------------------------
     /// @brief Get the resize event size.
     /// @return The updated size (width).
-    unsigned int GetWidth() const { return m_Width; }
+    uint32_t GetWidth() const { return m_Width; }
     /// @brief Get the resize event size.
     /// @return The updated size (height).
-    unsigned int GetHeight() const { return m_Height; }
+    uint32_t GetHeight() const { return m_Height; }
     /// @brief Get the description of the event.
     /// @return Event description (updated size).
     std::string GetDescription() const override
@@ -87,7 +87,7 @@ class WindowResizeEvent : public WindowEvent
     // ----------------------------------------
     private:
     ///< Size.
-    unsigned int m_Width, m_Height;
+    uint32_t m_Width, m_Height;
 };
 
 /**

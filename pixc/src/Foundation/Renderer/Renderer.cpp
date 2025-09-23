@@ -42,7 +42,7 @@ void Renderer::BeginScene()
  */
 void Renderer::EndScene()
 {
-    g_Stats.renderPasses++;
+    g_Stats.RenderPasses++;
 }
 
 /**
@@ -56,7 +56,7 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveTy
     // Render the geometry
     RendererCommand::Draw(drawable, primitive);
     // Add the drawing count
-    g_Stats.drawCalls++;
+    g_Stats.DrawCalls++;
 }
 
 /**

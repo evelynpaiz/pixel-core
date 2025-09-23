@@ -6,7 +6,7 @@
  */
 namespace pixc {
 
-using MouseCode = unsigned int;
+using MouseCode = uint16_t;
 
 /**
  * @namespace pixc::mouse

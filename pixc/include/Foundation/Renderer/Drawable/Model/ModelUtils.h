@@ -89,18 +89,18 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
  *
  * @param material A shared pointer to the material to be applied to the model.
  * @param DefineGeometry A function pointer to a function that defines the geometry data.
- *                       The function must have the signature `void DefineGeometry(std::vector<VertexData>&, std::vector<unsigned int>&)`.
+ *                       The function must have the signature `void DefineGeometry(std::vector<VertexData>&, std::vector<uint32_t>&)`.
  *                       It should fill the provided vectors with vertex data and indices.
  *
  * @return The generated model with the specified geometry and material.
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&,std::vector<unsigned int>&),
+GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&,std::vector<uint32_t>&),
               const std::shared_ptr<Material>& material)
 {
     std::vector<VertexData> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<uint32_t> indices;
     DefineGeometry(vertices, indices);
     
     BufferLayout layout = BufferLayoutGeometry(vertices);

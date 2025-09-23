@@ -14,7 +14,7 @@ namespace pixc {
  *
  * @param size The resolution of the cubemap (width = height).
  */
-EnvironmentLight::EnvironmentLight(const unsigned int size) : Light()
+EnvironmentLight::EnvironmentLight(const uint32_t size) : Light()
 {
     // Initialize the environment light
     InitEnvironment(size);
@@ -25,7 +25,7 @@ EnvironmentLight::EnvironmentLight(const unsigned int size) : Light()
  *
  * @param size The resolution of the cubemap (width = height).
  */
-void EnvironmentLight::InitEnvironment(unsigned int size)
+void EnvironmentLight::InitEnvironment(const uint32_t size)
 {
     SetupFramebuffers(size);
     SetupResources();
@@ -36,7 +36,7 @@ void EnvironmentLight::InitEnvironment(unsigned int size)
  *
  * @param size The resolution of the cubemap (width = height).
  */
-void EnvironmentLight::SetupFramebuffers(const unsigned int size)
+void EnvironmentLight::SetupFramebuffers(const uint32_t size)
 {
     // Create a framebuffer specification for the environment cubemap
     FrameBufferSpecification spec;

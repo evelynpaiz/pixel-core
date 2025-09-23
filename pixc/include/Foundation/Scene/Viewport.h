@@ -1,18 +1,30 @@
 #pragma once
 
-#include "Common/Renderer/RendererCommand.h"
+#include "Foundation/Core/ClassUtils.h"
 
-#include "Common/Renderer/Drawable/Model/Model.h"
-#include "Common/Renderer/Drawable/Model/ModelUtils.h"
+#include "Foundation/Renderer/Drawable/Model/Model.h"
+#include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
 
-#include "Common/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/SimpleMaterial.h"
+
+#include "Foundation/Renderer/RendererCommand.h"
 
 /**
- * Represents the viewport settings and geometry for rendering.
+ * @namespace pixc
+ * @brief Main namespace of the Pixel Core rendering engine.
+ */
+namespace pixc {
+
+/**
+ * @brief Represents a viewport used for rendering.
  *
- * The `Viewport` class encapsulates the properties of the rendering viewport,
- * including its width, height, 3D geometry model, framebuffer for rendering,
- * and the material used to display the rendered image.
+ * The `Viewport` class encapsulates a renderable area with its own framebuffer, material,
+ * and a geometric plane for displaying the rendered image.
+ * It supports both supersampling and subsampling through a scale factor, allowing the framebuffer
+ * to be rendered at higher or lower resolutions than the display size while keeping the geometry consistent.
+ *
+ * Copying or moving `Viewport` objects is disabled to ensure proper management of the
+ * underlying framebuffer and shared geometry.
  */
 class Viewport
 {
@@ -22,27 +34,40 @@ public:
     /// @brief Construct a viewport with a specific size.
     /// @param width The width of the viewport.
     /// @param height The height of the viewport.
-    Viewport(int width, int height, const std::filesystem::path& shaderPath = "") :
-        m_Width(width), m_Height(height)
+    /// @param shaderPath Optional shader path for the viewport material.
+    Viewport(uint32_t width, uint32_t height, const std::filesystem::path& shaderPath = "")
     {
-        // Define the framebuffer to be render into and update its information
+        // Create the output framebuffer (screen buffer)
         FrameBufferSpecification viewportSpec;
         viewportSpec.SetFrameBufferSize(width, height);
         viewportSpec.AttachmentsSpec = {
             { TextureType::TEXTURE2D, TextureFormat::RGBA8 },
             { TextureType::TEXTURE2D, TextureFormat::DEPTH16 }
         };
-        m_Framebuffer = FrameBuffer::Create(viewportSpec);
+        m_ScreenBuffer = FrameBuffer::Create(viewportSpec);
         
-        // Define the material to be displayed in the viewport
-        m_Material = shaderPath.empty() ? std::make_shared<SimpleTextureMaterial>() :
-                                          std::make_shared<SimpleTextureMaterial>(shaderPath);
-        m_Material->SetTextureMap(m_Framebuffer->GetColorAttachment(0));
+        // Initialize shared geometry if it hasn't been created yet
+        if (!s_Geometry)
+        {
+            using VertexData = GeoVertexData<glm::vec4, glm::vec2>;
+            s_Geometry = utils::geometry::ModelPlane<VertexData>();
+            s_Geometry->SetScale(glm::vec3(2.0f));
+        }
         
-        // Create the geometric model of the viewport
-        using VertexData = GeoVertexData<glm::vec4, glm::vec2>;
-        m_Geometry = utils::Geometry::ModelPlane<VertexData>();
-        m_Geometry->SetScale(glm::vec3(2.0f));
+        // Determine material name
+        std::string name = shaderPath.empty() ? "Viewport" : "Viewport" + shaderPath.stem().string();
+        // Lambda to create or get material from the library
+        auto createOrGetMaterial = [&](const std::string& name, const auto& path)
+        {
+            auto& materialLibrary = Renderer::GetMaterialLibrary();
+            if (!materialLibrary.Exists(name)) {
+                return path.empty() ?
+                    materialLibrary.Create<SimpleTextureMaterial>(name) :
+                    materialLibrary.Create<SimpleTextureMaterial>(name, path);
+            }
+            return std::dynamic_pointer_cast<SimpleTextureMaterial>(materialLibrary.Get(name));
+        };
+        m_Material = createOrGetMaterial(name, shaderPath);
     }
     /// @brief Delete the viewport.
     ~Viewport() = default;
@@ -51,83 +76,100 @@ public:
     // ----------------------------------------
     /// @brief Get the width of the viewport.
     /// @return Size (width).
-    int GetWidth() const { return m_Width; }
+    uint32_t GetWidth() const { return m_ScreenBuffer->GetSpec().Width / m_Scale; }
     /// @brief Get the height of the viewport.
     /// @return Size (height).
-    int GetHeight() const { return m_Height; }
+    uint32_t GetHeight() const { return m_ScreenBuffer->GetSpec().Height / m_Scale; }
     
     /// @brief Get the framebuffer with the rendered output.
     /// @return Viewport framebuffer.
-    const std::shared_ptr<FrameBuffer>& GetFramebuffer() const { return m_Framebuffer; }
+    const std::shared_ptr<FrameBuffer>& GetScreenBuffer() const { return m_ScreenBuffer; }
     
     // Setter(s)
     // ----------------------------------------
-    /// @brief Set the width of the viewport.
-    /// @param width The size (width).
-    void SetWidth(int width) { m_Width = width; }
-    /// @brief Set the height of the viewport.
-    /// @param height The size (height).
-    void SetHeight(int height) { m_Height = height; }
-    
     /// @brief Resize the size of the viewport.
     /// @param width The width of the viewport.
     /// @param height The height of the viewport.
-    void Resize(int width, int height)
+    void Resize(uint32_t width, uint32_t height)
     {
-        m_Width = width;
-        m_Height = height;
-        m_Framebuffer->Resize(width, height);
+        m_ScreenBuffer->Resize(width * m_Scale, height * m_Scale);
+    }
+    /// @brief Set a scale factor for subsampling the screen buffer.
+    /// @param scale Scale factor (e.g., 0.5 = half-resolution rendering)
+    void ReScale(float scale)
+    {
+        uint32_t width = GetWidth();
+        uint32_t height = GetHeight();
+        
+        m_Scale = scale;
+        Resize(width, height);
     }
     
     // Render
     // ----------------------------------------
-    /// @brief Display the rendered image into the viewport.
+    /// @brief Display the rendered image into the screen.
     /// @param material Viewport material.
-    void Render()
+    void RenderToScreen() const
     {
-        RendererCommand::SetViewport(0, 0, m_Width, m_Height);
-        RendererCommand::SetRenderTarget();
-        
-        Renderer::BeginScene();
-        m_Geometry->SetMaterial(m_Material);
-        m_Geometry->DrawModel();
-        Renderer::EndScene();
+        m_Material->SetTextureMap(m_ScreenBuffer->GetColorAttachment(0));
+        Render(nullptr, m_Material);
     }
     /// @brief Render the viewport geometry into a framebuffer.
     /// @param framebuffer The output of the rendered image.
     /// @param material The shading material used for rendering.
     void RenderToFramebuffer(const std::shared_ptr<FrameBuffer>& framebuffer,
-                             const std::shared_ptr<Material>& material)
+                             const std::shared_ptr<Material>& material) const
     {
-        framebuffer->Bind();
-        
-        RendererCommand::SetRenderTarget(framebuffer);
-        
+        Render(framebuffer, material);
+    }
+    
+private:
+    /// @brief Render the viewport geometry into a framebuffer.
+    /// @param framebuffer The output of the rendered image.
+    /// @param material The shading material used for rendering.
+    void Render(const std::shared_ptr<FrameBuffer>& framebuffer,
+                const std::shared_ptr<Material>& material) const
+    {
+        RendererCommand::BeginRenderPass(framebuffer);
+        if (!framebuffer)
+            RendererCommand::SetViewport(0, 0, GetWidth(), GetHeight());
+        RendererCommand::SetClearColor(glm::vec4(0.0f));
+        RendererCommand::Clear();
+
         Renderer::BeginScene();
-        m_Geometry->SetMaterial(material);
-        m_Geometry->DrawModel();
+        s_Geometry->SetMaterial(material);
+        s_Geometry->DrawModel();
         Renderer::EndScene();
-        
-        framebuffer->Unbind();
+
+        RendererCommand::EndRenderPass();
     }
     
     // Viewport variables
     // ----------------------------------------
 private:
-    ///< Width of the viewport.
-    int m_Width;
-    ///< Height of the viewport.
-    int m_Height;
     ///< 3D geometry of the viewport.
-    std::shared_ptr<BaseModel> m_Geometry;
+    static std::shared_ptr<BaseModel> s_Geometry;
     
     ///< Framebuffer to render into.
-    std::shared_ptr<FrameBuffer> m_Framebuffer;
+    std::shared_ptr<FrameBuffer> m_ScreenBuffer;
     ///< Material to be used to display the framebuffer.
     std::shared_ptr<SimpleTextureMaterial> m_Material;
+    
+    ///< Scale factor for the viewport plane (for subsampling or resizing)
+    float m_Scale = 1.0f;
     
     // Friend classes
     // ----------------------------------------
 public:
     friend class Scene;
+    
+    // Disable the copying or moving of this resource
+    // ----------------------------------------
+public:
+    DISABLE_COPY_AND_MOVE(Viewport);
 };
+
+// Define the static shared geometry
+inline std::shared_ptr<BaseModel> Viewport::s_Geometry = nullptr;
+
+} // namespace pixc

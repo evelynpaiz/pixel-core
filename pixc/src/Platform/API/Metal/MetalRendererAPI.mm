@@ -92,8 +92,8 @@ void MetalRendererAPI::SetClearColor(const glm::vec4& color)
  * @param width The width of the viewport.
  * @param height The height of the viewport.
  */
- void MetalRendererAPI::SetViewport(const unsigned int x, const unsigned int y,
-                                    const unsigned int width, const unsigned int height)
+ void MetalRendererAPI::SetViewport(const uint32_t x, const uint32_t y,
+                                    const uint32_t width, const uint32_t height)
  {
      // Get the size of the current drawable
      glm::vec2 drawableSize = m_Context->GetBackbufferSize();

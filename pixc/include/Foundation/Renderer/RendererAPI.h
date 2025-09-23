@@ -58,8 +58,8 @@ public:
     // ----------------------------------------
     virtual void SetClearColor(const glm::vec4& color) = 0;
     
-    virtual void SetViewport(const unsigned int x, const unsigned int y,
-                             const unsigned int width, const unsigned int height) = 0;
+    virtual void SetViewport(const uint32_t x, const uint32_t y,
+                             const uint32_t width, const uint32_t height) = 0;
     
     virtual void EnableDepthTesting(const bool enabled) = 0;
     virtual void SetDepthFunction(const DepthFunction function) = 0;

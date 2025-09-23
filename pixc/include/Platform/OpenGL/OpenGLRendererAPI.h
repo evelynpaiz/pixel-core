@@ -36,8 +36,8 @@ public:
     // ----------------------------------------
     void SetClearColor(const glm::vec4& color) override;
     
-    void SetViewport(const unsigned int x, const unsigned int y,
-                     const unsigned int width, const unsigned int height) override;
+    void SetViewport(const uint32_t x, const uint32_t y,
+                     const uint32_t width, const uint32_t height) override;
     
     void EnableDepthTesting(const bool enabled) override;
     void SetDepthFunction(const DepthFunction function) override;

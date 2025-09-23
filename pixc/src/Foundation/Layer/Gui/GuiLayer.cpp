@@ -136,8 +136,8 @@ void GuiLayer::GUIStats(Timestep ts)
     ImGui::Text("FPS: %d", ts.GetFPS());
     ImGui::Text("Time (ms) %.2f", ts.GetMilliseconds());
     ImGui::Separator();
-    ImGui::Text("Render Passes: %d", stats.renderPasses);
-    ImGui::Text("Draw Calls: %d", stats.drawCalls);
+    ImGui::Text("Render Passes: %d", stats.RenderPasses);
+    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
     
     ImGui::End();
 }

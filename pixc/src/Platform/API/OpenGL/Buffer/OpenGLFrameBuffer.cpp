@@ -228,7 +228,7 @@ void OpenGLFrameBuffer::Invalidate()
     DefineAttachments();
     
     // Attach defined textures to framebuffer
-    for (unsigned int i = 0; i < m_ColorAttachments.size(); i++)
+    for (uint32_t i = 0; i < m_ColorAttachments.size(); i++)
     {
         auto attachment = std::dynamic_pointer_cast<OpenGLTexture>(m_ColorAttachments[i]);
         

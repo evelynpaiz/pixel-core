@@ -34,13 +34,13 @@ public:
     // Setter(s)
     // ----------------------------------------
     void SetVertexAttributes(const std::shared_ptr<VertexBuffer>& vbo,
-                             unsigned int& index);
+                             uint32_t& index);
     
     // Vertex array variables
     // ----------------------------------------
 private:
     ///< ID of the vertex array.
-    unsigned int m_ID = 0;
+    uint32_t m_ID = 0;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

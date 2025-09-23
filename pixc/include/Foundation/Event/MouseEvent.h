@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/Event/Event.h"
+#include "Foundation/Input/MouseCodes.h"
 
 /**
  * @namespace pixc
@@ -21,7 +22,7 @@ class MouseButtonEvent : public Event
     // ----------------------------------------
     /// @brief Get the numerical code of the mouse button.
     /// @return The mouse code.
-    int GetMouseButton() const { return m_Button; }
+    MouseCode GetMouseButton() const { return m_Button; }
     
     // Define the different categories of the event
     EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
@@ -31,15 +32,15 @@ class MouseButtonEvent : public Event
     // ----------------------------------------
     /// @brief Generate a mouse button event.
     /// @param button Numerical value of the button.
-    MouseButtonEvent(const int button)
-    : m_Button(button)
+    MouseButtonEvent(const MouseCode button)
+        : m_Button(button)
     {}
     
     // Mouse button event variables
     // ----------------------------------------
     protected:
     ///< Code of the button pressed/released.
-    int m_Button;
+    MouseCode m_Button;
 };
 
 /**
@@ -56,8 +57,8 @@ class MouseButtonPressedEvent : public MouseButtonEvent
     // ----------------------------------------
     /// @brief Generate a mouse button pressed event.
     /// @param button Numerical value of the button.
-    MouseButtonPressedEvent(const int button)
-    : MouseButtonEvent(button)
+    MouseButtonPressedEvent(const MouseCode button)
+        : MouseButtonEvent(button)
     {}
     
     // Getter(s)
@@ -89,8 +90,8 @@ class MouseButtonReleasedEvent : public MouseButtonEvent
     // ----------------------------------------
     /// @brief Generate a mouse button released event.
     /// @param button Numerical value of the button.
-    MouseButtonReleasedEvent(const int button)
-    : MouseButtonEvent(button)
+    MouseButtonReleasedEvent(const MouseCode button)
+        : MouseButtonEvent(button)
     {}
     
     // Getter(s)
@@ -123,7 +124,7 @@ class MouseScrolledEvent : public Event
     /// @param xOffset The scroll offset in the x-axis (horizontally).
     /// @param yOffset The scroll offset in the y-axis (vertically).
     MouseScrolledEvent(const float xOffset, const float yOffset)
-    : m_XOffset(xOffset), m_YOffset(yOffset)
+        : m_XOffset(xOffset), m_YOffset(yOffset)
     {}
     
     // Getter(s)
@@ -171,7 +172,7 @@ class MouseMovedEvent : public Event
     /// @param x The mouse position in the x-axis.
     /// @param y The mouse position in the y-axis.
     MouseMovedEvent(const float x, const float y)
-    : m_X(x), m_Y(y)
+        : m_X(x), m_Y(y)
     {}
     
     // Getter(s)

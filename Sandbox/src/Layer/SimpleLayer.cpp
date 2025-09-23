@@ -4,31 +4,21 @@
  * @brief Define a layer for a 3D viewer.
  */
 SimpleLayer::SimpleLayer(int width, int height, const std::string& name)
-// TODO: pass a scene initialized?
-: RenderingLayer(width, height, name)
+    : RenderingLayer(width, height, name)
 {
     // Define the rendering camera
     m_Camera = std::make_shared<pixc::PerspectiveCamera>(width, height);
     m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+    
+    // Update the subsampling scale of the viewport
+    m_Viewport->ReScale(2.0f);
 }
 
 /**
  * @brief Define and configure frame buffers used in the rendering pipeline.
  */
 void SimpleLayer::DefineBuffers()
-{
-    // Define a framebuffer specification
-    pixc::FrameBufferSpecification spec;
-    
-    // Configure the specification for a super-sampling framebuffer
-    spec.SetFrameBufferSize(m_Camera->GetWidth() * 2, m_Camera->GetHeight() * 2);
-    spec.AttachmentsSpec = {
-        { pixc::TextureType::TEXTURE2D, pixc::TextureFormat::RGBA8 },
-        { pixc::TextureType::TEXTURE2D, pixc::TextureFormat::DEPTH16 }
-    };
-    
-    m_Framebuffers.Create("Scene", spec);
-}
+{}
 
 /**
  * @brief Define and register materials used for rendering.
@@ -40,8 +30,7 @@ void SimpleLayer::DefineMaterials()
     
     // Define the new material(s)
     materialLibrary.Create<pixc::SimpleMaterial>("Simple");
-    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor",
-                                                     pixc::ResourcesManager::GeneralPath("pixc/shaders/phong/SHPhongColor"));
+    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor");
 }
 
 /**
@@ -49,15 +38,11 @@ void SimpleLayer::DefineMaterials()
  */
 void SimpleLayer::DefineLights()
 {
-    unsigned int width = m_Camera->GetWidth();
-    unsigned int height = m_Camera->GetHeight();
+    uint32_t width = m_Camera->GetWidth();
+    uint32_t height = m_Camera->GetHeight();
     
     // Define the environment light
-    auto environment = std::make_shared<pixc::SHEnvironmentLight>();
-    
-    static auto envMap = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("environment/env.hdr"));
-    environment->SetEnvironmentMap(envMap);
-    
+    auto environment = std::make_shared<pixc::EnvironmentLight>();
     m_Lights.Add("Environment", environment);
     
     // Define the positional light source(s)
@@ -95,10 +80,6 @@ void SimpleLayer::DefineGeometry()
     cube->SetScale(glm::vec3(0.5f));
     cube->SetPosition(glm::vec3(0.5f, 0.0f, 0.0f));
     m_Models.Add("Cube", cube);
-    
-    auto viewport = pixc::utils::geometry::ModelPlane<pixc::GeoVertexData<glm::vec4, glm::vec2>>();
-    viewport->SetScale(glm::vec3(2.0f));
-    m_Models.Add("Viewport", viewport);
 }
 
 /**
@@ -128,11 +109,6 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     auto& planet = m_Models.Get("Planet");
     auto& cube = m_Models.Get("Cube");
     
-    auto& viewport = m_Models.Get("Viewport");
-    
-    // Get the frame buffer(s)
-    auto& sceneFB = m_Framebuffers.Get("Scene");
-    
     // Render
     // -------
     for(auto& light : m_Lights)
@@ -160,7 +136,7 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     }
     
     // -------
-    pixc::RendererCommand::BeginRenderPass(sceneFB);
+    pixc::RendererCommand::BeginRenderPass(m_Viewport->GetScreenBuffer());
     pixc::RendererCommand::SetClearColor(glm::vec4(0.33f, 0.33f, 0.33f, 1.0f));
     pixc::RendererCommand::Clear();
     
@@ -187,22 +163,7 @@ void SimpleLayer::OnUpdate(pixc::Timestep ts)
     pixc::RendererCommand::EndRenderPass();
     
     // -------
-    pixc::RendererCommand::BeginRenderPass();
-    pixc::RendererCommand::SetViewport(0, 0, m_Camera->GetWidth(), m_Camera->GetHeight());
-    pixc::RendererCommand::SetClearColor(glm::vec4(0.0f));
-    pixc::RendererCommand::Clear();
-    
-    pixc::Renderer::BeginScene();
-    
-    simpleMaterial->SetColor(glm::vec4(1.0f));
-    simpleMaterial->SetTextureMap(sceneFB->GetColorAttachment(0));
-    viewport->SetMaterial(simpleMaterial);
-    viewport->DrawModel();
-    
-    pixc::Renderer::EndScene();
-
-    pixc::RendererCommand::EndRenderPass();
-    
+    m_Viewport->RenderToScreen();
     // -------
     
     // Update camera
@@ -220,8 +181,7 @@ bool SimpleLayer::OnWindowResize(pixc::WindowResizeEvent &e)
     RenderingLayer::OnWindowResize(e);
     
     // Update specific size(s)
-    unsigned int scale = 2;
-    m_Framebuffers.Get("Scene")->Resize(scale * e.GetWidth(), scale * e.GetHeight());
+    m_Viewport->Resize(e.GetWidth(), e.GetHeight());
     
     // Define the event as handled
     return true;

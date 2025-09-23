@@ -128,7 +128,7 @@ void Texture2D::LoadFromFile(const std::filesystem::path& filePath)
     
     // Save the corresponding image information
     Update(width, height, channels, extension);
-    PIXEL_CORE_ASSERT((unsigned int)m_Spec.Format, "Data format of " + m_Path.filename().string() + " not supported!");
+    PIXEL_CORE_ASSERT((uint32_t)m_Spec.Format, "Data format of " + m_Path.filename().string() + " not supported!");
     
     // Generate the 2D texture
     CreateTexture(data);

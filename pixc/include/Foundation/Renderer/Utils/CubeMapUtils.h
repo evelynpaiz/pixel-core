@@ -87,9 +87,9 @@ inline void RotateCubeMap(CubeMap& cube, const glm::mat4& rotationMatrix)
 inline void RenderCubeMap(const CubeMap& cube, const std::shared_ptr<BaseModel>& model,
                           const std::shared_ptr<Material>& material,
                           const std::shared_ptr<FrameBuffer>& framebuffer,
-                          const unsigned int& viewportWidth = 0,
-                          const unsigned int& viewportHeight = 0,
-                          const unsigned int& level = 0,
+                          const uint32_t& viewportWidth = 0,
+                          const uint32_t& viewportHeight = 0,
+                          const uint32_t& level = 0,
                           const bool& genMipMaps = true)
 {
     // Update the size of the model
@@ -98,7 +98,7 @@ inline void RenderCubeMap(const CubeMap& cube, const std::shared_ptr<BaseModel>&
     model->SetMaterial(material);
     
     // Loop through each face of the cube map
-    for (unsigned int i = 0; i < cube.views.size(); ++i)
+    for (uint32_t i = 0; i < cube.views.size(); ++i)
     {
         // Bind the framebuffer for drawing to the current cube map face and mip level
         framebuffer->BindForDrawAttachmentCube(0, i, level);

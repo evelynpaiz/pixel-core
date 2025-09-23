@@ -65,7 +65,7 @@ class SHEnvironmentLight : public EnvironmentLight
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    SHEnvironmentLight(const unsigned int size = 2048);
+    SHEnvironmentLight(const uint32_t size = 2048);
     
     /// @brief Destructor for the environment light.
     ~SHEnvironmentLight() override = default;
@@ -73,7 +73,7 @@ public:
 private:
     // Initialization
     // ----------------------------------------
-    void SetupFramebuffers(const unsigned int size) override;
+    void SetupFramebuffers(const uint32_t size) override;
     void SetupResources() override;
     
     // Properties

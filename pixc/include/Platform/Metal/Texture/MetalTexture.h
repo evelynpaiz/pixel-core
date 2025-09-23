@@ -45,10 +45,10 @@ protected:
     // Texture Generator
     // ----------------------------------------
     void MTLCreateTexture(const void *data, const TextureSpecification& spec,
-                          unsigned int samples = 1, unsigned int slice = 0);
+                          const uint32_t samples = 1, const uint32_t slice = 0);
     
     void MTLDefineTexture(const TextureSpecification& spec,
-                          unsigned int samples = 1);
+                          const uint32_t samples = 1);
     void MTLDefineSampler(const TextureSpecification& spec);
     
     void MTLGenerateMipMaps(bool isOffscreenResource = true);

@@ -108,7 +108,7 @@ struct TextureHelper<TextureCube>
     /// @brief Sets the width and height of a `TextureSpecification` for the faces of a `TextureCube`.
     /// @param spec The `TextureSpecification` object whose size needs to be set.
     /// @param size The width and height to set for the faces of the cube texture.
-    static void SetSize(TextureSpecification& spec, unsigned int size)
+    static void SetSize(TextureSpecification& spec, uint32_t size)
     {
         spec.SetTextureSize(size, size);
     }

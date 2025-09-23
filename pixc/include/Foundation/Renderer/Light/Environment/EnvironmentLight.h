@@ -29,7 +29,7 @@ class EnvironmentLight : public Light
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    EnvironmentLight(const unsigned int size = 2048);
+    EnvironmentLight(const uint32_t size = 2048);
     
     /// @brief Destructor for the environment light.
     virtual ~EnvironmentLight() = default;
@@ -63,9 +63,9 @@ public:
 protected:
     // Initialization
     // ----------------------------------------
-    void InitEnvironment(const unsigned int size);
+    void InitEnvironment(const uint32_t size);
     
-    virtual void SetupFramebuffers(const unsigned int size);
+    virtual void SetupFramebuffers(const uint32_t size);
     virtual void SetupResources();
     
     // Properties

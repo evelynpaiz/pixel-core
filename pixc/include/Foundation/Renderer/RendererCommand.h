@@ -30,8 +30,8 @@ public:
     // ----------------------------------------
     static void SetClearColor(const glm::vec4& color);
     
-    static void SetViewport(const unsigned int x, const unsigned int y,
-                            const unsigned int width, const unsigned int height);
+    static void SetViewport(const uint32_t x, const uint32_t y,
+                            const uint32_t width, const uint32_t height);
     
     // Render
     // ----------------------------------------

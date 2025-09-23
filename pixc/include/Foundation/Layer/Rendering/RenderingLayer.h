@@ -8,6 +8,8 @@
 #include "Foundation/Renderer/Light/Light.h"
 #include "Foundation/Renderer/Drawable/Model/Model.h"
 
+#include "Foundation/Scene/Viewport.h"
+
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
@@ -32,7 +34,11 @@ class RenderingLayer : public Layer
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    RenderingLayer(int width, int height, const std::string& name = "Rendering Layer") : Layer() {}
+    RenderingLayer(uint32_t width, uint32_t height,
+                   const std::string& name = "Rendering Layer") : Layer()
+    {
+        m_Viewport = std::make_shared<Viewport>(width, height);
+    }
     /// @brief Delete the rendering layer.
     virtual ~RenderingLayer() = default;
     
@@ -106,8 +112,12 @@ protected:
     LightLibrary m_Lights;
     ///< Set of objects in the scene.
     ModelLibrary m_Models;
+    
     ///< Framebuffer(s) library with all the rendered images.
     FrameBufferLibrary m_Framebuffers;
+    
+    ///< Viewport (displays the rendered image).
+    std::shared_ptr<Viewport> m_Viewport;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

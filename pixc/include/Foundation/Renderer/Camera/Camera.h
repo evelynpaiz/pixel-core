@@ -53,10 +53,10 @@ public:
     
     /// @brief Get the camera resolution (width).
     /// @return Viewport width.
-    unsigned int GetWidth() const { return m_Width; }
+    uint32_t GetWidth() const { return m_Width; }
     /// @brief Get the camera resolution (height).
     /// @return Viewport height.
-    unsigned int GetHeight() const { return m_Height; }
+    uint32_t GetHeight() const { return m_Height; }
     /// @brief Get the camera aspect ratio.
     /// @return The aspect ratio (width/height).
     float GetAspectRatio() const

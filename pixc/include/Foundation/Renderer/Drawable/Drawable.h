@@ -69,9 +69,9 @@ public:
                        const BufferLayout &layout)
     {
         // Verify that the size of the data is not higher than supported
-        PIXEL_CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(VertexData)) >= vertices.size(),
+        PIXEL_CORE_ASSERT((std::numeric_limits<uint32_t>::max() / sizeof(VertexData)) >= vertices.size(),
                     "Potential integer overflow in vertex buffer size calculation!");
-        unsigned int size = static_cast<unsigned int>(vertices.size());
+        uint32_t size = static_cast<uint32_t>(vertices.size());
         
         // Create a vertex buffer containing the vertex data
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), size * sizeof(VertexData), size);
@@ -84,12 +84,12 @@ public:
     }
     /// @brief Define the index buffer for the drawable object.
     /// @param indices Set of indices.
-    void SetIndexData(const std::vector<unsigned int> &indices)
+    void SetIndexData(const std::vector<uint32_t> &indices)
     {
         // Verify that the size of the data is not higher than supported
-        PIXEL_CORE_ASSERT((std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)) >= indices.size(),
+        PIXEL_CORE_ASSERT((std::numeric_limits<uint32_t>::max() / sizeof(uint32_t)) >= indices.size(),
                     "Potential integer overflow in index buffer size calculation!");
-        unsigned int size = static_cast<unsigned int>(indices.size());
+        uint32_t size = static_cast<uint32_t>(indices.size());
         
         // Copy the index data in the buffer
         m_IndexBuffer = IndexBuffer::Create(indices.data(), size);
@@ -112,7 +112,7 @@ protected:
     // ----------------------------------------
 protected:
     ///< Vertex attribute index.
-    unsigned int m_Index = 0;
+    uint32_t m_Index = 0;
     
     ///< Linked vertex buffers (possible to have more than one).
     std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;

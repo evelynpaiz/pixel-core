@@ -184,10 +184,10 @@ void OpenGLShader::SetTexture(const std::string &name,
  *
  * @return the ID of the shader program.
  */
-unsigned int OpenGLShader::CompileShader(unsigned int type, const std::string& source)
+uint32_t OpenGLShader::CompileShader(uint32_t type, const std::string& source)
 {
     // Define the shader from the input source and compile
-    unsigned int id = glCreateShader(type);
+    uint32_t id = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
@@ -233,24 +233,24 @@ unsigned int OpenGLShader::CompileShader(unsigned int type, const std::string& s
  *
  * @return ID of the shader program.
  */
-unsigned int OpenGLShader::CreateShader(const std::string& vertexShader,
-                                        const std::string& fragmentShader,
-                                        const std::string& geometryShader)
+uint32_t OpenGLShader::CreateShader(const std::string& vertexShader,
+                                    const std::string& fragmentShader,
+                                    const std::string& geometryShader)
 {
     // Define a shader program
-    unsigned int program = glCreateProgram();
+    uint32_t program = glCreateProgram();
     
     // Vertex shader
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+    uint32_t vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
     glAttachShader(program, vs);
     // Fragment shader
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+    uint32_t fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
     glAttachShader(program, fs);
     // Geometry shader
-    unsigned int gs = 0;
+    uint32_t gs = 0;
     if (!geometryShader.empty())
     {
-        unsigned int gs = CompileShader(GL_GEOMETRY_SHADER, geometryShader);
+        uint32_t gs = CompileShader(GL_GEOMETRY_SHADER, geometryShader);
         glAttachShader(program, gs);
     }
     

@@ -46,8 +46,8 @@ public:
     static void SetWindowHints();
     void SetVerticalSync(bool enabled) override;
     
-    void UpdateBufferSize(const unsigned int width,
-                          const unsigned int height) override;
+    void UpdateBufferSize(const uint32_t width,
+                          const uint32_t height) override;
     
     // Buffers
     // ----------------------------------------

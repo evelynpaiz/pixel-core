@@ -56,7 +56,7 @@ struct TextureHelper<Texture1D>
     /// @brief Sets the width of a `TextureSpecification` for a `Texture1D`.
     /// @param spec The `TextureSpecification` object whose size needs to be set.
     /// @param size The width to set for the texture.
-    static void SetSize(TextureSpecification& spec, unsigned int size)
+    static void SetSize(TextureSpecification& spec, uint32_t size)
     {
         spec.SetTextureSize(size);
     }

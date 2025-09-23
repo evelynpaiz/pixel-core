@@ -14,8 +14,8 @@ namespace pixc {
  * @param channels The number of color channels in the texture.
  * @param extension The file extension (e.g., ".hdr") to determine if the texture is HDR.
  */
-void Texture::Update(const unsigned int width, const unsigned int height,
-                     const unsigned int channels, const std::string& extension)
+void Texture::Update(const uint32_t width, const uint32_t height,
+                     const uint32_t channels, const std::string& extension)
 {
     // Update width and height
     m_Spec.Width = width;

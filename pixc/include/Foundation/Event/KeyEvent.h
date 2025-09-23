@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/Event/Event.h"
+#include "Foundation/Input/KeyCodes.h"
 
 /**
  * @namespace pixc
@@ -21,7 +22,7 @@ class KeyEvent : public Event
     // ----------------------------------------
     /// @brief Get the numerical code of the key.
     /// @return The key code.
-    int GetKeyCode() const { return m_KeyCode; }
+    KeyCode GetKeyCode() const { return m_KeyCode; }
     
     // Define the different categories of the event
     EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
@@ -31,15 +32,15 @@ class KeyEvent : public Event
     // ----------------------------------------
     /// @brief Generate a keyboard event.
     /// @param keyCode Numerical value of the key.
-    KeyEvent(const int keyCode)
-    : m_KeyCode(keyCode)
+    KeyEvent(const KeyCode keyCode)
+        : m_KeyCode(keyCode)
     {}
     
     // Key event variables
     // ----------------------------------------
     protected:
     ///< Code of the key pressed/released.
-    int m_KeyCode;
+    KeyCode m_KeyCode;
 };
 
 /**
@@ -56,15 +57,15 @@ class KeyPressedEvent : public KeyEvent
     /// @brief Generate a key pressed event.
     /// @param keyCode Numerical value of the key.
     /// @param repeatCount Number of times the key has been pressed.
-    KeyPressedEvent(const int keyCode, const unsigned int repeatCount)
-    : KeyEvent(keyCode), m_RepeatCount(repeatCount)
+    KeyPressedEvent(const KeyCode keyCode, const uint32_t repeatCount)
+        : KeyEvent(keyCode), m_RepeatCount(repeatCount)
     {}
     
     // Getter(s)
     // ----------------------------------------
     /// @brief Get the number of times the key has been pressed.
     /// @return The key repeat count.
-    unsigned int GetRepeatCount() const { return m_RepeatCount; }
+    uint32_t GetRepeatCount() const { return m_RepeatCount; }
     /// @brief Get the description of the event.
     /// @return Event description (key currently pressed).
     std::string GetDescription() const override
@@ -81,7 +82,7 @@ class KeyPressedEvent : public KeyEvent
     // ----------------------------------------
     private:
     ///< Key pressed counter.
-    unsigned int m_RepeatCount;
+    uint32_t m_RepeatCount;
 };
 
 /**
@@ -98,8 +99,8 @@ class KeyReleasedEvent : public KeyEvent
     // ----------------------------------------
     /// @brief Generate a key released event.
     /// @param keyCode Numerical value of the key.
-    KeyReleasedEvent(const int keyCode)
-    : KeyEvent(keyCode)
+    KeyReleasedEvent(const KeyCode keyCode)
+        : KeyEvent(keyCode)
     {}
     
     // Getter(s)

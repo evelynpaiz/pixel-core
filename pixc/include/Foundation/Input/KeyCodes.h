@@ -6,7 +6,7 @@
  */
 namespace pixc {
 
-using KeyCode = unsigned int;
+using KeyCode = uint16_t;
 
 /**
  * @namespace pixc::key

@@ -44,7 +44,7 @@ void AssimpModel::LoadModel(const std::filesystem::path &filePath)
 void AssimpModel::ProcessNode(aiNode *node, const aiScene *scene)
 {
     // Process all meshes inside each node
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         // The node object only contains indices to index the actual
         // objects in the scene. The scene contains all the data
@@ -53,7 +53,7 @@ void AssimpModel::ProcessNode(aiNode *node, const aiScene *scene)
     }
 
     // Then do the same for each child node
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    for (size_t i = 0; i < node->mNumChildren; i++)
     {
         ProcessNode(node->mChildren[i], scene);
     }
@@ -70,7 +70,7 @@ Mesh<AssimpVertexData> AssimpModel::ProcessMesh(aiMesh *mesh)
     // Mesh attributes
     // -----------------------
     std::vector<AssimpVertexData> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<uint32_t> indices;
     BufferLayout layout = {
         { "a_Position", { DataType::Vec4 } },
         { "a_TextureCoord", { DataType::Vec2 } },
@@ -80,7 +80,7 @@ Mesh<AssimpVertexData> AssimpModel::ProcessMesh(aiMesh *mesh)
     // Process the vertex data
     // -----------------------
     // Check each mesh
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    for (size_t i = 0; i < mesh->mNumVertices; i++)
     {
         AssimpVertexData vertex;
 
@@ -114,12 +114,12 @@ Mesh<AssimpVertexData> AssimpModel::ProcessMesh(aiMesh *mesh)
     
     // Process indices
     // -----------------------
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    for (size_t i = 0; i < mesh->mNumFaces; i++)
     {
         // Pass through each of the mesh's faces (triangle) and retrieve
         // the corresponding vertex indices
         aiFace face = mesh->mFaces[i];
-        for (unsigned int j = 0; j < face.mNumIndices; j++)
+        for (size_t j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
     

@@ -74,9 +74,9 @@ public:
     struct RenderingStatistics
     {
         ///< Number or rendering passes.
-        unsigned int renderPasses = 0;
+        uint32_t RenderPasses = 0;
         ///< Number of times the draw function is called.
-        unsigned int drawCalls = 0;
+        uint32_t DrawCalls = 0;
     };
     
     static void ResetStats();
