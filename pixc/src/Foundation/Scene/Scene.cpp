@@ -1,9 +1,7 @@
-#include "enginepch.h"
-#include "Common/Scene/Scene.h"
+#include "pixc.h"
+#include "Foundation/Scene/Scene.h"
 
-#include "Common/Renderer/Material/LightedMaterial.h"
-#include "Common/Renderer/Material/SimpleMaterial.h"
-#include "Common/Renderer/Light/PositionalLight.h"
+namespace pixc {
 
 /**
  * Define a scene to be rendered.
@@ -12,109 +10,17 @@
  * @param height Viewport height.
  * @param viewportShader The shader file path to be used for shading the viewport.
  */
-Scene::Scene(int width, int height,
+Scene::Scene(uint32_t width, uint32_t height,
              const std::filesystem::path& viewportShader)
 {
-    // Define the rendering camera
-    m_Camera = std::make_shared<PerspectiveCamera>(width, height);
-    
-    // Define the lights
-    m_Lights.Create<EnvironmentLight>("Environment", width, height);
+    // Define a generic rendering camera (can be changed with the method SetCamera())
+    m_Camera = std::make_shared<pixc::PerspectiveCamera>(width, height);
     
     // Define the viewport
     m_Viewport = std::make_shared<Viewport>(width, height, viewportShader);
-    
-    Renderer::GetMaterialLibrary().Add("Viewport", m_Viewport->m_Material);
-    m_FramebufferLibrary.Add("Viewport", m_Viewport->m_Framebuffer);
-    m_Models.Add("Viewport", m_Viewport->m_Geometry);
-}
-
-/**
- * Draws the scene using the provided render pass specification.
- *
- * @param pass The render pass specification containing the parameters for drawing the scene.
- */
-void Scene::Draw(const RenderPassSpecification &pass)
-{
-    // Run the post-rendering code
-    if (pass.PreRenderCode)
-        pass.PreRenderCode();
-    
-    // Bind the framebuffer if it is provided
-    if (pass.Framebuffer)
-        pass.Framebuffer->Bind();
-    
-    // Update the viewport size
-    if(pass.Size.has_value())
-        RendererCommand::SetViewport(0, 0, pass.Size.value().x, pass.Size.value().y);
-    
-    // Clear the framebuffer with the specified color (if provided), or clear it with the active buffers
-    if (pass.Framebuffer && pass.Color.has_value())
-        RendererCommand::SetRenderTarget(pass.Color.value(), pass.Framebuffer);
-    else if (pass.Framebuffer)
-        RendererCommand::SetRenderTarget(pass.Framebuffer);
-    else if (pass.Color.has_value())
-        RendererCommand::SetRenderTarget(pass.Color.value());
-    else
-        RendererCommand::SetRenderTarget();
-    
-    // Begin the scene with the provided camera, or without a camera if none is provided
-    if (pass.Camera)
-        Renderer::BeginScene(pass.Camera);
-    else
-        Renderer::BeginScene();
-    
-    // Render each model with its associated material
-    for (auto& pair : pass.Models)
-    {
-        // Check if the model is the light sources and render it separately
-        if (pair.first == "Light")
-        {
-            DrawLight(); // Render the light source
-            continue;   // Move to the next iteration of the loop
-        }
-            
-        // Retrieve the model associated with the current pair
-        auto& model = m_Models.Get(pair.first);
-        
-        // Check if the model is valid
-        if (model)
-        {
-            // If a material is specified for the model, set it
-            if (!pair.second.empty())
-            {
-                auto& material = Renderer::GetMaterialLibrary().Get(pair.second);
-                DefineShadowProperties(material);
-                model->SetMaterial(material);
-            }
-            
-            // Draw the model
-            model->DrawModel();
-        }
-    }
-        
-    // End the scene
-    Renderer::EndScene();
-    
-    // Unbind the framebuffer if it was provided
-    if (pass.Framebuffer)
-        pass.Framebuffer->Unbind();
-    
-    // Run the post-rendering code
-    if (pass.PostRenderCode)
-        pass.PostRenderCode();
-}
-
-/**
- * Draws the scene lights.
- */
-void Scene::DrawLight()
-{
-    for (auto& pair : m_Lights)
-    {
-        auto& light = pair.second;
-        light->DrawLight();
-    }
+    // Add viewport to the model and framebuffer library
+    m_Models.Add("Viewport", m_Viewport->s_Geometry);
+    m_FrameBuffers.Add("ScreenBuffer", m_Viewport->m_ScreenBuffer);
 }
 
 /**
@@ -127,14 +33,104 @@ void Scene::Draw()
         auto& pass = m_RenderPasses.Get(name);
         if (pass.Active)
             Draw(pass);
-        else
-        {
-            if (pass.Framebuffer)
-                pass.Framebuffer->Bind();
-            RendererCommand::SetRenderTarget(glm::vec4(0.0f));
-        }
+        
+        // TODO: handle not active passes
+        /*
+         else
+         {
+         if (pass.Framebuffer)
+            pass.Framebuffer->Bind();
+         RendererCommand::SetRenderTarget(glm::vec4(0.0f));
+         }
+         */
     }
 }
+
+/**
+ * Draws the scene using the provided render pass specification.
+ *
+ * @param pass The render pass specification containing the parameters for drawing the scene.
+ */
+void Scene::Draw(const RenderPassSpecification &pass)
+{
+    // Run pre-render code
+    if (pass.PreRenderCode)
+        pass.PreRenderCode();
+    
+    // Begin render pass
+    RendererCommand::BeginRenderPass(pass.FrameBuffer);
+    
+    // Set viewport if specified
+    if (pass.ViewportSize)
+        RendererCommand::SetViewport(0, 0, (*pass.ViewportSize).x, (*pass.ViewportSize).y);
+    
+    // Clear framebuffer if enabled
+    switch (pass.ClearBehavior)
+    {
+        case RenderPassSpecification::ClearMode::Enabled:
+            // Clear with the specified color
+            RendererCommand::SetClearColor(pass.ClearColor);
+            RendererCommand::Clear();
+            break;
+
+        case RenderPassSpecification::ClearMode::Disabled:
+            // Do nothing; leave framebuffer as-is
+            break;
+
+        case RenderPassSpecification::ClearMode::Default:
+            // Optional: define default behavior (e.g., clear with black)
+            RendererCommand::SetClearColor(glm::vec4(0.0f));
+            RendererCommand::Clear();
+            break;
+    }
+    
+    // Begin the scene with the specified camera
+    Renderer::BeginScene(pass.Camera);
+    
+    // Render light sources separately
+    if (pass.RenderLights)
+        DrawLights();
+    
+    // Render each model
+    for (const auto& renderable : pass.Models)
+    {
+        
+        auto& model = m_Models.Get(renderable.ModelName);
+        if (!model)
+            continue;
+
+        if (!renderable.MaterialName.empty())
+        {
+            auto& material = Renderer::GetMaterialLibrary().Get(renderable.MaterialName);
+            if (renderable.MaterialSetupFunction)
+                renderable.MaterialSetupFunction(material);
+            DefineShadowProperties(material);
+            model->SetMaterial(material);
+        }
+
+        model->DrawModel();
+    }
+    
+    // End scene and render pass
+    Renderer::EndScene();
+    RendererCommand::EndRenderPass();
+
+    // Run post-render code
+    if (pass.PostRenderCode)
+        pass.PostRenderCode();
+}
+
+/**
+ * Draws the scene lights.
+ */
+ void Scene::DrawLights()
+ {
+     for (auto& pair : m_Lights)
+     {
+         auto& light = pair.second;
+         light->DrawLight();
+     }
+ }
 
 /**
  * Define shadow properties for a given material.
@@ -142,13 +138,15 @@ void Scene::Draw()
  * @param baseMaterial The base material to define shadow properties for.
  * @note If the "Shadow" render pass does not exist in the scene, no shadows maps will be defined.
  */
-void Scene::DefineShadowProperties(const std::shared_ptr<Material>& baseMaterial)
-{
-    // Attempt to cast the base material to a LightedMaterial
-    auto material = std::dynamic_pointer_cast<LightedMaterial>(baseMaterial);
-    if (!material)
-        return; // Base material is not a LightedMaterial, so return early
+ void Scene::DefineShadowProperties(const std::shared_ptr<Material>& baseMaterial)
+ {
+     // Attempt to cast the base material to a LightedMaterial
+     auto material = std::dynamic_pointer_cast<LightedMaterial>(baseMaterial);
+     if (!material)
+         return; // Base material is not a LightedMaterial, so return early
+     
+     // Define the properties of the material related to the light sources
+     material->DefineLightProperties(m_Lights);
+ }
 
-    // Define the properties of the material related to the light sources
-    material->DefineLightProperties(m_Lights);
-}
+} // namespace pixc

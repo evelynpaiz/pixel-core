@@ -65,7 +65,7 @@ protected:
     // ----------------------------------------
     void InitEnvironment(const uint32_t size);
     
-    virtual void SetupFramebuffers(const uint32_t size);
+    virtual void SetupFrameBuffers(const uint32_t size);
     virtual void SetupResources();
     
     // Properties
@@ -81,7 +81,7 @@ protected:
     // ----------------------------------------
 protected:
     ///< Framebuffer(s) for pre-processing.
-    FrameBufferLibrary m_Framebuffers;
+    FrameBufferLibrary m_FrameBuffers;
     
     ///< The ambient light intensity.
     float m_AmbientStrength = 0.4f;

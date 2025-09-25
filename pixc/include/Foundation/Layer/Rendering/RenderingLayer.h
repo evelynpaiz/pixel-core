@@ -10,6 +10,8 @@
 
 #include "Foundation/Scene/Viewport.h"
 
+#include "Foundation/Scene/Scene.h"
+
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
@@ -35,10 +37,8 @@ public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     RenderingLayer(uint32_t width, uint32_t height,
-                   const std::string& name = "Rendering Layer") : Layer()
-    {
-        m_Viewport = std::make_shared<Viewport>(width, height);
-    }
+                   const std::string& name = "Rendering Layer")
+        : Layer(), m_Scene(width, height) {}
     /// @brief Delete the rendering layer.
     virtual ~RenderingLayer() = default;
     
@@ -56,8 +56,8 @@ public:
         dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(RenderingLayer::OnWindowResize));
         
         // Handle the events on the camera
-        if (m_Camera && !e.Handled)
-            m_Camera->OnEvent(e);
+        if (m_Scene.GetCamera() && !e.Handled)
+            m_Scene.GetCamera()->OnEvent(e);
     }
     
 protected:
@@ -72,6 +72,9 @@ protected:
     /// @brief Define the geometry used in the scene.
     virtual void DefineGeometry() {}
     
+    /// @brief Defines the rendering passes.
+    virtual void DefineRenderPasses() {}
+    
     /// @brief Initialize all resources required for rendering.
     virtual void Initialize()
     {
@@ -83,6 +86,9 @@ protected:
         DefineLights();
         // Define the mesh(es) & model(s)
         DefineGeometry();
+        
+        // Define all the rendering passes
+        DefineRenderPasses();
     }
     
     // Events handler(s)
@@ -93,8 +99,8 @@ protected:
         PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());
         
         // Update the camera
-        if (m_Camera)
-            m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
+        if (m_Scene.GetCamera())
+            m_Scene.GetCamera()->SetViewportSize(e.GetWidth(), e.GetHeight());
         
         // TODO: update the size of the framebuffers?
         
@@ -105,19 +111,8 @@ protected:
     // Rendering layer variables
     // ----------------------------------------
 protected:
-    ///< Rendering camera.
-    std::shared_ptr<Camera> m_Camera;
-    
-    ///< Light sources in the scene.
-    LightLibrary m_Lights;
-    ///< Set of objects in the scene.
-    ModelLibrary m_Models;
-    
-    ///< Framebuffer(s) library with all the rendered images.
-    FrameBufferLibrary m_Framebuffers;
-    
-    ///< Viewport (displays the rendered image).
-    std::shared_ptr<Viewport> m_Viewport;
+    ///< Rendering scene.
+    Scene m_Scene;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

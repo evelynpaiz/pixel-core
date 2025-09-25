@@ -5,12 +5,8 @@ file(
     GLOB_RECURSE sources
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    #   src/Foundation/*.cpp src/Foundation/*.mm
-
-    src/Foundation/Core/*.cpp src/Foundation/Core/*.mm
-    src/Foundation/Input/*.cpp
-    src/Foundation/Layer/*.cpp
-    src/Foundation/Renderer/*.cpp
+    
+    src/Foundation/*.cpp src/Foundation/*.mm*.cpp
 )
 
 # Find platform-specific source files
@@ -42,18 +38,9 @@ file(
     GLOB_RECURSE public_headers
     LIST_DIRECTORIES false
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-#   include/*.h
 
     include/pixc.h
-
-    include/Foundation/Core/*.h
-    include/Foundation/Event/*.h
-    include/Foundation/Input/*.h
-    include/Foundation/Layer/*.h
-    include/Foundation/Renderer/*.h
-    
-    include/Foundation/Scene/Viewport.h
-
+    include/Foundation/*.h
     include/Platform/OpenGL/*.h
 )
 

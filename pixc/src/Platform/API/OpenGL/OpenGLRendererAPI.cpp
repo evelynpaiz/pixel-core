@@ -87,7 +87,7 @@ void OpenGLRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& fram
     // Update the information of the currently bound framebuffer
     RendererAPI::BeginRenderPass(framebuffer);
     
-    if (!m_ActiveFramebuffer)
+    if (!m_ActiveFrameBuffer)
         glBindFramebuffer(GL_FRAMEBUFFER, 0);       // render to screen
 }
 

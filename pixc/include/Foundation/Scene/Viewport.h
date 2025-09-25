@@ -117,11 +117,15 @@ public:
     /// @brief Render the viewport geometry into a framebuffer.
     /// @param framebuffer The output of the rendered image.
     /// @param material The shading material used for rendering.
-    void RenderToFramebuffer(const std::shared_ptr<FrameBuffer>& framebuffer,
+    void RenderToFrameBuffer(const std::shared_ptr<FrameBuffer>& framebuffer,
                              const std::shared_ptr<Material>& material) const
     {
         Render(framebuffer, material);
     }
+    
+    // Friend class definition(s)
+    // ----------------------------------------
+    friend class Scene;
     
 private:
     /// @brief Render the viewport geometry into a framebuffer.
@@ -157,11 +161,6 @@ private:
     
     ///< Scale factor for the viewport plane (for subsampling or resizing)
     float m_Scale = 1.0f;
-    
-    // Friend classes
-    // ----------------------------------------
-public:
-    friend class Scene;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

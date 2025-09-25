@@ -33,6 +33,8 @@ private:
     void DefineLights() override;
     void DefineGeometry() override;
     
+    void DefineRenderPasses() override;
+    
     // Events handler(s)
     // ----------------------------------------
     bool OnWindowResize(pixc::WindowResizeEvent &e) override;

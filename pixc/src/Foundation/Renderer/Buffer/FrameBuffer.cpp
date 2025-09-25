@@ -36,7 +36,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification&
 /**
  * @brief Releases the resources associated with the framebuffer.
  */
-void FrameBuffer::ReleaseFramebuffer()
+void FrameBuffer::ReleaseFrameBuffer()
 {
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;

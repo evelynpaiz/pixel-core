@@ -91,4 +91,5 @@
 // Rendering Context & Scene
 // --------------------------------------------
 #include "Foundation/Scene/Viewport.h"
-//#include "Foundation/Scene/Scene.h"
+#include "Foundation/Scene/RenderPass.h"
+#include "Foundation/Scene/Scene.h"

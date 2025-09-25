@@ -26,7 +26,7 @@ SHEnvironmentLight::SHEnvironmentLight(const uint32_t size)
  *
  * @param size The resolution of the cubemap (width = height).
  */
-void SHEnvironmentLight::SetupFramebuffers(const uint32_t size)
+void SHEnvironmentLight::SetupFrameBuffers(const uint32_t size)
 {
     // Create a framebuffer specification for storing SH coefficients
     FrameBufferSpecification spec;
@@ -40,7 +40,7 @@ void SHEnvironmentLight::SetupFramebuffers(const uint32_t size)
     spec.AttachmentsSpec = { { sh } };
     
     // Create the framebuffer in the library
-    m_Framebuffers.Create("SphericalHarmonics", spec);
+    m_FrameBuffers.Create("SphericalHarmonics", spec);
 }
 
 /**
@@ -74,7 +74,7 @@ void SHEnvironmentLight::DefineLightProperties(const std::shared_ptr<Shader> &sh
     // Using texture slot 0 for the environment map
     if (m_EnvironmentMap)
     {
-        auto environment = m_Framebuffers.Get("Environment")->GetColorAttachment(0);
+        auto environment = m_FrameBuffers.Get("Environment")->GetColorAttachment(0);
         shader->SetTexture("u_Environment.EnvironmentMap", environment,
                            static_cast<uint32_t>(TextureIndex::EnvironmentMap));
     }
@@ -105,7 +105,7 @@ void SHEnvironmentLight::UpdateEnvironment()
     auto& materialLibrary = Renderer::GetMaterialLibrary();
     // Update the current texture representing the environment map
     auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(materialLibrary.Get("SphericalHarmonics"));
-    material->SetTextureMap(m_Framebuffers.Get("Environment")->GetColorAttachment(0));
+    material->SetTextureMap(m_FrameBuffers.Get("Environment")->GetColorAttachment(0));
     
     // Create a plane geometry (to render to) using the material
     using VertexData = GeoVertexData<glm::vec4>;
@@ -113,7 +113,7 @@ void SHEnvironmentLight::UpdateEnvironment()
     geometry->SetScale(glm::vec3(2.0f));
     
     // Get the spherical harmonics framebuffer
-    auto& framebuffer = m_Framebuffers.Get("SphericalHarmonics");
+    auto& framebuffer = m_FrameBuffers.Get("SphericalHarmonics");
     
     // Render the scene to compute the SH coefficients
     RendererCommand::BeginRenderPass(framebuffer);

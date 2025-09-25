@@ -307,7 +307,7 @@ class FrameBuffer
     
     // Destructor
     // ----------------------------------------
-    virtual void ReleaseFramebuffer();
+    virtual void ReleaseFrameBuffer();
     
     // Framebuffer variables
     // ----------------------------------------

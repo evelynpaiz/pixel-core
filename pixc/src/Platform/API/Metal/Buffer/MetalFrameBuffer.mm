@@ -31,7 +31,7 @@ MetalFrameBuffer::MetalFrameBuffer(const FrameBufferSpecification& spec)
  */
 MetalFrameBuffer::~MetalFrameBuffer()
 {
-    ReleaseFramebuffer();
+    ReleaseFrameBuffer();
 }
 
 /**
@@ -158,7 +158,7 @@ void MetalFrameBuffer::BlitAdvanced(const std::shared_ptr<MetalFrameBuffer> &src
 void MetalFrameBuffer::Invalidate()
 {
     // Check if framebuffer already exists, if so, delete it
-    ReleaseFramebuffer();
+    ReleaseFrameBuffer();
     
     // Define the framebuffer texture(s)
     DefineAttachments();

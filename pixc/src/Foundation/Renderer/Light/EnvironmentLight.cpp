@@ -27,7 +27,7 @@ EnvironmentLight::EnvironmentLight(const uint32_t size) : Light()
  */
 void EnvironmentLight::InitEnvironment(const uint32_t size)
 {
-    SetupFramebuffers(size);
+    SetupFrameBuffers(size);
     SetupResources();
 }
 
@@ -36,7 +36,7 @@ void EnvironmentLight::InitEnvironment(const uint32_t size)
  *
  * @param size The resolution of the cubemap (width = height).
  */
-void EnvironmentLight::SetupFramebuffers(const uint32_t size)
+void EnvironmentLight::SetupFrameBuffers(const uint32_t size)
 {
     // Create a framebuffer specification for the environment cubemap
     FrameBufferSpecification spec;
@@ -56,7 +56,7 @@ void EnvironmentLight::SetupFramebuffers(const uint32_t size)
     spec.MipMaps = true;
 
     // Create the framebuffer and store it in the library
-    m_Framebuffers.Create("Environment", spec);
+    m_FrameBuffers.Create("Environment", spec);
     
     // -------
     
@@ -171,7 +171,7 @@ void EnvironmentLight::DrawLight()
     
     RendererCommand::SetDepthFunction(DepthFunction::LEqual);
     
-    auto environment = m_Framebuffers.Get("Environment")->GetColorAttachment(0);
+    auto environment = m_FrameBuffers.Get("Environment")->GetColorAttachment(0);
     auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(Renderer::GetMaterialLibrary().Get("CubeMap"));
     material->SetTextureMap(environment);
     
@@ -199,7 +199,7 @@ void EnvironmentLight::UpdateEnvironment()
     material->SetTextureMap(m_EnvironmentMap);
     
     // Render the environment map into a cube map configuration
-    utils::cubemap::RenderCubeMap(cubemap, m_Model, material, m_Framebuffers.Get("Environment"));
+    utils::cubemap::RenderCubeMap(cubemap, m_Model, material, m_FrameBuffers.Get("Environment"));
     
     // TODO: remove this and set it into another function. Make the static variables an enumeration.
     /*

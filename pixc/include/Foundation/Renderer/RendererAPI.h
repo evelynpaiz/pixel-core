@@ -93,7 +93,7 @@ protected:
     // ----------------------------------------
 protected:
     ///< The currently bound framebuffer. If null, rendering goes to the screen (default framebuffer).
-    std::shared_ptr<FrameBuffer> m_ActiveFramebuffer = nullptr;
+    std::shared_ptr<FrameBuffer> m_ActiveFrameBuffer = nullptr;
     
     
 private:

@@ -135,7 +135,7 @@ public:
     /// @return The shadow map.
     const std::shared_ptr<Texture>& GetShadowMap() const
     {
-        return m_Shadow.Framebuffer->GetDepthAttachment();
+        return m_Shadow.FrameBuffer->GetDepthAttachment();
     }
     
     /// @brief Get the camera used for shadow mapping to generate depth maps for shadow calculations.
@@ -143,7 +143,7 @@ public:
     const std::shared_ptr<Camera>& GetShadowCamera() const { return m_Shadow.Camera; }
     /// @brief Get the framebuffer with the rendered shadow map.
     /// @return The shadow map framebuffer.
-    const std::shared_ptr<FrameBuffer>&  GetShadowFramebuffer() const { return m_Shadow.Framebuffer; }
+    const std::shared_ptr<FrameBuffer>& GetShadowFrameBuffer() const { return m_Shadow.FrameBuffer; }
     
     // Properties
     // ----------------------------------------
@@ -186,7 +186,7 @@ public:
         spec.AttachmentsSpec = {
             { TextureType::TEXTURE2D, format }
         };
-        m_Shadow.Framebuffer = FrameBuffer::Create(spec);
+        m_Shadow.FrameBuffer = FrameBuffer::Create(spec);
     }
     
 protected:
@@ -257,7 +257,7 @@ protected:
         ///< Camera representing the light’s viewpoint for shadow mapping.
         std::shared_ptr<Camera> Camera;
         ///< Framebuffer used to render the shadow map texture.
-        std::shared_ptr<FrameBuffer> Framebuffer;
+        std::shared_ptr<FrameBuffer> FrameBuffer;
     };
 
     ///< Shadow data container.
@@ -316,7 +316,7 @@ public:
         auto light = std::make_shared<Type>(std::forward<Args>(args)...);
         
         std::string message = GetTypeName() + " '" + name + "' is not of the specified type!";
-        CORE_ASSERT(std::dynamic_pointer_cast<Light>(light), message);
+        PIXEL_CORE_ASSERT(std::dynamic_pointer_cast<Light>(light), message);
         
         Add(name, light);
         return light;

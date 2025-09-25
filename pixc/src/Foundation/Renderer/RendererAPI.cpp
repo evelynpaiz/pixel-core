@@ -51,8 +51,8 @@ void RendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffe
         return;
     
     // Update the information of the currently bound framebuffer
-    m_ActiveFramebuffer = framebuffer;
-    m_ActiveFramebuffer->Bind();                // render into the framebuffer
+    m_ActiveFrameBuffer = framebuffer;
+    m_ActiveFrameBuffer->Bind();                // render into the framebuffer
 }
 
 /**
@@ -61,12 +61,12 @@ void RendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffe
 void RendererAPI::EndRenderPass()
 {
     // If no framebuffer is active, return
-    if (!m_ActiveFramebuffer)
+    if (!m_ActiveFrameBuffer)
         return;
     
     // Unbound the framebuffer if necessary
-    m_ActiveFramebuffer->Unbind();
-    m_ActiveFramebuffer = nullptr;
+    m_ActiveFrameBuffer->Unbind();
+    m_ActiveFrameBuffer = nullptr;
 }
 
 /**
@@ -74,8 +74,8 @@ void RendererAPI::EndRenderPass()
  */
 void RendererAPI::Clear()
 {
-    RenderTargetBuffers clearTargets = m_ActiveFramebuffer
-            ? m_ActiveFramebuffer->GetEnabledTargets()          // Clear buffers in the active framebuffer
+    RenderTargetBuffers clearTargets = m_ActiveFrameBuffer
+            ? m_ActiveFrameBuffer->GetEnabledTargets()          // Clear buffers in the active framebuffer
             : RenderTargetBuffers{ true, false, false };        // Clear color only for screen
     
     Clear(clearTargets);

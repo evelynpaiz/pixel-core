@@ -180,19 +180,19 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
         
         // Determine the active draw target override (attachment, cube face, mip level)
-        auto drawTarget = m_ActiveFramebuffer ? m_ActiveFramebuffer->GetDrawTargetOverride() : FrameBufferDrawTarget{0};
+        auto drawTarget = m_ActiveFrameBuffer ? m_ActiveFrameBuffer->GetDrawTargetOverride() : FrameBufferDrawTarget{0};
         
         // Determine the number of color attachments to clear
-        size_t colorAttachmentCount = drawTarget.IsAttachmentDefined() ? 1 : m_ActiveFramebuffer->GetColorAttachments().size();
+        size_t colorAttachmentCount = drawTarget.IsAttachmentDefined() ? 1 : m_ActiveFrameBuffer->GetColorAttachments().size();
         
         // Lambda to retrieve the Metal texture for a given color attachment index
         auto getColorAttachment = [&](size_t i) -> id<MTLTexture>
         {
-            if (!m_ActiveFramebuffer)
+            if (!m_ActiveFrameBuffer)
                 return reinterpret_cast<id<MTLTexture>>(m_Context->GetBackbufferTexture());
 
             uint32_t index = drawTarget.IsAttachmentDefined() ? drawTarget.AttachmentIndex : static_cast<uint32_t>(i);
-            auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(m_ActiveFramebuffer->GetColorAttachment(index));
+            auto framebufferAttachment = std::dynamic_pointer_cast<MetalTexture>(m_ActiveFrameBuffer->GetColorAttachment(index));
             return reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
         };
         
@@ -209,8 +209,8 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
             // Apply cube map face/mip level override if defined
             if (drawTarget.IsCubeFaceDefined())
             {
-                descriptor.colorAttachments[i].slice   = m_ActiveFramebuffer->GetDrawTargetOverride().CubeFace;
-                descriptor.colorAttachments[i].level   = m_ActiveFramebuffer->GetDrawTargetOverride().MipLevel;
+                descriptor.colorAttachments[i].slice   = m_ActiveFrameBuffer->GetDrawTargetOverride().CubeFace;
+                descriptor.colorAttachments[i].level   = m_ActiveFrameBuffer->GetDrawTargetOverride().MipLevel;
             }
         }
         
@@ -219,7 +219,7 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         {
             // Define the depth attachment to be used
             id<MTLTexture> attachment;
-            if (!m_ActiveFramebuffer)
+            if (!m_ActiveFrameBuffer)
             {
                 // Create the depth texture for the screen target if it doesn't exist or needs to be updated
                 CreateDepthTexture();
@@ -229,19 +229,19 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
             {
                 // Get the depth attachment texture from the framebuffer
                 std::shared_ptr<MetalTexture> framebufferAttachment =
-                std::dynamic_pointer_cast<MetalTexture>(m_ActiveFramebuffer->GetDepthAttachment());
+                std::dynamic_pointer_cast<MetalTexture>(m_ActiveFrameBuffer->GetDepthAttachment());
                 
                 attachment = reinterpret_cast<id<MTLTexture>>(framebufferAttachment->MTLGetTexture());
             }
             
             descriptor.depthAttachment.clearDepth = 1.0;
             descriptor.depthAttachment.loadAction = MTLLoadActionClear;
-            descriptor.depthAttachment.storeAction = m_ActiveFramebuffer ? MTLStoreActionStore : MTLStoreActionDontCare;
+            descriptor.depthAttachment.storeAction = m_ActiveFrameBuffer ? MTLStoreActionStore : MTLStoreActionDontCare;
             descriptor.depthAttachment.texture = attachment;
         }
         
         // Create command encoder and setup depth-stencil
-        m_Context->InitCommandEncoder(descriptor, m_ActiveFramebuffer ? "FB" : "SB");
+        m_Context->InitCommandEncoder(descriptor, m_ActiveFrameBuffer ? "FB" : "SB");
         EnableDepthTesting(targets.Depth);
     } // autoreleasepool
 }
@@ -260,7 +260,8 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
 
      // Set the pipeline state
      auto metalDrawable = std::reinterpret_pointer_cast<MetalDrawable>(drawable);
-     auto renderPipelineState = reinterpret_cast<id<MTLRenderPipelineState>>(metalDrawable->GetOrCreateRenderPipelineState(m_ActiveFramebuffer));
+     auto renderPipelineState = reinterpret_cast<id<MTLRenderPipelineState>>(
+         metalDrawable->GetOrCreateRenderPipelineState(m_ActiveFrameBuffer));
      [encoder setRenderPipelineState:renderPipelineState];
      
     // Bind the drawable object

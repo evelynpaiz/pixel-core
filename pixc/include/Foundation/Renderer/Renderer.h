@@ -36,8 +36,7 @@ public:
     
     // Scene parametrization
     // ----------------------------------------
-    static void BeginScene();
-    static void BeginScene(const std::shared_ptr<Camera>& camera);
+    static void BeginScene(const std::shared_ptr<Camera>& camera = nullptr);
     static void BeginScene(const glm::mat4& view, const glm::mat4& projection,
                            const glm::vec3& position = glm::vec3(0.0f));
     

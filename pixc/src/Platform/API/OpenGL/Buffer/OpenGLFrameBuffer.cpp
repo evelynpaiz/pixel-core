@@ -33,7 +33,7 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
  */
 OpenGLFrameBuffer::~OpenGLFrameBuffer()
 {
-    ReleaseFramebuffer();
+    ReleaseFrameBuffer();
 }
 
 /**
@@ -218,7 +218,7 @@ void OpenGLFrameBuffer::Invalidate()
 {
     // Check if framebuffer already exists, if so, delete it
     if (m_ID)
-        ReleaseFramebuffer();
+        ReleaseFrameBuffer();
     
     // Create the framebuffer
     glGenFramebuffers(1, &m_ID);
@@ -284,10 +284,10 @@ void OpenGLFrameBuffer::Invalidate()
 /**
  * @brief Releases the resources associated with the framebuffer.
  */
-void OpenGLFrameBuffer::ReleaseFramebuffer()
+void OpenGLFrameBuffer::ReleaseFrameBuffer()
 {
     glDeleteFramebuffers(1, &m_ID);
-    FrameBuffer::ReleaseFramebuffer();
+    FrameBuffer::ReleaseFrameBuffer();
 }
 
 } // namespace pixc

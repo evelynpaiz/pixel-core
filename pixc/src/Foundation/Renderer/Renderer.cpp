@@ -27,14 +27,40 @@ void Renderer::Init()
 }
 
 /**
- * @brief Start the rendering of a scene by defining its general parameters.
+ * Start the rendering of a scene by defining its general parameters.
+ *
+ * @param camera Rendering camera.
  */
-void Renderer::BeginScene()
+void Renderer::BeginScene(const std::shared_ptr<Camera> &camera)
 {
-    s_SceneData->ViewPosition = glm::vec3(0.0);
+    // If no camera is defined, set a generic configuration
+    if (!camera)
+    {
+        BeginScene(glm::mat4(1.0), glm::mat4(1.0));
+        return;
+    }
     
-    s_SceneData->ViewMatrix = glm::mat4(1.0f);
-    s_SceneData->ProjectionMatrix = glm::mat4(1.0f);
+    // Set the information from the scene
+    s_SceneData->ViewPosition = camera->GetPosition();
+    
+    s_SceneData->ViewMatrix = camera->GetViewMatrix();
+    s_SceneData->ProjectionMatrix = camera->GetProjectionMatrix();
+}
+
+/**
+ * Start the rendering of a scene by defining its general parameters.
+ *
+ * @param view The view matrix transformation.
+ * @param projection The projection matrix transformation.
+ * @param position The view position.
+ */
+void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
+                          const glm::vec3& position)
+{
+    s_SceneData->ViewPosition = position;
+    
+    s_SceneData->ViewMatrix = view;
+    s_SceneData->ProjectionMatrix = projection;
 }
 
 /**
@@ -101,35 +127,6 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     
     // Unbind the material
     material->Unbind();
-}
-
-/**
- * Start the rendering of a scene by defining its general parameters.
- *
- * @param camera Rendering camera.
- */
-void Renderer::BeginScene(const std::shared_ptr<Camera> &camera)
-{
-    s_SceneData->ViewPosition = camera->GetPosition();
-    
-    s_SceneData->ViewMatrix = camera->GetViewMatrix();
-    s_SceneData->ProjectionMatrix = camera->GetProjectionMatrix();
-}
-
-/**
- * Start the rendering of a scene by defining its general parameters.
- *
- * @param view The view matrix transformation.
- * @param projection The projection matrix transformation.
- * @param position The view position.
- */
-void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
-                          const glm::vec3& position)
-{
-    s_SceneData->ViewPosition = position;
-    
-    s_SceneData->ViewMatrix = view;
-    s_SceneData->ProjectionMatrix = projection;
 }
 
 /**

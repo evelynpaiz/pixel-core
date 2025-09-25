@@ -73,7 +73,7 @@ public:
 private:
     // Initialization
     // ----------------------------------------
-    void SetupFramebuffers(const uint32_t size) override;
+    void SetupFrameBuffers(const uint32_t size) override;
     void SetupResources() override;
     
     // Properties

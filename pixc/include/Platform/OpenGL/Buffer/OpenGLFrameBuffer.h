@@ -51,7 +51,7 @@ class OpenGLFrameBuffer : public FrameBuffer
     private:
     // Destructor
     // ----------------------------------------
-    void ReleaseFramebuffer() override;
+    void ReleaseFrameBuffer() override;
     
     // Reset
     // ----------------------------------------
