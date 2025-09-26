@@ -72,7 +72,7 @@ void MetalGuiBackend::BeginFrame()
         // Define render encoder
         m_Context->InitCommandEncoder(descriptor, "ImGui");
         // Define the imgui frame
-        //ImGui_ImplMetal_NewFrame(descriptor);
+        ImGui_ImplMetal_NewFrame(descriptor);
     }
 }
 
@@ -88,7 +88,7 @@ void MetalGuiBackend::EndFrame()
         auto encoder = reinterpret_cast<id<MTLRenderCommandEncoder>>(m_Context->GetCommandEncoder());
         
         // Render the imgui data
-        //ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, encoder);
+        ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData(), commandBuffer, encoder);
     }
 }
 
