@@ -1,10 +1,11 @@
 # Pixel Core
-This repository contains Pixel Core, a lightweight rendering engine built using OpenGL.
+Pixel Core is a rendering engine built from scratch, supporting both OpenGL and Metal for cross-platform graphics.
 
 ## Requirements
 * [Git](https://git-scm.com): Required for version control.
 * [CMake](https://cmake.org): Used for generating platform-specific build files.
 * [OpenGL](https://www.opengl.org/): The underlying graphics API.
+* [Metal](https://developer.apple.com/metal/): GPU framework for macOS and iOS.
 * C++ Compiler: A modern C++ compiler compatible with C++20 or later.
     
 ## Getting started
@@ -49,4 +50,5 @@ The external libraries needed in this project have been added as git submodules.
 This project draws inspiration and utilizes code from the following resources:
 * [Hazel Engine](https://github.com/TheCherno/Hazel) from Yan Chernokov.
 * [Learn OpenGL](https://github.com/JoeyDeVries/LearnOpenGL) from Joey de Vries.
-* [OpenGL Tutorial](https://github.com/VictorGordan/opengl-tutorials) from Victor Gordan.
+* [OpenGL Tutorials](https://github.com/VictorGordan/opengl-tutorials) from Victor Gordan.
+* [Metal by Tutorials](https://github.com/kodecocodes/met-materials) from Kodeco.

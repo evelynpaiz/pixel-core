@@ -1,21 +1,21 @@
-[submodule "3rdparty/stb"]
-	path = 3rdparty/stb
-	url = https://github.com/nothings/stb.git
-[submodule "3rdparty/glfw"]
-	path = 3rdparty/glfw
-	url = https://github.com/epaizreyes/glfw.git
-[submodule "3rdparty/glew"]
-	path = 3rdparty/glew
-	url = https://github.com/epaizreyes/glew.git
 [submodule "3rdparty/spdlog"]
 	path = 3rdparty/spdlog
-	url = https://github.com/epaizreyes/spdlog.git
+	url = https://github.com/evelynpaiz/spdlog.git
+[submodule "3rdparty/glfw"]
+	path = 3rdparty/glfw
+	url = https://github.com/evelynpaiz/glfw.git
+[submodule "3rdparty/glew"]
+	path = 3rdparty/glew
+	url = https://github.com/evelynpaiz/glew.git
 [submodule "3rdparty/glm"]
 	path = 3rdparty/glm
-	url = https://github.com/epaizreyes/glm.git
+	url = https://github.com/g-truc/glm.git
 [submodule "3rdparty/imgui"]
 	path = 3rdparty/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "3rdparty/stb"]
+	path = 3rdparty/stb
+	url = https://github.com/nothings/stb.git
 [submodule "3rdparty/assimp"]
 	path = 3rdparty/assimp
 	url = https://github.com/assimp/assimp.git

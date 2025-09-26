@@ -1,0 +1,25 @@
+#include <metal_stdlib>
+using namespace metal;
+
+// Include indices enumeration
+#import "pixc/shaders/shared/enum/buffer/Buffer.metal"
+#import "pixc/shaders/shared/enum/texture/TextureIndex.metal"
+
+// Include transformation matrices
+#import "pixc/shaders/shared/structure/matrix/SimpleMatrix.metal"
+
+// Include vertex shader
+#import "pixc/shaders/shared/chunk/vertex/Tex.vs.metal"
+
+// ----------------------------------
+
+// Entry point of the fragment shader
+fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
+                              texture2d<float> u_Material_TextureMap [[ texture(TextureIndex::TextureMap) ]],
+                              sampler s_Material_TextureMap [[ sampler(TextureIndex::TextureMap) ]])
+{
+    // Sample the color from the texture using the provided texture coordinates
+    float4 color = u_Material_TextureMap.sample(s_Material_TextureMap, in.v_TextureCoord);
+    // Output the sampled texture color as the final fragment color
+    return color;
+}
