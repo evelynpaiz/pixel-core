@@ -28,7 +28,6 @@ public:
 private:
     // Initialization
     // ----------------------------------------
-    void DefineBuffers() override;
     void DefineMaterials() override;
     void DefineLights() override;
     void DefineGeometry() override;

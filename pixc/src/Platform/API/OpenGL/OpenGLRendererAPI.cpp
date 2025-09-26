@@ -74,6 +74,36 @@ void OpenGLRendererAPI::SetDepthFunction(const DepthFunction function)
 }
 
 /**
+ * @brief Set the face culling mode for rendering.
+ *
+ * Face culling is a technique used to improve rendering performance by discarding
+ * the rendering of faces that are not visible, such as the back faces of 3D objects.
+ *
+ * @param mode The face culling mode to be set.
+ */
+void OpenGLRendererAPI::SetFaceCulling(const FaceCulling mode)
+{
+    glCullFace(utils::graphics::gl::ToOpenGLCulling(mode));
+}
+
+/**
+ * @brief Enable or disable seamless cubemap sampling.
+ *
+ * This function allows you to enable or disable seamless cubemap sampling, which
+ * can improve the visual quality when rendering cubemaps, especially when used as
+ * skyboxes or for environment mapping.
+ *
+ * @param enabled Set to `true` to enable seamless cubemap sampling, or `false` to disable it.
+ */
+void OpenGLRendererAPI::SetCubeMapSeamless(const bool enabled)
+{
+    if (enabled)
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    else
+        glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+}
+
+/**
  * @brief Initialize a new rendering pass.
  *
  * @param framebuffer Buffer to hold to result of the rendered pass.

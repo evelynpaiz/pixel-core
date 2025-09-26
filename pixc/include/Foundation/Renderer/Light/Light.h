@@ -56,12 +56,6 @@ public:
     virtual void DefineLightProperties(const std::shared_ptr<Shader>& shader,
                                        LightProperty properties) = 0;
     
-protected:
-    // Constructor(s)
-    // ----------------------------------------
-    /// @brief Define a base light.
-    Light() = default;
-    
     /// @brief Check whether a set of `LightProperty` flags contains a specific flag.
     /// @param value The combined set of flags.
     /// @param flag The flag to check.
@@ -70,6 +64,12 @@ protected:
     {
         return (value & flag) != LightProperty::None;
     }
+    
+protected:
+    // Constructor(s)
+    // ----------------------------------------
+    /// @brief Define a base light.
+    Light() = default;
     
     // Light variables
     // ----------------------------------------

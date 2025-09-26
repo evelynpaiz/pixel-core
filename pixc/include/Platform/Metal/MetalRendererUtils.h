@@ -128,6 +128,30 @@ inline MTLCompareFunction ToMetalCompareFunction(DepthFunction depth)
     return MTLCompareFunctionLess;
 }
 
+/**
+ * @brief Convert the face culling mode to its corresponding Metal mode.
+ *
+ * @param mode The face culling mode to be converted.
+ *
+ * @return The corresponding Metal face culling mode.
+ *
+ * @note If the input face culling mode is not recognized, the function will assert with an error.
+ */
+inline MTLCullMode ToMetalCulling(FaceCulling mode)
+{
+    switch (mode)
+    {
+        case FaceCulling::Front:        return MTLCullModeFront;
+        case FaceCulling::Back:         return MTLCullModeBack;
+        case FaceCulling::FrontAndBack:
+            PIXEL_CORE_WARN("Metal does not support culling both front and back; defaulting to Back.");
+            return MTLCullModeBack;
+    }
+
+    PIXEL_CORE_ASSERT(false, "Unknown face culling mode!");
+    return MTLCullModeNone;
+}
+
 } // namespace mtl
 } // namespace graphics
 } // namespace utils

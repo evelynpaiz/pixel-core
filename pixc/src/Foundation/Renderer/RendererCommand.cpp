@@ -117,4 +117,24 @@ void RendererCommand::ConfigureDepthTesting(const bool enabled,
     s_API->ConfigureDepthTesting(enabled, function);
 }
 
+/**
+ * @brief Set the face culling mode for rendering.
+ *
+ * @param mode The face culling mode to be set.
+ */
+void RendererCommand::SetFaceCulling(const FaceCulling mode)
+{
+    s_API->SetFaceCulling(mode);
+}
+
+/**
+ * @brief Enable or disable seamless cubemap sampling.
+ *
+ * @param enabled Set to `true` to enable seamless cubemap sampling, or `false` to disable it.
+ */
+void RendererCommand::SetCubeMapSeamless(const bool enabled)
+{
+    s_API->SetCubeMapSeamless(enabled);
+}
+
 } // namespace pixc

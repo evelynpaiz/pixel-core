@@ -73,6 +73,7 @@ private:
     void UpdateViewport(const void* descriptor);
     
     void SetDepthStencilState(const void* state);
+    void SetFaceCulling(const void* mode);
     
     // Render
     // ----------------------------------------

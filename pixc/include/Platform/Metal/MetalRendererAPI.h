@@ -40,6 +40,12 @@ public:
     void EnableDepthTesting(const bool enabled) override;
     void SetDepthFunction(const DepthFunction function) override;
     
+    void SetFaceCulling(const FaceCulling mode) override;
+    /// @brief Enable or disable seamless cubemap sampling.
+    /// @param enabled Set to `true` to enable seamless cubemap sampling, or `false` to disable it.
+    /// @note No-op in Metal: seamless cubemap sampling is automatic
+    void SetCubeMapSeamless(const bool enabled) override {}
+    
     // Render
     // ----------------------------------------
     void BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer) override;

@@ -338,7 +338,6 @@ void MetalContext::EndEncoding()
 void MetalContext::UpdateBufferSize(const uint32_t width,
                                     const uint32_t height)
 {
-    // TODO: to be checked! (maybe the viewport needs to be updated too)
     m_State->SwapChain.Layer.drawableSize = CGSizeMake(width, height);
 }
 
@@ -371,6 +370,23 @@ void MetalContext::SetDepthStencilState(const void* state)
     // Set the depth stencil state
     auto depthStencilState = reinterpret_cast<id<MTLDepthStencilState>>(state);
     [m_State->Frame.Encoder setDepthStencilState:depthStencilState];
+}
+
+/**
+ * @brief Sets the face culling mode for the current Metal command encoder.
+ *
+ * @param mode Pointer to a culling mode value specifying which faces to cull.
+ */
+void MetalContext::SetFaceCulling(const void* mode)
+{
+    // Verify that the encoder has been defined
+    if (!m_State->Frame.Encoder)
+        return;
+    
+    // Set face culling for the current encoder
+    auto cullMode = *reinterpret_cast<const MTLCullMode*>(mode);
+    [m_State->Frame.Encoder setFrontFacingWinding:MTLWindingCounterClockwise]; // default winding
+    [m_State->Frame.Encoder setCullMode:cullMode];
 }
 
 } // namespace pixc

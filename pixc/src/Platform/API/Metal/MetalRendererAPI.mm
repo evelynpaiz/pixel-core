@@ -53,6 +53,9 @@ struct MetalRendererAPI::MetalRendererState
     ///< Depth configuration.
     MetalDepthDescriptor DepthDescriptor;
     
+    ///< Face culling mode (default back-face culling)
+    FaceCulling CullMode = FaceCulling::Back;
+    
     /// Cache of render-related GPU states (e.g., depth-stencil).
     MetalRenderCache Cache;
 };
@@ -139,6 +142,22 @@ void MetalRendererAPI::SetDepthFunction(const DepthFunction function)
     
     // Update the current depth stencil state
     m_Context->SetDepthStencilState(GetOrCreateDepthState());
+}
+
+/**
+ * @brief Set the face culling mode for rendering.
+ *
+ * Face culling is a technique used to improve rendering performance by discarding
+ * the rendering of faces that are not visible, such as the back faces of 3D objects.
+ *
+ * @param mode The face culling mode to be set.
+ */
+void MetalRendererAPI::SetFaceCulling(const FaceCulling mode)
+{
+    m_State->CullMode = mode;
+    
+    MTLCullMode cullMode = utils::graphics::mtl::ToMetalCulling(m_State->CullMode);
+    m_Context->SetFaceCulling(&cullMode);
 }
 
 /**
@@ -243,6 +262,9 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         // Create command encoder and setup depth-stencil
         m_Context->InitCommandEncoder(descriptor, m_ActiveFrameBuffer ? "FB" : "SB");
         EnableDepthTesting(targets.Depth);
+        // Define culling mode
+        MTLCullMode cullMode = utils::graphics::mtl::ToMetalCulling(m_State->CullMode);
+        m_Context->SetFaceCulling(&cullMode);
     } // autoreleasepool
 }
 

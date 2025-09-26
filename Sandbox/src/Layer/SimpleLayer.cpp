@@ -14,12 +14,6 @@ SimpleLayer::SimpleLayer(int width, int height, const std::string& name)
 }
 
 /**
- * @brief Define and configure frame buffers used in the rendering pipeline.
- */
-void SimpleLayer::DefineBuffers()
-{}
-
-/**
  * @brief Define and register materials used for rendering.
  */
 void SimpleLayer::DefineMaterials()
@@ -98,12 +92,14 @@ void SimpleLayer::DefineRenderPasses()
             continue;
         
         pixc::RenderPassSpecification shadowPassSpec;
-        shadowPassSpec.Camera = light->GetShadowCamera();
-        shadowPassSpec.FrameBuffer = light->GetShadowFrameBuffer();
-        shadowPassSpec.Models = {
-            { "Planet", "Depth"},
+        shadowPassSpec.Target.FrameBuffer = light->GetShadowFrameBuffer();
+        shadowPassSpec.Render.Camera = light->GetShadowCamera();
+        shadowPassSpec.Render.Models = {
+            { "Planet", "Depth" },
             { "Cube", "Depth" },
         };
+        shadowPassSpec.Hooks.PreRenderCode = []() { pixc::RendererCommand::SetFaceCulling(pixc::FaceCulling::Front); };
+        shadowPassSpec.Hooks.PostRenderCode = []() { pixc::RendererCommand::SetFaceCulling(pixc::FaceCulling::Back); };
     
         library.Add("Shadow-" + pair.first, shadowPassSpec);
     }
@@ -111,9 +107,10 @@ void SimpleLayer::DefineRenderPasses()
     // Second pass: scene
     //--------------------------------
     pixc::RenderPassSpecification scenePassSpec;
-    scenePassSpec.Camera = m_Scene.GetCamera();
-    scenePassSpec.FrameBuffer = m_Scene.GetFrameBuffers().Get("ScreenBuffer");
-    scenePassSpec.Models = {
+    scenePassSpec.Target.FrameBuffer = m_Scene.GetFrameBuffers().Get("ScreenBuffer");
+    scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
+    scenePassSpec.Render.Camera = m_Scene.GetCamera();
+    scenePassSpec.Render.Models = {
         { "Planet", "Simple",
             [](const std::shared_ptr<pixc::Material>& material)
             {
@@ -121,10 +118,8 @@ void SimpleLayer::DefineRenderPasses()
                 
                 if (!simpleMaterial)
                     return;
-             
-                // Define rendering texture(s)
+
                 static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
-                
                 simpleMaterial->SetColor(glm::vec4(1.0f));
                 simpleMaterial->SetTextureMap(ground);
             }
@@ -144,8 +139,7 @@ void SimpleLayer::DefineRenderPasses()
             }
         }
     };
-    scenePassSpec.RenderLights = true;
-    scenePassSpec.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
+    scenePassSpec.Render.RenderLights = true;
     library.Add("Scene", scenePassSpec);
 }
 

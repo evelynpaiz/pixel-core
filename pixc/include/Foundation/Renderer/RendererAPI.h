@@ -72,6 +72,9 @@ public:
         SetDepthFunction(function);
     }
     
+    virtual void SetFaceCulling(const FaceCulling mode) = 0;
+    virtual void SetCubeMapSeamless(const bool enabled) = 0;
+    
     // Render
     // ----------------------------------------
     virtual void BeginRenderPass(const std::shared_ptr<FrameBuffer>& framebuffer);

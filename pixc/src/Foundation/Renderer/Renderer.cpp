@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Renderer.h"
 
 #include "Foundation/Renderer/RendererCommand.h"
-//#include "Foundation/Renderer/Material/LightedMaterial.h"
+#include "Foundation/Renderer/Material/LightedMaterial.h"
 
 namespace pixc {
 
@@ -19,7 +19,7 @@ static const glm::mat4 g_TextureMatrix = glm::mat4(
 );
 
 /**
- * Initialize the renderer.
+ * @brief Initialize the renderer.
  */
 void Renderer::Init()
 {
@@ -27,7 +27,7 @@ void Renderer::Init()
 }
 
 /**
- * Start the rendering of a scene by defining its general parameters.
+ * @brief Start the rendering of a scene by defining its general parameters.
  *
  * @param camera Rendering camera.
  */
@@ -48,7 +48,7 @@ void Renderer::BeginScene(const std::shared_ptr<Camera> &camera)
 }
 
 /**
- * Start the rendering of a scene by defining its general parameters.
+ * @brief Start the rendering of a scene by defining its general parameters.
  *
  * @param view The view matrix transformation.
  * @param projection The projection matrix transformation.
@@ -64,7 +64,7 @@ void Renderer::BeginScene(const glm::mat4 &view, const glm::mat4 &projection,
 }
 
 /**
- * End the rendering of a scene.
+ * @brief End the rendering of a scene.
  */
 void Renderer::EndScene()
 {
@@ -72,7 +72,7 @@ void Renderer::EndScene()
 }
 
 /**
- * Render primitives from a drawable object using the specified primitive type.
+ * @brief Render primitives from a drawable object using the specified primitive type.
  *
  * @param drawable The drawable object containing the data for rendering.
  * @param primitive The type of primitive to be drawn (e.g., Points, Lines, Triangles).
@@ -86,7 +86,7 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const PrimitiveTy
 }
 
 /**
- * Render primitives from a drawable object using the specified primitive type.
+ * @brief Render primitives from a drawable object using the specified primitive type.
  *
  * @param drawable The drawable object containing the data for rendering.
  * @param shader The shader program.
@@ -110,17 +110,14 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     if (material->HasProperty(MaterialProperty::NormalMatrix))
         material->GetShader()->SetMat4("u_Transform.Normal", glm::transpose(glm::inverse(transform)));
     
-    //TODO: uncomment when lighted material is added
-    /*
     auto lightedMaterial = std::dynamic_pointer_cast<LightedMaterial>(material);
     if (lightedMaterial)
     {
         // Check the flags for the lighted material
-        auto& lightFlags = lightedMaterial->GetLightFlags();
-        if (lightFlags.ShadowProperties)
+        const auto& lightProperties = lightedMaterial->GetLightProperties();
+        if (Light::HasProperty(lightProperties, LightProperty::ShadowProperties))
             material->GetShader()->SetMat4("u_Transform.Texture", g_TextureMatrix);
     }
-     */
     
     // Render the geometry
     Draw(drawable, primitive);
@@ -130,7 +127,7 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
 }
 
 /**
- * Reset rendering statistics.
+ * @brief Reset rendering statistics.
  *
  * This function resets the stored rendering statistics, including information about
  * the number of draw calls, vertices rendered, and other rendering-related data.
@@ -142,7 +139,7 @@ void Renderer::ResetStats()
 }
 
 /**
- * Get the current rendering statistics.
+ * @brief Get the current rendering statistics.
  *
  * @return The rendering statistics structure containing performance metrics.
  */
@@ -150,36 +147,5 @@ Renderer::RenderingStatistics Renderer::GetStats()
 {
     return g_Stats;
 }
-
-/**
- * @brief Set the face culling mode for rendering.
- *
- * Face culling is a technique used to improve rendering performance by discarding
- * the rendering of faces that are not visible, such as the back faces of 3D objects.
- *
- * @param culling The face culling mode to be set.
-
-void Renderer::SetFaceCulling(const FaceCulling culling)
-{
-    glCullFace(utils::graphics::gl::ToOpenGLCulling(culling));
-}
- */
-/**
- * Enable or disable seamless cubemap sampling.
- *
- * This function allows you to enable or disable seamless cubemap sampling, which
- * can improve the visual quality when rendering cubemaps, especially when used as
- * skyboxes or for environment mapping.
- *
- * @param enabled Set to `true` to enable seamless cubemap sampling, or `false` to disable it.
-
-void Renderer::SetCubeMapSeamless(const bool enabled)
-{
-    if (enabled)
-        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    else
-        glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-}
- */
 
 } // namespace pixc

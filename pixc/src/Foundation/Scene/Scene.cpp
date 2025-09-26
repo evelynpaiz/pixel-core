@@ -28,21 +28,27 @@ Scene::Scene(uint32_t width, uint32_t height,
  */
 void Scene::Draw()
 {
+    // Iterate through all render passes in the order they were added
     for (auto& name : m_RenderPasses.m_Order)
     {
+        // Retrieve the render pass specification by name
         auto& pass = m_RenderPasses.Get(name);
         if (pass.Active)
+        {
+            // If the render pass is active, perform the full rendering workflow
             Draw(pass);
-        
-        // TODO: handle not active passes
-        /*
-         else
-         {
-         if (pass.Framebuffer)
-            pass.Framebuffer->Bind();
-         RendererCommand::SetRenderTarget(glm::vec4(0.0f));
-         }
-         */
+        }
+        else
+        {
+            // If the render pass is inactive but has a framebuffer target,
+            // apply clear/viewport settings to keep buffers consistent
+            if (!pass.Target.FrameBuffer)
+                continue;
+
+            RendererCommand::BeginRenderPass(pass.Target.FrameBuffer);
+            ApplyTargetSettings(pass.Target);
+            RendererCommand::EndRenderPass();
+        }
     }
 }
 
@@ -53,71 +59,36 @@ void Scene::Draw()
  */
 void Scene::Draw(const RenderPassSpecification &pass)
 {
-    // Run pre-render code
-    if (pass.PreRenderCode)
-        pass.PreRenderCode();
+    if (!pass.Active)
+            return;
+    
+    // Run pre-render hook
+    if (pass.Hooks.PreRenderCode)
+        pass.Hooks.PreRenderCode();
     
     // Begin render pass
-    RendererCommand::BeginRenderPass(pass.FrameBuffer);
+    RendererCommand::BeginRenderPass(pass.Target.FrameBuffer);
     
-    // Set viewport if specified
-    if (pass.ViewportSize)
-        RendererCommand::SetViewport(0, 0, (*pass.ViewportSize).x, (*pass.ViewportSize).y);
-    
-    // Clear framebuffer if enabled
-    switch (pass.ClearBehavior)
-    {
-        case RenderPassSpecification::ClearMode::Enabled:
-            // Clear with the specified color
-            RendererCommand::SetClearColor(pass.ClearColor);
-            RendererCommand::Clear();
-            break;
-
-        case RenderPassSpecification::ClearMode::Disabled:
-            // Do nothing; leave framebuffer as-is
-            break;
-
-        case RenderPassSpecification::ClearMode::Default:
-            // Optional: define default behavior (e.g., clear with black)
-            RendererCommand::SetClearColor(glm::vec4(0.0f));
-            RendererCommand::Clear();
-            break;
-    }
+    // Apply the settings specific for the rendering target
+    ApplyTargetSettings(pass.Target);
     
     // Begin the scene with the specified camera
-    Renderer::BeginScene(pass.Camera);
+    Renderer::BeginScene(pass.Render.Camera);
     
     // Render light sources separately
-    if (pass.RenderLights)
+    if (pass.Render.RenderLights)
         DrawLights();
     
     // Render each model
-    for (const auto& renderable : pass.Models)
-    {
-        
-        auto& model = m_Models.Get(renderable.ModelName);
-        if (!model)
-            continue;
-
-        if (!renderable.MaterialName.empty())
-        {
-            auto& material = Renderer::GetMaterialLibrary().Get(renderable.MaterialName);
-            if (renderable.MaterialSetupFunction)
-                renderable.MaterialSetupFunction(material);
-            DefineShadowProperties(material);
-            model->SetMaterial(material);
-        }
-
-        model->DrawModel();
-    }
+    DrawModels(pass.Render.Models);
     
     // End scene and render pass
     Renderer::EndScene();
     RendererCommand::EndRenderPass();
 
-    // Run post-render code
-    if (pass.PostRenderCode)
-        pass.PostRenderCode();
+    // Run post-render hook
+    if (pass.Hooks.PostRenderCode)
+        pass.Hooks.PostRenderCode();
 }
 
 /**
@@ -125,12 +96,58 @@ void Scene::Draw(const RenderPassSpecification &pass)
  */
  void Scene::DrawLights()
  {
-     for (auto& pair : m_Lights)
-     {
-         auto& light = pair.second;
+     for (auto& [name, light] : m_Lights)
          light->DrawLight();
-     }
  }
+
+/**
+ * @brief Renders a collection of models defined by renderables.
+ *
+ * @param models The list of renderables to be drawn, including model and material information.
+ */
+void Scene::DrawModels(const std::vector<Renderable>& models)
+{
+    for (const auto& renderable : models)
+    {
+        // Get the model from library
+        auto& model = m_Models.Get(renderable.ModelName);
+        if (!model)
+            continue;
+
+        // Assign material if specified
+        if (!renderable.MaterialName.empty())
+        {
+            auto& material = Renderer::GetMaterialLibrary().Get(renderable.MaterialName);
+            if (!material)
+                continue;
+
+            if (renderable.MaterialSetupFunction)
+                renderable.MaterialSetupFunction(material);
+
+            DefineShadowProperties(material);
+            model->SetMaterial(material);
+        }
+
+        model->DrawModel();
+    }
+}
+
+/**
+ * @brief Applies target-specific rendering settings for a render pass.
+ *
+ * @param target The target settings containing framebuffer, viewport, and clear information.
+ */
+void Scene::ApplyTargetSettings(const TargetSettings& target)
+{
+    if (target.ViewportSize)
+        RendererCommand::SetViewport(0, 0, target.ViewportSize->x, target.ViewportSize->y);
+
+    if (target.ClearEnabled)
+    {
+        RendererCommand::SetClearColor(target.ClearColor);
+        RendererCommand::Clear();
+    }
+}
 
 /**
  * Define shadow properties for a given material.

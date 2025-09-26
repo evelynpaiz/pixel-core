@@ -71,10 +71,13 @@ public:
     
 private:
     void Draw(const RenderPassSpecification& pass);
+    
     void DrawLights();
+    void DrawModels(const std::vector<Renderable>& models);
     
     // Setters
     // ----------------------------------------
+    void ApplyTargetSettings(const TargetSettings& target);
     void DefineShadowProperties(const std::shared_ptr<Material>& material);
     
     // Scene variables

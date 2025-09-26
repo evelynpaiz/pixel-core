@@ -12,64 +12,57 @@
 namespace pixc {
 
 /**
+ * @brief Target output of the render pass (framebuffer, viewport, and clear behavior).
+ */
+struct TargetSettings
+{
+    std::shared_ptr<FrameBuffer> FrameBuffer;   ///< Target framebuffer (null = default).
+    std::optional<glm::vec2> ViewportSize;      ///< Viewport override (uses framebuffer or scene's viewport if not set).
+
+    bool ClearEnabled = true;                   ///< Whether the framebuffer should be cleared.
+    glm::vec4 ClearColor = glm::vec4(0.0f);     ///< Clear color (used only if ClearEnabled).
+};
+
+/**
+ * @brief A single model to be rendered in a pass.
+ */
+struct Renderable
+{
+    std::string ModelName;                      ///< Name of the model in the scene's model library.
+    std::string MaterialName;                   ///< Name of the material to use for this model.
+
+    ///< Lambda to configure material properties before rendering this model.
+    std::function<void(const std::shared_ptr<Material>&)> MaterialSetupFunction;
+};
+
+/**
+ * @brief What is rendered in this pass (models, lights, camera).
+ */
+struct RenderSettings
+{
+    std::shared_ptr<Camera> Camera;             ///< Camera used for rendering (falls back to scene camera if null).
+    std::vector<Renderable> Models;             ///< Models to render in this pass.
+    bool RenderLights = false;                  ///< Whether to render lights in this pass.
+};
+
+/**
+ * @brief User-defined callbacks executed around rendering.
+ */
+struct PassHooks
+{
+    std::function<void()> PreRenderCode;        ///< Lambda executed before rendering.
+    std::function<void()> PostRenderCode;       ///< Lambda executed after rendering.
+};
+
+/**
  * @brief Represents the specification for a render pass in a rendering pipeline.
- *
- * The `RenderPassSpecification` struct defines all parameters and settings
- * for a single render pass, including camera, framebuffer, models, viewport,
- * clear settings, and optional pre/post rendering hooks.
  */
 struct RenderPassSpecification
 {
-    ///< Whether this render pass is active.
-    bool Active = true;
-    ///< Human-readable name for this render pass.
-    std::string Name;
-
-    ///< The camera used to render this pass. If null, the scene's active camera is used.
-    std::shared_ptr<Camera> Camera;
-
-    /**
-     * @brief Represents a single model and its associated material to be rendered.
-     */
-    struct Renderable
-    {
-        std::string ModelName;    ///< Name of the model in the scene's model library.
-        std::string MaterialName; ///< Name of the material to use for this model.
-        
-        ///< Lambda to configure material properties before rendering this model.
-        std::function<void(const std::shared_ptr<Material>& material)> MaterialSetupFunction;
-    };
-    ///< Collection of models to render in this pass.
-    std::vector<Renderable> Models;
-    
-    ///< Whether to render the scene's lights in this pass.
-    bool RenderLights = false;
-
-    ///< The framebuffer to render to. If null, the default framebuffer is used.
-    std::shared_ptr<FrameBuffer> FrameBuffer;
-
-    /**
-     * @brief Clear behavior for this render pass.
-     *
-     * Default behavior clears the framebuffer using the specified ClearColor.
-     */
-    enum class ClearMode { Enabled, Disabled, Default };
-    ClearMode ClearBehavior = ClearMode::Enabled;
-    ///< Color used to clear the framebuffer (only if ClearBehavior != Disabled).
-    glm::vec4 ClearColor = glm::vec4(0.0f);
-
-    ///< Optional override for the viewport size for this pass. Uses the scene's viewport if not specified.
-    std::optional<glm::vec2> ViewportSize;
-
-    ///< Optional lambda executed before rendering this pass.
-    std::function<void()> PreRenderCode;
-    ///< Optional lambda executed after rendering this pass.
-    std::function<void()> PostRenderCode;
-
-    // ----------------------------------------
-    // Helper Constructors / Methods
-    // ----------------------------------------
-    RenderPassSpecification() = default;
+    bool Active = true;                         ///< Whether this render pass is active.
+    TargetSettings Target;                      ///< Framebuffer, viewport, clear.
+    RenderSettings Render;                      ///< Models, camera, lights.
+    PassHooks Hooks;                            ///< Custom code hooks.
 };
 
 /**

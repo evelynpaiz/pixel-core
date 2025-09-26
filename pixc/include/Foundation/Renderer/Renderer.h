@@ -7,9 +7,6 @@
 
 #include "Foundation/Renderer/Drawable/Drawable.h"
 
-//#include "Foundation/Renderer/Buffer/IndexBuffer.h"
-//#include "Foundation/Renderer/Buffer/FrameBuffer.h"
-
 #include "Foundation/Renderer/Material/Material.h"
 
 #include <glm/glm.hpp>
@@ -58,12 +55,6 @@ public:
     static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
     
     static MaterialLibrary& GetMaterialLibrary() { return s_MaterialLibrary; }
-    
-    // Setter(s)
-    // ----------------------------------------
-    // TODO: move to renderer command
-    //static void SetFaceCulling(const FaceCulling culling);
-    //static void SetCubeMapSeamless(const bool enabled);
     
     // Statistics
     // ----------------------------------------

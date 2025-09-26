@@ -51,6 +51,9 @@ public:
     static void ConfigureDepthTesting(const bool enabled = true,
                                       const DepthFunction function = DepthFunction::Less);
     
+    static void SetFaceCulling(const FaceCulling mode);
+    static void SetCubeMapSeamless(const bool enabled);
+    
     // Renderer variables
     // ----------------------------------------
 private:
