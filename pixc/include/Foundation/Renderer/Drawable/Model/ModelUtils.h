@@ -96,7 +96,7 @@ inline BufferLayout BufferLayoutGeometry(std::vector<GeoVertexData<glm::vec4, gl
  */
 template<typename VertexData>
 inline std::shared_ptr<Model<VertexData>>
-GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&,std::vector<uint32_t>&),
+GenerateModel(void (*DefineGeometry)(std::vector<VertexData>&, std::vector<uint32_t>&),
               const std::shared_ptr<Material>& material)
 {
     std::vector<VertexData> vertices;

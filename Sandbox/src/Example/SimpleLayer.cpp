@@ -1,4 +1,4 @@
-#include "Layer/SimpleLayer.h"
+#include "Example/SimpleLayer.h"
 
 /**
  * @brief Define a layer for a 3D viewer.

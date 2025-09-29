@@ -1,4 +1,4 @@
-#include "Core/SandboxApp.h"
+#include "App/SandboxApp.h"
 
 #include <pixc.h>
 
@@ -16,6 +16,6 @@ int main()
     pixc::Log::Init();
     
     // Create the application
-    auto application = std::make_unique<SandboxApp>("3D Viewer", 800, 600);
+    auto application = std::make_unique<SandboxApp>("Sandbox", 800, 600);
     application->Run();
 }

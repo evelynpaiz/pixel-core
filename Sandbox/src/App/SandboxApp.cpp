@@ -1,6 +1,7 @@
-#include "Core/SandboxApp.h"
+#include "App/SandboxApp.h"
 
-#include "Layer/SimpleLayer.h"
+#include "Example/BasicPrimitive.h"
+#include "Example/SimpleLayer.h"
 
 /**
  * @brief Generate a (sandbox) rendering application.
@@ -16,7 +17,7 @@ SandboxApp::SandboxApp(const std::string &name, const int width, const int heigh
     pixc::ResourcesManager::SetSpecificPath("/Users/evelynpaiz/Library/CloudStorage/GoogleDrive-evelyn.rpaiz@gmail.com/Mi unidad/Dev/assets");
     
     // Define a rendering and gui layer
-    m_Renderer = std::make_shared<SimpleLayer>(GetWindow().GetWidth(), GetWindow().GetHeight());
+    m_Renderer = std::make_shared<BasicPrimitive>(GetWindow().GetWidth(), GetWindow().GetHeight());
     m_Gui = std::make_shared<pixc::GuiLayer>();
     
     // Push the layers to the stack

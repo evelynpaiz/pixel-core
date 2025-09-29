@@ -25,8 +25,8 @@ public:
     // ----------------------------------------
 private:
     ///< 3D viewer (rendering layer).
-    std::shared_ptr<pixc::RenderingLayer> m_Renderer;
-    std::shared_ptr<pixc::GuiLayer> m_Gui;
+    std::shared_ptr<pixc::Layer> m_Renderer;
+    std::shared_ptr<pixc::Layer> m_Gui;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

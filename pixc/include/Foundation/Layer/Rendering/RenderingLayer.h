@@ -93,6 +93,9 @@ protected:
     
     // Events handler(s)
     // ----------------------------------------
+    /// @brief Function to be called when a window resize event happens.
+    /// @param e Event to be handled.
+    /// @return True if the event has been handled.
     virtual bool OnWindowResize(WindowResizeEvent &e)
     {
         // Notify of the change
