@@ -16,11 +16,12 @@ namespace pixc {
  */
 struct TargetSettings
 {
-    std::shared_ptr<FrameBuffer> FrameBuffer;   ///< Target framebuffer (null = default).
-    std::optional<glm::vec2> ViewportSize;      ///< Viewport override (uses framebuffer or scene's viewport if not set).
+    std::shared_ptr<FrameBuffer> FrameBuffer;           ///< Target framebuffer (null = default).
+    std::optional<glm::vec2> ViewportSize;              ///< Viewport override (uses framebuffer or scene's viewport if not set).
 
-    bool ClearEnabled = true;                   ///< Whether the framebuffer should be cleared.
-    glm::vec4 ClearColor = glm::vec4(0.0f);     ///< Clear color (used only if ClearEnabled).
+    bool ClearEnabled = true;                           ///< Whether the framebuffer should be cleared.
+    glm::vec4 ClearColor = glm::vec4(0.0f);             ///< Clear color (used only if ClearEnabled).
+    std::optional<RenderTargetMask> ClearTargets;       ///< Buffers to clear (color, depth, stencil).
 };
 
 /**

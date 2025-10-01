@@ -1,9 +1,14 @@
-#include "Example/SimpleLayer.h"
+#include "Examples/PhongPrimitive.h"
 
 /**
- * @brief Define a layer for a 3D viewer.
+ * @brief Create a rendering layer.
+ *
+ * @param width Width of the window where the layer is presented.
+ * @param height Height of the window where the layer is presented.
+ * @param name Name of the layer.
  */
-SimpleLayer::SimpleLayer(int width, int height, const std::string& name)
+PhongPrimitive::PhongPrimitive(const uint32_t width, const uint32_t height,
+                               const std::string& name)
     : RenderingLayer(width, height, name)
 {
     // Define the rendering camera
@@ -16,7 +21,7 @@ SimpleLayer::SimpleLayer(int width, int height, const std::string& name)
 /**
  * @brief Define and register materials used for rendering.
  */
-void SimpleLayer::DefineMaterials()
+void PhongPrimitive::DefineMaterials()
 {
     // Get the material library defined in the renderer
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
@@ -29,7 +34,7 @@ void SimpleLayer::DefineMaterials()
 /**
  * @brief Set up lighting parameters and light sources.
  */
-void SimpleLayer::DefineLights()
+void PhongPrimitive::DefineLights()
 {
     uint32_t width = m_Scene.GetCamera()->GetWidth();
     uint32_t height = m_Scene.GetCamera()->GetHeight();
@@ -61,13 +66,13 @@ void SimpleLayer::DefineLights()
 /**
  * @brief Define the geometry used in the scene.
  */
-void SimpleLayer::DefineGeometry()
+void PhongPrimitive::DefineGeometry()
 {
     // Define the model(s)
-    auto planet = std::make_shared<pixc::AssimpModel>(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
-    planet->SetScale(glm::vec3(0.12f));
-    planet->SetPosition(glm::vec3(-0.5f, 0.0f, 0.0f));
-    m_Scene.GetModels().Add("Planet", planet);
+    auto sphere = pixc::utils::geometry::ModelSphere<pixc::GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
+    sphere->SetScale(glm::vec3(0.3f));
+    sphere->SetPosition(glm::vec3(-0.5f, 0.0f, 0.0f));
+    m_Scene.GetModels().Add("Sphere", sphere);
     
     auto cube = pixc::utils::geometry::ModelCube<pixc::GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
     cube->SetScale(glm::vec3(0.5f));
@@ -78,12 +83,13 @@ void SimpleLayer::DefineGeometry()
 /**
  * @brief Defines the rendering passes.
  */
-void SimpleLayer::DefineRenderPasses()
+void PhongPrimitive::DefineRenderPasses()
 {
     auto& library = m_Scene.GetRenderPasses();
     
     // First pass(es): shadow(s)
     //--------------------------------
+    // TODO: remove from this example and move to a shadowed one
     auto& lights = m_Scene.GetLights();
     for (auto& pair : lights)
     {
@@ -95,7 +101,7 @@ void SimpleLayer::DefineRenderPasses()
         shadowPassSpec.Target.FrameBuffer = light->GetShadowFrameBuffer();
         shadowPassSpec.Render.Camera = light->GetShadowCamera();
         shadowPassSpec.Render.Models = {
-            { "Planet", "Depth" },
+            { "Sphere", "Depth" },
             { "Cube", "Depth" },
         };
         shadowPassSpec.Hooks.PreRenderCode = []() { pixc::RendererCommand::SetFaceCulling(pixc::FaceCulling::Front); };
@@ -111,7 +117,7 @@ void SimpleLayer::DefineRenderPasses()
     scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Planet", "Simple",
+        { "Sphere", "Simple",
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto simpleMaterial =  std::dynamic_pointer_cast<pixc::SimpleMaterial>(material);
@@ -144,36 +150,20 @@ void SimpleLayer::DefineRenderPasses()
 }
 
 /**
- * @brief Render the viewer layer.
+ * @brief Render the rendering layer.
  *
  * @param deltaTime Times passed since the last update.
  */
-void SimpleLayer::OnUpdate(pixc::Timestep ts)
+void PhongPrimitive::OnUpdate(pixc::Timestep ts)
 {
-    // Reset rendering statistics
+    // Reset per-frame rendering statistics (e.g., draw calls, triangles, vertices)
     pixc::Renderer::ResetStats();
     
-    // Render
+    // Draw all objects contained in the scene into its assigned viewport
     m_Scene.Draw();
+    // Render the scene’s viewport content to the screen framebuffer
     m_Scene.GetViewport()->RenderToScreen();
     
-    // Update camera
+    // Update the camera state (e.g., input handling, matrices) using the timestep
     m_Scene.GetCamera()->OnUpdate(ts);
-}
-
-/**
- * @brief Function to be called when a window resize event happens.
- *
- * @param e Event to be handled.
- * @return True if the event has been handled.
- */
-bool SimpleLayer::OnWindowResize(pixc::WindowResizeEvent &e)
-{
-    RenderingLayer::OnWindowResize(e);
-    
-    // Update specific size(s)
-    m_Scene.GetViewport()->Resize(e.GetWidth(), e.GetHeight());
-    
-    // Define the event as handled
-    return true;
 }

@@ -39,7 +39,7 @@ public:
     static void EndRenderPass();
     
     static void Clear();
-    static void Clear(const RenderTargetBuffers& targets);
+    static void Clear(const RenderTargetMask targets);
     
     static void Draw(const std::shared_ptr<Drawable>& drawable,
                      const PrimitiveType &primitive = PrimitiveType::Triangle);

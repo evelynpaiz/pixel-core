@@ -36,9 +36,13 @@ class RenderingLayer : public Layer
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    RenderingLayer(uint32_t width, uint32_t height,
+    /// @brief Create a rendering layer.
+    /// @param width Width of the window where the layer is presented.
+    /// @param height Height of the window where the layer is presented.
+    /// @param name Name of the layer.
+    RenderingLayer(const uint32_t width, const uint32_t height,
                    const std::string& name = "Rendering Layer")
-        : Layer(), m_Scene(width, height) {}
+        : Layer(name), m_Scene(width, height) {}
     /// @brief Delete the rendering layer.
     virtual ~RenderingLayer() = default;
     
@@ -101,11 +105,12 @@ protected:
         // Notify of the change
         PIXEL_CORE_TRACE("Window resized to {0} x {1}", e.GetWidth(), e.GetHeight());
         
-        // Update the camera
+        // Update the camera size
         if (m_Scene.GetCamera())
             m_Scene.GetCamera()->SetViewportSize(e.GetWidth(), e.GetHeight());
-        
-        // TODO: update the size of the framebuffers?
+        // Update the size of the viewport
+        if (m_Scene.GetViewport())
+            m_Scene.GetViewport()->Resize(e.GetWidth(), e.GetHeight());
         
         // Define the event as handled
         return true;

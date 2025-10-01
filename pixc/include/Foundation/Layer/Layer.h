@@ -27,7 +27,7 @@ class Layer
     public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    /// @brief Define a rendering layer.
+    /// @brief Create a layer to be displayed.
     /// @param name Name of the layer.
     Layer(const std::string& name = "Unidentified Layer")
     : m_LayerName(name)

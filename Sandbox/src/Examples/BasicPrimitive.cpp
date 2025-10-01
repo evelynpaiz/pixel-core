@@ -1,7 +1,7 @@
-#include "Example/BasicPrimitive.h"
+#include "Examples/BasicPrimitive.h"
 
 /**
- * @brief Render the basic primitive layer.
+ * @brief Render the rendering layer.
  *
  * @param deltaTime Times passed since the last update.
  */

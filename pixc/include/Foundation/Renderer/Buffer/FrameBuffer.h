@@ -118,9 +118,9 @@ struct BlitSpecification
     /// @param filter The texture filter for the blit operation.
     void SetFilter(const TextureFilter& filter) { Filter = filter; }
     
-    /// @brief Set the color attachments for the blit operation.
-    /// @param targets The buffers to be copied during the blit.
-    void SetTargets(const RenderTargetBuffers& targets) { Targets = targets; }
+    /// @brief Set the render target mask for the blit operation.
+    /// @param targets Bitmask of buffers (color, depth, stencil) to be copied during the blit.
+    void SetTargets(const RenderTargetMask targets) { Targets = targets; }
     
     /// @brief Set the source and destination attachment indices.
     /// @param srcIndex The source attachment index.
@@ -137,7 +137,7 @@ struct BlitSpecification
     TextureFilter Filter = TextureFilter::Nearest;
     
     ///< The buffers to be copied during the blit operation.
-    RenderTargetBuffers Targets;
+    RenderTargetMask Targets = RenderTargetMask::Color;
     
     ///< The index of the source color attachment.
     uint32_t SrcAttachmentIndex = 0;
@@ -231,7 +231,7 @@ class FrameBuffer
     
     /// @brief Get the active rendering targets for this framebuffer.
     /// @return The state of the color, depth and stencil targets state.
-    RenderTargetBuffers GetEnabledTargets() const { return m_EnabledTargets; }
+    RenderTargetMask GetEnabledTargets() const { return m_EnabledTargets; }
     /// @brief Get the current draw target override for this framebuffer.
     /// @return Reference to the current `FrameBufferDrawTarget` override.
     FrameBufferDrawTarget& GetDrawTargetOverride() { return m_DrawTargetOverride; }
@@ -325,7 +325,7 @@ class FrameBuffer
     TextureSpecification m_DepthAttachmentSpec;
     
     ///< Which buffers (color/depth/stencil) are currently active/enabled.
-    RenderTargetBuffers m_EnabledTargets = { false, false, false };
+    RenderTargetMask m_EnabledTargets = RenderTargetMask::Color;
 
     ///< Optional override for the specific draw target (attachment, cube face, mip level).
     FrameBufferDrawTarget m_DrawTargetOverride;

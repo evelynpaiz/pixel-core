@@ -12,14 +12,15 @@
  * Copying or moving `SimpleLayer` objects is disabled to ensure single ownership and prevent unintended
  * duplication.
  */
-class SimpleLayer : public pixc::RenderingLayer
+class PhongPrimitive : public pixc::RenderingLayer
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    SimpleLayer(int width, int height, const std::string& name = "Simple Layer Example");
+    PhongPrimitive(const uint32_t width, const uint32_t height,
+                   const std::string& name = "Phong Primitive Layer");
     /// @brief Delete the rendering layer.
-    virtual ~SimpleLayer() = default;
+    virtual ~PhongPrimitive() = default;
     
     // Layer handlers
     // ----------------------------------------
@@ -34,12 +35,8 @@ private:
     
     void DefineRenderPasses() override;
     
-    // Events handler(s)
-    // ----------------------------------------
-    bool OnWindowResize(pixc::WindowResizeEvent &e) override;
-    
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(SimpleLayer);
+    DISABLE_COPY_AND_MOVE(PhongPrimitive);
 };

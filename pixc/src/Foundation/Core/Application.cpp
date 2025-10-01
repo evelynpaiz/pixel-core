@@ -21,8 +21,8 @@ Application* Application::s_Instance = nullptr;
  * @param width Size (width) of the application window.
  * @param height Size (height) of the application window.
  */
-Application::Application(const std::string& name, const int width,
-                         const int height)
+Application::Application(const std::string& name, const uint32_t width,
+                         const uint32_t height)
 {
     // Define the pointer to the application
     PIXEL_CORE_ASSERT(!s_Instance, "Application '{0}' already exists!", name);

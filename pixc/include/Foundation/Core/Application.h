@@ -30,8 +30,8 @@ class Application
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    Application(const std::string &name = "Pixel Core Renderer", const int width = 800,
-                const int height = 600);
+    Application(const std::string &name = "Pixel-Core Application",
+                const uint32_t width = 800, const uint32_t height = 600);
     /// @brief Delete the application.
     virtual ~Application() = default;
     

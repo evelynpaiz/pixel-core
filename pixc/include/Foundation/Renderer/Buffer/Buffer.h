@@ -61,35 +61,56 @@ public:
 };
 
 /**
- * @brief Structure to represent the state of color, depth, and stencil buffers.
+ * @brief Bitmask flags representing which render target buffers to clear.
  */
-struct RenderTargetBuffers
+enum class RenderTargetMask : uint8_t
 {
-    // Constructor(s)
-    // ----------------------------------------
-    /// @brief Generate a buffer state with predefined buffer activation states.
-    /// @param color Whether the color buffer is active (default: true).
-    /// @param depth Whether the depth buffer is active (default: false).
-    /// @param stencil Whether the stencil buffer is active (default: false).
-    RenderTargetBuffers(bool color = true, bool depth = false, bool stencil = false)
-        : Color(color), Depth(depth), Stencil(stencil)
-    {}
-    
-    // Comparison operator to check if the current state is equal to the default state
-    bool operator==(const RenderTargetBuffers& other) const
-    {
-        return Color == other.Color &&
-               Depth == other.Depth &&
-               Stencil == other.Stencil;
-    }
-    
-    // Buffer state variables
-    // ----------------------------------------
-    bool Color;     ///< Indicates whether the color buffer is active.
-    bool Depth;     ///< Indicates whether the depth buffer is active.
-    bool Stencil;   ///< Indicates whether the stencil buffer is active.
+    None    = 0,          ///< No buffer is cleared.
+    Color   = 1 << 0,     ///< Clear the color buffer.
+    Depth   = 1 << 1,     ///< Clear the depth buffer.
+    Stencil = 1 << 2      ///< Clear the stencil buffer.
 };
 
+/**
+ * @brief Bitwise OR operator for combining buffer flags.
+ */
+inline RenderTargetMask operator|(RenderTargetMask a, RenderTargetMask b)
+{
+    return static_cast<RenderTargetMask>(
+        static_cast<uint8_t>(a) | static_cast<uint8_t>(b)
+    );
+}
+
+/**
+ * @brief Bitwise AND operator for checking overlapping buffer flags.
+ */
+inline RenderTargetMask operator&(RenderTargetMask a, RenderTargetMask b)
+{
+    return static_cast<RenderTargetMask>(
+        static_cast<uint8_t>(a) & static_cast<uint8_t>(b)
+    );
+}
+
+/**
+ * @namespace utils::graphics::gl
+ * @brief Utility functions related to Metal rendering operations.
+ */
+namespace utils { namespace graphics {
+
+/**
+ * @brief Check if a specific buffer flag is active in the bitmask.
+ *
+ * @param mask Bitmask of render targets (e.g., color, depth, stencil).
+ * @param target Specific render target to check.
+ * @return true if the target is active in the mask.
+ */
+inline bool IsBufferActive(RenderTargetMask mask, RenderTargetMask target)
+{
+    return (static_cast<uint8_t>(mask) & static_cast<uint8_t>(target)) != 0;
+}
+
+} // namespace graphics
+} // namespace utils
 } // namespace pixc
 
 namespace std {

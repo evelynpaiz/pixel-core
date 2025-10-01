@@ -77,7 +77,7 @@ void MetalFrameBuffer::Blit(const std::shared_ptr<MetalFrameBuffer>& src,
                 "Invalid destination color attachment index!");
     
     // Perform a direct copy if no filtering or complex target buffers are involved
-    if (spec.Filter == TextureFilter::Nearest && spec.Targets == RenderTargetBuffers())
+    if (spec.Filter == TextureFilter::Nearest && utils::graphics::IsBufferActive(spec.Targets, RenderTargetMask::Color))
         BlitDirect(src, dst, spec.SrcAttachmentIndex, spec.DstAttachmentIndex);
     // Otherwise, perform the advanced blit operation with extra parameters
     else

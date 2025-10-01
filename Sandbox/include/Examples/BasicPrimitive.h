@@ -18,9 +18,13 @@ class BasicPrimitive : public pixc::Layer
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    BasicPrimitive(int width, int height,
+    /// @brief Create a rendering layer.
+    /// @param width Width of the window where the layer is presented.
+    /// @param height Height of the window where the layer is presented.
+    /// @param name Name of the layer.
+    BasicPrimitive(const uint32_t width, const uint32_t height,
                    const std::string& name = "Basic Primitive Layer")
-        : m_Width(width), m_Height(height) {}
+        : Layer(name), m_Width(width), m_Height(height) {}
     /// @brief Delete the rendering layer.
     virtual ~BasicPrimitive() = default;
     

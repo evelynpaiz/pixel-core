@@ -83,22 +83,23 @@ inline DataType ToDataType(GLenum glType)
 /**
  * @brief Convert the buffers state to its corresponding OpenGL clear mask.
  *
- * @param targets Active rendering targets.
+ * @param targets Bitmask of render targets to be cleared.
  *
  * @return Bitwise OR of masks that indicate the buffers to be cleared.
  */
-inline GLbitfield ToOpenGLClearMask(const RenderTargetBuffers& targets)
+inline GLbitfield ToOpenGLClearMask(RenderTargetMask targets)
 {
     GLbitfield mask = 0;
-    if (targets.Color) {
+
+    if (IsBufferActive(targets, RenderTargetMask::Color))
         mask |= GL_COLOR_BUFFER_BIT;
-    }
-    if (targets.Depth) {
+
+    if (IsBufferActive(targets, RenderTargetMask::Depth))
         mask |= GL_DEPTH_BUFFER_BIT;
-    }
-    if (targets.Stencil) {
+
+    if (IsBufferActive(targets, RenderTargetMask::Stencil))
         mask |= GL_STENCIL_BUFFER_BIT;
-    }
+
     return mask;
 }
 

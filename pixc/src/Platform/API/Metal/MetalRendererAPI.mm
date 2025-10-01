@@ -189,9 +189,9 @@ void MetalRendererAPI::EndRenderPass()
 /**
  * @brief Clear the buffers to preset values.
  *
- * @param targets The rendering buffers to be cleared.
+ * @param targets Bitmask of render targets to be cleared.
  */
-void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
+void MetalRendererAPI::Clear(const RenderTargetMask targets)
 {
     @autoreleasepool
     {
@@ -234,7 +234,8 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         }
         
         // Configure depth attachment (if depth buffer is active)
-        if (targets.Depth)
+        bool dephtActive = utils::graphics::IsBufferActive(targets, RenderTargetMask::Depth);
+        if (dephtActive)
         {
             // Define the depth attachment to be used
             id<MTLTexture> attachment;
@@ -261,7 +262,7 @@ void MetalRendererAPI::Clear(const RenderTargetBuffers& targets)
         
         // Create command encoder and setup depth-stencil
         m_Context->InitCommandEncoder(descriptor, m_ActiveFrameBuffer ? "FB" : "SB");
-        EnableDepthTesting(targets.Depth);
+        EnableDepthTesting(dephtActive);
         // Define culling mode
         MTLCullMode cullMode = utils::graphics::mtl::ToMetalCulling(m_State->CullMode);
         m_Context->SetFaceCulling(&cullMode);

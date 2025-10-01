@@ -74,9 +74,9 @@ void RendererAPI::EndRenderPass()
  */
 void RendererAPI::Clear()
 {
-    RenderTargetBuffers clearTargets = m_ActiveFrameBuffer
+    RenderTargetMask clearTargets = m_ActiveFrameBuffer
             ? m_ActiveFrameBuffer->GetEnabledTargets()          // Clear buffers in the active framebuffer
-            : RenderTargetBuffers{ true, false, false };        // Clear color only for screen
+            : RenderTargetMask::Color;                          // Clear color only for screen
     
     Clear(clearTargets);
 }

@@ -66,9 +66,9 @@ void RendererCommand::Clear()
 /**
  * @brief Clear the buffers to preset values.
  *
- * @param targets The rendering buffers to be cleared.
+ * @param targets Bitmask of render targets to be cleared.
  */
-void RendererCommand::Clear(const RenderTargetBuffers& targets)
+void RendererCommand::Clear(const RenderTargetMask targets)
 {
     s_API->Clear(targets);
 }

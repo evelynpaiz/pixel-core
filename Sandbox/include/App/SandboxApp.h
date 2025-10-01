@@ -17,9 +17,22 @@ class SandboxApp : public pixc::Application
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    SandboxApp(const std::string &name = "3D Viewer Application", const int width = 800,
-              const int height = 600);
+    SandboxApp(const std::string &name = "Pixel-Core Sandbox Application",
+               const uint32_t width = 800, const uint32_t height = 600);
     ~SandboxApp();
+    
+private:
+    /**
+     * @brief Enum for selecting which rendering layer to use in the sandbox.
+     */
+    enum class SandboxLayerType
+    {
+        Basic,      ///< Use BasicPrimitive layer
+        Textured,   ///< Use TexturedPrimitive layer
+        Phong       ///< Use PhongPrimitive layer
+    };
+    std::shared_ptr<pixc::Layer> InitRenderingLayer(SandboxLayerType type,
+                                                    uint32_t width, uint32_t height);
     
     // Viewer application variables
     // ----------------------------------------

@@ -81,7 +81,7 @@ public:
     virtual void EndRenderPass();
     
     void Clear();
-    virtual void Clear(const RenderTargetBuffers& targets) = 0;
+    virtual void Clear(const RenderTargetMask targets) = 0;
     
     virtual void Draw(const std::shared_ptr<Drawable>& drawable,
                       const PrimitiveType &primitive = PrimitiveType::Triangle) = 0;

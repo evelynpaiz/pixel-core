@@ -142,11 +142,15 @@ void Scene::ApplyTargetSettings(const TargetSettings& target)
     if (target.ViewportSize)
         RendererCommand::SetViewport(0, 0, target.ViewportSize->x, target.ViewportSize->y);
 
-    if (target.ClearEnabled)
-    {
-        RendererCommand::SetClearColor(target.ClearColor);
+    if (!target.ClearEnabled)
+        return;
+    
+    RendererCommand::SetClearColor(target.ClearColor);
+    
+    if (target.ClearTargets)
+        RendererCommand::Clear(*target.ClearTargets);
+    else
         RendererCommand::Clear();
-    }
 }
 
 /**

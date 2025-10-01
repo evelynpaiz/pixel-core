@@ -124,12 +124,12 @@ void OpenGLRendererAPI::BeginRenderPass(const std::shared_ptr<FrameBuffer>& fram
 /**
  * @brief Clear the buffers to preset values.
  *
- * @param targets The rendering buffers to be cleared.
+ * @param targets Bitmask of render targets to be cleared.
  */
-void OpenGLRendererAPI::Clear(const RenderTargetBuffers& targets)
+void OpenGLRendererAPI::Clear(const RenderTargetMask targets)
 {
     // Set depth testing state so it's in the correct state
-    EnableDepthTesting(targets.Depth);
+    EnableDepthTesting(utils::graphics::IsBufferActive(targets, RenderTargetMask::Depth));
     // Clear buffers
     glClear(utils::graphics::gl::ToOpenGLClearMask(targets));
 }
