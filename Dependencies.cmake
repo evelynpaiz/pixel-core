@@ -26,7 +26,6 @@ set(ONLY_LIBS ON CACHE BOOL "" FORCE)
 add_subdirectory(3rdparty/glew)
 add_library(glew::glew ALIAS glew)
 
-
 ## GLM
 set(GLM_BUILD_LIBRARY OFF CACHE BOOL "" FORCE)
 
