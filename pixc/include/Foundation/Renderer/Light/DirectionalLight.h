@@ -35,12 +35,12 @@ public:
     DirectionalLight(const glm::vec3& color = glm::vec3(1.0f),
                      const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
                      // TODO: needs to be defined based on the type of the scene
-                     float distance = 15.0f, float orthoSize = 20.0f)
+                     float distance = 15.0f, float zoomLevel = 20.0f)
     : LightCaster(glm::vec4(direction, 0.0f), color), m_Distance(distance)
     {
         // Set the shadow camera parameters
         auto camera = std::make_shared<OrthographicShadow>();
-        camera->SetOrthographicSize(orthoSize);
+        camera->SetZoomLevel(zoomLevel);
         m_Shadow.Camera = camera;
         
         UpdateShadowCamera();

@@ -26,6 +26,7 @@ PerspectiveCamera::PerspectiveCamera(const int width, const int height,
     const float fov, const float nearPlane, const float farPlane)
     : Camera(width, height, nearPlane, farPlane), m_FieldOfView(fov)
 {
+    // Update camera matrices
     UpdateCameraMatrices();
 }
 
@@ -36,56 +37,27 @@ PerspectiveCamera::PerspectiveCamera(const int width, const int height,
  */
 void PerspectiveCamera::OnUpdate(Timestep ts)
 {
-    static glm::vec2 initialMousePosition;
+    // If no interaction is enabled, do not translate the camera
+    if (!m_Enabled) return;
     
-    // If no interaction is enabled, just update the mouse position
-    if (!m_Enabled)
-    {
-        initialMousePosition = Input::GetMousePosition();
-        return;
-    }
-    
-    // Translation of the camera
+    // Calculate the distance of translation
     glm::vec3 distance = glm::vec3(0.0f);
     
     if(Input::IsKeyPressed(key::Q))     // up
-        distance.y = ts * m_TranslationFactor;
+        distance.y = ts * m_Movement.Translation;
     if(Input::IsKeyPressed(key::E))     // down
-        distance.y = -ts * m_TranslationFactor;
+        distance.y = -ts * m_Movement.Translation;
     if(Input::IsKeyPressed(key::D))     // left
-        distance.x = ts * m_TranslationFactor;
+        distance.x = ts * m_Movement.Translation;
     if(Input::IsKeyPressed(key::A))     // right
-        distance.x = -ts * m_TranslationFactor;
+        distance.x = -ts * m_Movement.Translation;
     if(Input::IsKeyPressed(key::W))     // front
-        distance.z = ts * m_TranslationFactor;
+        distance.z = ts * m_Movement.Translation;
     if(Input::IsKeyPressed(key::S))     // back
-        distance.z = -ts * m_TranslationFactor;
+        distance.z = -ts * m_Movement.Translation;
     
+    // Translate the camera
     Translate(distance);
-    
-    // Camera rotation and orbit
-    const glm::vec2 &mouse = Input::GetMousePosition();
-    glm::vec2 deltaMouse = (mouse - initialMousePosition);
-    deltaMouse *= ts;
-    initialMousePosition = mouse;
-    
-    if (Input::IsMouseButtonPressed(mouse::ButtonLeft))
-        Orbit(deltaMouse * m_OrbitFactor);
-    if (Input::IsMouseButtonPressed(mouse::ButtonRight))
-        Rotate(deltaMouse * m_RotationFactor);
-}
-
-/**
- * @brief Handle an event on the application related to the camera.
- *
- * @param e Event to be handled.
- */
-void PerspectiveCamera::OnEvent(Event &e)
-{
-    EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<MouseScrolledEvent>(
-        BIND_EVENT_FN(PerspectiveCamera::OnMouseScroll));
-    
 }
 
 /**
@@ -110,17 +82,6 @@ glm::vec3 PerspectiveCamera::CalculateDistance(const glm::vec3& p1, const glm::v
                                                const glm::vec3& direction) const
 {
     return p1 - direction * glm::length(p1 - p2);
-}
-
-/**
- * @brief Zoom in/out the camera.
- *
- * @param delta The change in the field of view.
- */
-void PerspectiveCamera::Zoom(const float delta)
-{
-    m_FieldOfView = std::clamp(m_FieldOfView - delta, 1.0f, 160.0f);
-    UpdateProjectionMatrix();
 }
 
 /**
@@ -184,18 +145,14 @@ void PerspectiveCamera::Orbit(const glm::vec2 &delta)
 }
 
 /**
- * @brief Function to be called when a mouse scrolled event happens.
+ * @brief Zoom in/out the camera.
  *
- * @param e Event to be handled.
- * @return `true` if the event has been handled.
+ * @param delta The change in the field of view.
  */
-bool PerspectiveCamera::OnMouseScroll(MouseScrolledEvent &e)
+void PerspectiveCamera::Zoom(const float delta)
 {
-    // Dolly the camera
-    float delta = e.GetYOffset() * m_ZoomFactor;
-    Zoom(delta);
-    // Set the event as handled
-    return true;
+    m_FieldOfView = std::clamp(m_FieldOfView - delta, 1.0f, 160.0f);
+    UpdateProjectionMatrix();
 }
 
 } // namespace pixc

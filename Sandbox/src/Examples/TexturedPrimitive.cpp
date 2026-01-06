@@ -12,7 +12,10 @@ TexturedPrimitive::TexturedPrimitive(const uint32_t width, const uint32_t height
     : RenderingLayer(width, height, name)
 {
     // Define the rendering camera
-    m_Scene.GetCamera()->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+    auto camera = std::make_shared<pixc::OrthographicCamera>(width, height);
+    camera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+    camera->SetZoomLevel(5.0f);
+    m_Scene.SetCamera(camera);
 }
 
 /**

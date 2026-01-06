@@ -10,8 +10,6 @@
  */
 namespace pixc {
 
-class MouseScrolledEvent;
-
 /**
  * @brief Represents a perspective camera that captures the scene and displays it in a viewport.
  *
@@ -34,10 +32,6 @@ public:
     // Rendering
     // ----------------------------------------
     void OnUpdate(Timestep ts) override;
-    
-    // Event handler
-    // ----------------------------------------
-    void OnEvent(Event &e) override;
     
     // Getter(s)
     // ----------------------------------------
@@ -85,19 +79,6 @@ public:
         UpdateProjectionMatrix();
     }
     
-    /// @brief Update the zooming in/out scaling factor.
-    /// @param v Scaling factor value.
-    void SetZoomFactor(const float v) { m_ZoomFactor = v; }
-    /// @brief Update the camera translation scaling factor.
-    /// @param v Scaling factor value.
-    void SetTranslateFactor(const float v) { m_TranslationFactor = v; }
-    /// @brief Update the camera rotation scaling factor.
-    /// @param v Scaling factor value.
-    void SetRotateFactor(const float v) { m_RotationFactor = v; }
-    /// @brief Update the camera oribitin scaling factor.
-    /// @param v Scaling factor value.
-    void SetOrbitFactor(const float v) { m_ZoomFactor = v; }
-    
 protected:
     // Transformation matrices
     // ----------------------------------------
@@ -110,26 +91,16 @@ protected:
     
     // Camera movements
     // ----------------------------------------
-    virtual void Zoom(const float delta);
-    virtual void Translate(const glm::vec3 &delta);
-    virtual void Rotate(const glm::vec2 &delta);
-    virtual void Orbit(const glm::vec2 &delta);
-    
-    // Event handler
-    // ----------------------------------------
-    bool OnMouseScroll(MouseScrolledEvent &e);
+    void Translate(const glm::vec3 &delta) override;
+    void Rotate(const glm::vec2 &delta) override;
+    void Orbit(const glm::vec2 &delta) override;
+    void Zoom(const float delta) override;
     
     // Perspective camera variables
     // ----------------------------------------
 protected:
     ///< Camera field of view (angle in degrees).
     float m_FieldOfView;
-    
-    ///< Camera movement scaling factors.
-    float m_ZoomFactor = 0.25f;
-    float m_TranslationFactor = 1.0f;
-    float m_RotationFactor = 5.0f;
-    float m_OrbitFactor = 12.0f;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

@@ -14,6 +14,20 @@
  */
 namespace pixc {
 
+class MouseMovedEvent;
+class MouseScrolledEvent;
+
+/**
+ * @brief Defines scaling factors for camera movement operations.
+ */
+struct CameraMovementSettings
+{
+    float Translation = 1.0f;   ///< Scales translation (pan or movement) input.
+    float Rotation = 0.25f;     ///< Scales camera rotation input (e.g. yaw and pitch).
+    float Orbit = 0.25f;        ///< Scales orbit rotation around a target point.
+    float Zoom = 0.25f;         ///< Scales zoom input (field of view or orthographic size).
+};
+
 /**
  * @brief Represents a camera that captures the scene and displays it in a viewport.
  *
@@ -42,7 +56,7 @@ public:
     // ----------------------------------------
     /// @brief Handle an event on the application related to the camera.
     /// @param e Event.
-    virtual void OnEvent(Event &e) {}
+    virtual void OnEvent(Event &e);
     
     // Getter(s)
     // ----------------------------------------
@@ -134,6 +148,19 @@ public:
     /// @param e Enable/disable the camera.
     void Enable(const bool e) { m_Enabled = e; }
     
+    /// @brief Update the camera translation scaling factor.
+    /// @param v Scaling factor value.
+    void SetTranslateFactor(const float v) { m_Movement.Translation = v; }
+    /// @brief Update the camera rotation scaling factor.
+    /// @param v Scaling factor value.
+    void SetRotateFactor(const float v) { m_Movement.Rotation = v; }
+    /// @brief Update the camera oribitin scaling factor.
+    /// @param v Scaling factor value.
+    void SetOrbitFactor(const float v) { m_Movement.Orbit = v; }
+    /// @brief Update the zooming in/out scaling factor.
+    /// @param v Scaling factor value.
+    void SetZoomFactor(const float v) { m_Movement.Zoom = v; }
+    
 protected:
     // Constructor(s)
     // ----------------------------------------
@@ -157,11 +184,28 @@ protected:
     virtual void UpdateProjectionMatrix();
     void UpdateCameraMatrices();
     
+    // Camera movements
+    // ----------------------------------------
+    virtual void Translate(const glm::vec3 &delta) = 0;
+    virtual void Rotate(const glm::vec2 &delta) = 0;
+    virtual void Orbit(const glm::vec2 &delta) = 0;
+    virtual void Zoom(const float delta) = 0;
+    
+    // Event handler(s)
+    // ----------------------------------------
+    virtual bool OnMouseMove(MouseMovedEvent &e);
+    virtual bool OnMouseScroll(MouseScrolledEvent &e);
+    
     // Camera variables
     // ----------------------------------------
 protected:
+    ///< Camera enabled for interaction.
+    bool m_Enabled = true;
+    
     ///< Camera resolution.
     uint32_t m_Width, m_Height;
+    ///< Camera viewing target (x, y, z).
+    glm::vec3 m_Target = glm::vec3(0.0f);
     
     ///< Distance to near and far plane.
     float m_NearPlane, m_FarPlane;
@@ -176,11 +220,8 @@ protected:
     ///< Projection matrix.
     glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
     
-    ///< Camera viewing target (x, y, z).
-    glm::vec3 m_Target = glm::vec3(0.0f);
-    
-    ///< Camera enabled for interaction.
-    bool m_Enabled = true;
+    ///< Camera movement scaling factors.
+    CameraMovementSettings m_Movement;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

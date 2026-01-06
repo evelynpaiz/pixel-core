@@ -1,10 +1,30 @@
 #include "pixcpch.h"
 #include "Foundation/Renderer/Camera/Camera.h"
 
+#include "Foundation/Input/Input.h"
+
+#include "Foundation/Event/MouseEvent.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 namespace pixc {
+
+/**
+ * @brief Handle an event on the application related to the camera.
+ *
+ * @param e Event to be handled.
+ */
+void Camera::OnEvent(Event &e)
+{
+    // If no interaction is enabled, do not handle the event
+    if (!m_Enabled) return;
+    
+    // Dispatch the mouse events
+    EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Camera::OnMouseMove));
+    dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(Camera::OnMouseScroll));
+}
 
 /**
  * @brief Get the camera orientation defined as a quaternion.
@@ -120,6 +140,47 @@ void Camera::UpdateCameraMatrices()
 {
     UpdateViewMatrix();
     UpdateProjectionMatrix();
+}
+
+/**
+ * @brief Function to be called when a mouse movement event happens.
+ *
+ * @param e Event to be handled.
+ * @return `true` if the event has been handled.
+ */
+bool Camera::OnMouseMove(MouseMovedEvent &e)
+{
+    // Saves the previous mouse position
+    static glm::vec2 initialMousePosition;
+    
+    // Get the mouse position and calculate the delta movement
+    const glm::vec2 &mouse = Input::GetMousePosition();
+    glm::vec2 deltaMouse = (mouse - initialMousePosition);
+    initialMousePosition = mouse;
+    
+    // Update camera orbit and rotation
+    if (Input::IsMouseButtonPressed(mouse::ButtonLeft))
+        Orbit(deltaMouse * m_Movement.Orbit);
+    if (Input::IsMouseButtonPressed(mouse::ButtonRight))
+        Rotate(deltaMouse * m_Movement.Rotation);
+    
+    // Set the event as handled
+    return true;
+}
+
+/**
+ * @brief Function to be called when a mouse scrolled event happens.
+ *
+ * @param e Event to be handled.
+ * @return `true` if the event has been handled.
+ */
+bool Camera::OnMouseScroll(MouseScrolledEvent &e)
+{
+    // Dolly the camera
+    float delta = e.GetYOffset() * m_Movement.Zoom;
+    Zoom(delta);
+    // Set the event as handled
+    return true;
 }
 
 } // namespace pixc

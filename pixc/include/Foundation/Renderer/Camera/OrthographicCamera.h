@@ -10,8 +10,6 @@
  */
 namespace pixc {
 
-class MouseScrolledEvent;
-
 /**
  * @brief Represents an orthographic camera that captures the scene without perspective distortion.
  *
@@ -29,7 +27,8 @@ class OrthographicCamera : public Camera
 public:
     // Constructor(s)/ Destructor
     // ----------------------------------------
-    OrthographicCamera(const int width, const int height, const float nearPlane = -100.0f,
+    OrthographicCamera(const int width, const int height,
+                       const float nearPlane = -100.0f,
                        const float farPlane = 100.0f);
     
     // Rendering
@@ -44,11 +43,11 @@ public:
     
     // Setter(s)
     // ----------------------------------------
-    /// @brief Change the camera orthographic size.
-    /// @param size The orthographic size of the camera.
-    void SetOrthographicSize(const float size)
+    /// @brief Change the camera zoom level.
+    /// @param zoomLevel The zoom level of the orthographic camera.
+    void SetZoomLevel(const float zoomLevel)
     {
-        m_OrthoSize = size;
+        m_ZoomLevel = zoomLevel;
         UpdateProjectionMatrix();
     }
     
@@ -60,13 +59,6 @@ public:
         UpdateViewMatrix();
     }
     
-    /// @brief Update the camera translation scaling factor.
-    /// @param v Scaling factor value.
-    void SetTranslateFactor(const float v) { m_TranslationFactor = v; }
-    /// @brief Update the camera rotation scaling factor.
-    /// @param v Scaling factor value.
-    void SetRotateFactor(const float v) { m_RotationFactor = v; }
-    
 protected:
     // Transformation matrices
     // ----------------------------------------
@@ -75,18 +67,18 @@ protected:
     
     // Camera movements
     // ----------------------------------------
-    virtual void Translate(const glm::vec2 &delta);
-    virtual void Rotate(const glm::vec2 &delta);
+    void Translate(const glm::vec3 &delta) override;
+    void Rotate(const glm::vec2 &delta) override;
+    void Zoom(const float delta) override;
+    
+    /// @note Orbit is not supported for orthographic cameras.
+    void Orbit(const glm::vec2 &delta) override {};
     
     // Perspective camera variables
     // ----------------------------------------
 protected:
-    ///< View size.
-    float m_OrthoSize = 10.0f;
-    
-    ///< Camera movement scaling factors.
-    float m_TranslationFactor = 2.0f;
-    float m_RotationFactor = 7.0f;
+    ///< Zoom level of the camera.
+    float m_ZoomLevel = 1.0f;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
