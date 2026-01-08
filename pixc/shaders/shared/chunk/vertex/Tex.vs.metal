@@ -5,7 +5,6 @@ struct VertexIn
 {
     float4 a_Position [[ attribute(0) ]];     ///< Vertex position in model space.
     float2 a_TextureCoord [[ attribute(1) ]]; ///< Texture coordinates.
-    
 };
 
 /**

@@ -48,17 +48,17 @@ void PhongPrimitive::DefineLights()
     positional->InitShadowFrameBuffer(width, height);
     
     positional->SetDiffuseStrength(0.6f);
-    positional->SetSpecularStrength(0.4f);
+    positional->SetSpecularStrength(0.6f);
     positional->GetModel()->SetScale(glm::vec3(0.05f));
     
     m_Scene.GetLights().Add("Positional", positional);
     
     // Define the directional light sources
-    auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f), 1.0f, 2.0f);
+    auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
     directional->InitShadowFrameBuffer(width, height);
     
-    directional->SetDiffuseStrength(0.6f);
-    directional->SetSpecularStrength(0.4f);
+    directional->SetDiffuseStrength(0.4f);
+    directional->SetSpecularStrength(0.1f);
     
     m_Scene.GetLights().Add("Directional", directional);
 }
@@ -117,7 +117,7 @@ void PhongPrimitive::DefineRenderPasses()
     scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Sphere", "Simple",
+        { "Cube", "Simple",
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto simpleMaterial =  std::dynamic_pointer_cast<pixc::SimpleMaterial>(material);
@@ -125,12 +125,12 @@ void PhongPrimitive::DefineRenderPasses()
                 if (!simpleMaterial)
                     return;
 
-                static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
+                static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("textures/sample/container.jpg"));
                 simpleMaterial->SetColor(glm::vec4(1.0f));
                 simpleMaterial->SetTextureMap(ground);
             }
         },
-        { "Cube", "PhongColor",
+        { "Sphere", "PhongColor",
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto phongMaterial =  std::dynamic_pointer_cast<pixc::PhongColorMaterial>(material);
@@ -141,7 +141,10 @@ void PhongPrimitive::DefineRenderPasses()
                 phongMaterial->SetAmbientColor(glm::vec3(0.8f, 0.2f, 0.4f));
                 phongMaterial->SetDiffuseColor(glm::vec3(0.8f, 0.2f, 0.4f));
                 phongMaterial->SetSpecularColor(glm::vec3(1.0f));
-                phongMaterial->SetShininess(100.0f);
+                
+                // In a cube, the shininnes is discrete, using 100–300
+                // and i a sphere, the shinines is smooth, using 8–32
+                phongMaterial->SetShininess(8.0f);
             }
         }
     };

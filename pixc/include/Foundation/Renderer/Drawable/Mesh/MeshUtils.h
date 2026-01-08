@@ -162,11 +162,11 @@ inline std::vector<uint32_t> IndicesOfSphere(uint32_t resolution)
             uint32_t p4 = p3 + 1;
             
             indices.push_back(p1);
-            indices.push_back(p2);
             indices.push_back(p3);
+            indices.push_back(p2);
             
-            indices.push_back(p3);
             indices.push_back(p2);
+            indices.push_back(p3);
             indices.push_back(p4);
         }
     }
@@ -400,6 +400,8 @@ inline void DefineCubeGeometry(std::vector<GeoVertexData<glm::vec4, glm::vec2, g
     indices = IndicesOfCube();
 }
 
+// Sphere geometry
+// ----------------------------------------
 /**
  * @brief Define the geometry of a sphere with position information.
  *

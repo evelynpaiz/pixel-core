@@ -11,7 +11,7 @@
 namespace pixc {
 
 // Define static variables
-RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
+RendererAPI::API RendererAPI::s_API = RendererAPI::API::Metal;
 
 /**
  * Creates a new Renderer API instance based on the selected API.

@@ -26,21 +26,14 @@ public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Generate a light source defined by a direction.
-    /// @param width The width of the shadow map in pixels.
-    /// @param height The height of the shadow map in pixels.
     /// @param color The color of the light source.
     /// @param direction The direction of the light source.
-    /// @param distance The distance from the target position to the light source.
-    /// @param orthoSize The orthographic size for shadow calculations.
     DirectionalLight(const glm::vec3& color = glm::vec3(1.0f),
-                     const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
-                     // TODO: needs to be defined based on the type of the scene
-                     float distance = 15.0f, float zoomLevel = 20.0f)
-    : LightCaster(glm::vec4(direction, 0.0f), color), m_Distance(distance)
+                     const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f))
+    : LightCaster(glm::vec4(direction, 0.0f), color)
     {
         // Set the shadow camera parameters
         auto camera = std::make_shared<OrthographicShadow>();
-        camera->SetZoomLevel(zoomLevel);
         m_Shadow.Camera = camera;
         
         UpdateShadowCamera();
@@ -80,15 +73,19 @@ private:
     /// @brief Update the shadow camera based on the properties of the light source.
     void UpdateShadowCamera()
     {
+        // Update the position of the camera
         glm::vec3 position = m_Shadow.Camera->GetTarget() - (glm::normalize(glm::vec3(m_Vector)) * m_Distance);
         m_Shadow.Camera->SetPosition(position);
+        
+        // Update the zoom factor of the camera to capture everything
+        m_Shadow.Camera->SetZoomFactor(m_Distance);
     }
     
     // Light variables
     // ----------------------------------------
 private:
     ///< The distance from the (shadow camera) target to the light source.
-    float m_Distance;
+    float m_Distance = 1.0f;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
