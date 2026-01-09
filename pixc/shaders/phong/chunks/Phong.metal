@@ -29,20 +29,21 @@ inline float3 calculateColor(float3 position, float3 normal, float3 viewPosition
                           normalize(lightVector.xyz - position)         // positional light (.w = 1)
                           : normalize(-lightVector.xyz);                // directional light (.w = 0)
     float3 viewDirection = normalize(viewPosition - position);
-    float3 reflectionDirection = normalize(2.0 * dot(lightDirection, normal) * normal - lightDirection);
     
     // Calculate the light radiance
     float3 radiance = lightColor * calculateAttenuation(position, lightVector,
-                                                      lightLinear, lightQuadratic, maxAttenuation);
+                                                        lightLinear, lightQuadratic, maxAttenuation);
+    
+    // Calculate the cosine of the angle
+    float cosTheta = saturate(dot(normal, lightDirection));
+    float angleFalloff = smoothstep(1e-4f, 0.2f, cosTheta);
     
     // Calculate the diffuse reflection component using the Lambertian cosine law
-    float cosTheta = saturate(dot(normal, lightDirection));
     float3 diffuse = cosTheta * kd;
     
-    // Calculate the specular reflection component using the Phong specular reflection formula
-    float3 specular = cosTheta > 0.0f ?
-        calculateSpecular(viewDirection, reflectionDirection, ks, shininess) :
-        float3(0.0f);
+    // Calculate the specular reflection component using the Phong-Blinn specular reflection formula
+    // NOTE: Use the function calculatePhongSpecular(...) for the original Phong model
+    float3 specular = angleFalloff * calculateBlinnPhongSpecular(normal, viewDirection, lightDirection, ks, shininess);
     
     // Calculate the final color by combining ambient, diffuse, and specular components,
     // and modulating with the shadow factor

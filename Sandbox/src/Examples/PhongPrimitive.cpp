@@ -57,8 +57,8 @@ void PhongPrimitive::DefineLights()
     auto directional = std::make_shared<pixc::DirectionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
     directional->InitShadowFrameBuffer(width, height);
     
-    directional->SetDiffuseStrength(0.4f);
-    directional->SetSpecularStrength(0.1f);
+    directional->SetDiffuseStrength(0.6f);
+    directional->SetSpecularStrength(0.2f);
     
     m_Scene.GetLights().Add("Directional", directional);
 }
@@ -144,7 +144,7 @@ void PhongPrimitive::DefineRenderPasses()
                 
                 // In a cube, the shininnes is discrete, using 100–300
                 // and i a sphere, the shinines is smooth, using 8–32
-                phongMaterial->SetShininess(8.0f);
+                phongMaterial->SetShininess(24.0f);
             }
         }
     };
