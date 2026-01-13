@@ -2,31 +2,29 @@
 #version 330 core
 
 // Include transformation matrices
-#include "Resources/shaders/common/matrix/NormalMatrix.glsl"
+#include "pixc/shaders/shared/structure/matrix/NormalMatrix.glsl"
 
 // Include vertex shader
-#include "Resources/shaders/common/vertex/PTN.vs.glsl"
+#include "pixc/shaders/shared/chunk/vertex/PosTexNorm.vs.glsl"
 
 #shader fragment
 #version 330 core
 
 // Include material, view and light properties
-#include "Resources/shaders/common/material/PhongTextureMaterial.glsl"
-#include "Resources/shaders/common/view/SimpleView.glsl"
-#include "Resources/shaders/common/light/SimpleLight.glsl"
-#include "Resources/shaders/common/environment/Environment.glsl"
+#include "pixc/shaders/shared/structure/material/PhongTextureMaterial.glsl"
+#include "pixc/shaders/shared/structure/view/SimpleView.glsl"
+#include "pixc/shaders/shared/structure/light/SimpleLight.glsl"
+#include "pixc/shaders/shared/structure/environment/Environment.glsl"
 
 // Include fragment inputs
-#include "Resources/shaders/common/fragment/PTN.fs.glsl"
+#include "pixc/shaders/shared/chunk/fragment/PosTexNorm.fs.glsl"
 
 // Include additional functions
-#include "Resources/shaders/common/utils/Saturate.glsl"
-#include "Resources/shaders/common/utils/Attenuation.glsl"
+#include "pixc/shaders/shared/utils/Saturate.glsl"
+#include "pixc/shaders/shared/utils/Attenuation.glsl"
 
-#include "Resources/shaders/phong/chunks/PhongSpecular.glsl"
-#include "Resources/shaders/phong/chunks/Phong.glsl"
-
-#include "Resources/shaders/environment/chunks/SHIrradiance.glsl"
+#include "pixc/shaders/phong/chunks/PhongSpecular.glsl"
+#include "pixc/shaders/phong/chunks/Phong.glsl"
 
 ///< Mathematical constants.
 const float PI = 3.14159265359f;
@@ -43,17 +41,17 @@ void main()
     // Define the initial reflectance
     vec3 reflectance = vec3(0.0f);
     // Shade based on each light source in the scene
-    for(int i = 0; i < u_Environment.LightsNumber; i++)
+    for(int i = 0; i < u_Environment.LightCount; i++)
     {
         // Define fragment color using Phong shading
-        reflectance += calculateColor(v_Position, v_Normal, u_View.Position, u_Light[i].Vector,
-                                      u_Light[i].Color, kd * u_Light[i].Ld, ks * u_Light[i].Ls,
+        reflectance += calculateColor(v_Position, v_Normal, u_View.Position,
+                                      u_Environment.Lights[i].Vector, u_Environment.Lights[i].Color,
+                                      kd * u_Environment.Lights[i].Ld, ks * u_Environment.Lights[i].Ls,
                                       u_Material.Shininess, 0.0f, 0.045f, 0.0075f, 0.7f);
     }
     
     // Calculate the ambient light
-    vec3 irradiance = calculateIrradiance(u_Environment.IrradianceMatrix, normal, INV_PI);
-    vec3 ambient = irradiance * u_Environment.La * kd;
+    vec3 ambient = u_Environment.La * kd;   // NOTE: using ka as the diffuse map
     
     // Set the fragment color with the calculated result and material's alpha
     vec3 result = reflectance + ambient;

@@ -27,8 +27,8 @@ void PhongPrimitive::DefineMaterials()
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
     
     // Define the new material(s)
-    materialLibrary.Create<pixc::SimpleMaterial>("Simple");
     materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor");
+    materialLibrary.Create<pixc::PhongTextureMaterial>("PhongTexture");
 }
 
 /**
@@ -117,17 +117,22 @@ void PhongPrimitive::DefineRenderPasses()
     scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Cube", "Simple",
+        { "Cube", "PhongTexture",
             [](const std::shared_ptr<pixc::Material>& material)
             {
-                auto simpleMaterial =  std::dynamic_pointer_cast<pixc::SimpleMaterial>(material);
+                auto phongMaterial = std::dynamic_pointer_cast<pixc::PhongTextureMaterial>(material);
                 
-                if (!simpleMaterial)
+                if (!phongMaterial)
                     return;
 
-                static auto ground = pixc::Texture2D::CreateFromFile(pixc::ResourcesManager::SpecificPath("textures/sample/container.jpg"));
-                simpleMaterial->SetColor(glm::vec4(1.0f));
-                simpleMaterial->SetTextureMap(ground);
+                static auto diffuse = pixc::Texture2D::CreateFromFile(
+                    pixc::ResourcesManager::SpecificPath("textures/sample/container_diffuse.png"));
+                static auto specular = pixc::Texture2D::CreateFromFile(
+                    pixc::ResourcesManager::SpecificPath("textures/sample/container_specular.png"));
+                
+                phongMaterial->SetDiffuseMap(diffuse);
+                phongMaterial->SetSpecularMap(specular);
+                phongMaterial->SetShininess(200.0f);        // in a cube, the shininnes is discrete, using 100–300
             }
         },
         { "Sphere", "PhongColor",
@@ -141,10 +146,7 @@ void PhongPrimitive::DefineRenderPasses()
                 phongMaterial->SetAmbientColor(glm::vec3(0.8f, 0.2f, 0.4f));
                 phongMaterial->SetDiffuseColor(glm::vec3(0.8f, 0.2f, 0.4f));
                 phongMaterial->SetSpecularColor(glm::vec3(1.0f));
-                
-                // In a cube, the shininnes is discrete, using 100–300
-                // and i a sphere, the shinines is smooth, using 8–32
-                phongMaterial->SetShininess(24.0f);
+                phongMaterial->SetShininess(24.0f);         // in a sphere, the shinines is smooth, using 8–32
             }
         }
     };
