@@ -71,6 +71,17 @@ void OpenGLShader::SetBool(const std::string& name, bool value)
 }
 
 /**
+ * @brief Set the uniform with an unsigned integer value.
+ *
+ * @param name Uniform name.
+ * @param value Uniform value.
+ */
+void OpenGLShader::SetUint(const std::string &name, unsigned int value)
+{
+    SET_UNIFORM(name, value, glUniform1ui(uniform.Location, value));
+}
+
+/**
  * @brief Set the uniform with an integer value.
  *
  * @param name Uniform name.

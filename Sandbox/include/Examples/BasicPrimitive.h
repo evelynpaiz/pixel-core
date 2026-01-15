@@ -45,7 +45,7 @@ private:
     ///< Model to be rendered.
     std::shared_ptr<pixc::BaseModel> m_Model;
     ///< Material to be used for rendering.
-    std::shared_ptr<pixc::SimpleColorMaterial> m_Material;
+    std::shared_ptr<pixc::UnlitMaterial> m_Material;
     
     // Disable the copying or moving of this resource
     // ----------------------------------------

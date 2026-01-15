@@ -3,6 +3,7 @@
 #include "Foundation/Core/Resources.h"
 
 #include "Foundation/Renderer/Material/Material.h"
+#include "Foundation/Renderer/Texture/Texture2D.h"
 
 /**
  * @namespace pixc
@@ -120,71 +121,29 @@ protected:
 };
 
 /**
- * @brief A material class for simple color-based shading.
- *
- * The `SimpleColorMaterial` class is a subclass of `Material` and provides a basic material
- * definition for shading 3D models with a simple color. It uses a shader specified by the given file path
- * to apply the color to the model.
- *
- * Inherit from this class when creating materials that have a single albedo color.
- *
- * Copying or moving `SimpleColorMaterial` objects is disabled to ensure single ownership and
- * prevent unintended duplication of material resources.
- */
-class SimpleColorMaterial : public Material, public FlatColor
-{
-public:
-    // Constructor(s)/Destructor
-    // ----------------------------------------
-    /// @brief Generate a material for hair with the specified shader file path.
-    /// @param filePath The file path to the shader used by the material.
-    SimpleColorMaterial(const std::filesystem::path& filePath =
-                        ResourcesManager::GeneralPath("pixc/shaders/base/SimpleColor"))
-    : Material(filePath), FlatColor()
-    {}
-    /// @brief Destructor for the hair shading material.
-    ~SimpleColorMaterial() override = default;
-    
-protected:
-    // Properties
-    // ----------------------------------------
-    /// @brief Set the material properties into the uniforms of the shader program.
-    void SetMaterialProperties() override
-    {
-        FlatColor::SetProperties(m_Shader, "u_Material.Color");
-    }
-    
-    // Disable the copying or moving of this resource
-    // ----------------------------------------
-public:
-    DISABLE_COPY_AND_MOVE(SimpleColorMaterial);
-};
-
-/**
  * @brief A material class for simple texture-based shading.
  *
- * The `SimpleTextureMaterial` class is a subclass of `Material` and provides a basic material
+ * The `TextureMaterial` class is a subclass of `Material` and provides a basic material
  * definition for shading 3D models with a simple texture map. It uses a shader specified by the given file
  * path to apply the texture to the model.
  *
  * Inherit from this class when creating materials that have a single texture map.
  *
- * Copying or moving `SimpleTextureMaterial` objects is disabled to ensure single ownership
+ * Copying or moving `TextureMaterial` objects is disabled to ensure single ownership
  * and prevent unintended duplication of material resources.
  */
-class SimpleTextureMaterial : public Material, public FlatTexture
+class TextureMaterial : public Material, public FlatTexture
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
     /// @brief Generate a basic material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
-    SimpleTextureMaterial(const std::filesystem::path& filePath =
-                          ResourcesManager::GeneralPath("pixc/shaders/base/SimpleTexture"))
+    TextureMaterial(const std::filesystem::path& filePath)
     : Material(filePath), FlatTexture()
     {}
     /// @brief Destructor for the basic material.
-    ~SimpleTextureMaterial() override = default;
+    ~TextureMaterial() override = default;
     
 protected:
     // Properties
@@ -193,59 +152,80 @@ protected:
     void SetMaterialProperties() override
     {
         Material::SetMaterialProperties();
-        FlatTexture::SetProperties(m_Shader, "u_Material.TextureMap",
+        FlatTexture::SetProperties(m_Shader, m_TextureUniformName,
                                    static_cast<uint32_t>(TextureIndex::TextureMap));
     }
+    
+    // Setter(s)
+    // ----------------------------------------
+    /// @brief Update the texture uniform name.
+    /// @param name Texture uniform name.
+    void SetTextureUniformName(const std::string& name)
+    {
+        m_TextureUniformName = name;
+    }
+    
+    // Getter(s)
+    // ----------------------------------------
+    /// @brief Get the texture uniform name
+    /// @return The texture uniform name.
+    const std::string& GetTextureUniformName() const
+    {
+        return m_TextureUniformName;
+    }
+    
+private:
+    ///< Uniform name to bind the texture
+    std::string m_TextureUniformName = "u_Material.TextureMap";
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(SimpleTextureMaterial);
+    DISABLE_COPY_AND_MOVE(TextureMaterial);
 };
 
 /**
  * @brief A material class that combines simple color and texture-based shading.
  *
- * The `SimpleMaterial` class is a subclass of `Material` and provides a basic material
+ * The `UnlitMaterial` class is a subclass of `Material` and provides a basic material
  * definition for shading 3D models with a combination of a simple color and a texture map. It
  * uses a shader specified by the given file path to apply the material properties to the model.
  *
  * Inherit from this class when creating materials that have both an albedo color and a texture map.
  *
- * Copying or moving `SimpleMaterial` objects is disabled to ensure single ownership
+ * Copying or moving `UnlitMaterial` objects is disabled to ensure single ownership
  * and prevent unintended duplication of material resources.
  */
-class SimpleMaterial : public Material, public FlatColor, public FlatTexture
+class UnlitMaterial : public TextureMaterial, public FlatColor
 {
 public:
     // Constructor(s)/Destructor
     // ----------------------------------------
-    /// @brief Generate a basic material object with the specified shader file path.
+    /// @brief Generate a simple material object with the specified shader file path.
     /// @param filePath The file path to the shader used by the material.
-    SimpleMaterial(const std::filesystem::path& filePath =
-                   ResourcesManager::GeneralPath("pixc/shaders/base/SimpleColorTexture"))
-    : Material(filePath), FlatColor(), FlatTexture()
-    {}
+    UnlitMaterial(const std::filesystem::path& filePath =
+                   ResourcesManager::GeneralPath("pixc/shaders/forward/unlit/Simple"))
+    : TextureMaterial(filePath)
+    {
+        m_Texture = pixc::utils::textures::WhiteTexture2D();
+    }
     /// @brief Destructor for the basic material.
-    ~SimpleMaterial() override = default;
+    ~UnlitMaterial() override = default;
     
-protected:
+private:
     // Properties
     // ----------------------------------------
     /// @brief Set the material properties into the uniforms of the shader program.
     void SetMaterialProperties() override
     {
-        Material::SetMaterialProperties();
+        TextureMaterial::SetMaterialProperties();
         FlatColor::SetProperties(m_Shader, "u_Material.Color");
-        FlatTexture::SetProperties(m_Shader, "u_Material.TextureMap",
-                                   static_cast<uint32_t>(TextureIndex::TextureMap));
     }
-    
     
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(SimpleMaterial);
+    DISABLE_COPY_AND_MOVE(UnlitMaterial);
 };
 
 } // namespace pixc

@@ -14,7 +14,7 @@ using namespace metal;
 // ----------------------------------
 
 // Include material properties
-#import "pixc/shaders/shared/structure/material/ColorMaterial.metal"
+#import "pixc/shaders/shared/structure/material/UnlitMaterial.metal"
 
 // Entry point of the fragment shader
 fragment float4 fragment_main(const VertexOut in [[ stage_in ]],

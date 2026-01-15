@@ -43,6 +43,7 @@ void PhongPrimitive::DefineLights()
     auto environment = std::make_shared<pixc::EnvironmentLight>();
     m_Scene.GetLights().Add("Environment", environment);
     
+    
     // Define the positional light source(s)
     auto positional = std::make_shared<pixc::PositionalLight>(glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     positional->InitShadowFrameBuffer(width, height);
@@ -61,6 +62,7 @@ void PhongPrimitive::DefineLights()
     directional->SetSpecularStrength(0.2f);
     
     m_Scene.GetLights().Add("Directional", directional);
+     
 }
 
 /**

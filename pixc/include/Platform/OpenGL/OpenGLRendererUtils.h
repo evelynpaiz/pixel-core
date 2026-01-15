@@ -31,6 +31,7 @@ inline GLenum ToOpenGLType(DataType dataType)
     {
         case DataType::None:  return 0;
         case DataType::Bool:  return GL_BOOL;
+        case DataType::Uint:  return GL_UNSIGNED_INT;
         case DataType::Int:   return GL_INT;
         case DataType::Float: return GL_FLOAT;
         case DataType::Vec2:  return GL_FLOAT;
@@ -59,15 +60,16 @@ inline DataType ToDataType(GLenum glType)
 {
     switch (glType)
     {
-        case GL_BOOL:       return DataType::Bool;
-        case GL_INT:        return DataType::Int;
-        case GL_FLOAT:      return DataType::Float;
-        case GL_FLOAT_VEC2: return DataType::Vec2;
-        case GL_FLOAT_VEC3: return DataType::Vec3;
-        case GL_FLOAT_VEC4: return DataType::Vec4;
-        case GL_FLOAT_MAT2: return DataType::Mat2;
-        case GL_FLOAT_MAT3: return DataType::Mat3;
-        case GL_FLOAT_MAT4: return DataType::Mat4;
+        case GL_BOOL:         return DataType::Bool;
+        case GL_UNSIGNED_INT: return DataType::Uint;
+        case GL_INT:          return DataType::Int;
+        case GL_FLOAT:        return DataType::Float;
+        case GL_FLOAT_VEC2:   return DataType::Vec2;
+        case GL_FLOAT_VEC3:   return DataType::Vec3;
+        case GL_FLOAT_VEC4:   return DataType::Vec4;
+        case GL_FLOAT_MAT2:   return DataType::Mat2;
+        case GL_FLOAT_MAT3:   return DataType::Mat3;
+        case GL_FLOAT_MAT4:   return DataType::Mat4;
             
         case GL_SAMPLER_2D:
         case GL_SAMPLER_3D:

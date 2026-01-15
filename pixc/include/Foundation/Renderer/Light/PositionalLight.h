@@ -46,7 +46,7 @@ public:
         m_Shadow.Camera = camera;
         
         // Define the 3D model for the positional light
-        using VertexData = GeoVertexData<glm::vec4>;
+        using VertexData = GeoVertexData<glm::vec4, glm::vec2>;
         m_Model = utils::geometry::ModelSphere<VertexData>(GetOrCreateLightMaterial());
         m_Model->SetPosition(position);
         // TODO: needs to be defined based on the type of the scene
@@ -85,15 +85,15 @@ public:
     
 private:
     /// @brief Ensures the "LightMaterial" exists in the material library and returns it.
-    /// @return Shared pointer to the `SimpleColorMaterial` instance.
-    std::shared_ptr<SimpleColorMaterial> GetOrCreateLightMaterial()
+    /// @return Shared pointer to the `UnlitMaterial` instance.
+    std::shared_ptr<UnlitMaterial> GetOrCreateLightMaterial()
     {
         auto& library = Renderer::GetMaterialLibrary();
         if (!library.Exists("LightMaterial"))
         {
-            library.Create<SimpleColorMaterial>("LightMaterial");
+            library.Create<UnlitMaterial>("LightMaterial");
         }
-        return std::dynamic_pointer_cast<SimpleColorMaterial>(library.Get("LightMaterial"));
+        return std::dynamic_pointer_cast<UnlitMaterial>(library.Get("LightMaterial"));
     }
     
     // Disable the copying or moving of this resource

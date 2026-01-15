@@ -41,7 +41,7 @@ void BasicPrimitive::OnUpdate(pixc::Timestep ts)
 void BasicPrimitive::OnAttach()
 {
     // Create a simple color material for the primitive
-    m_Material = std::make_shared<pixc::SimpleColorMaterial>();
+    m_Material = std::make_shared<pixc::UnlitMaterial>();
     
     // Define the vertex structure used for this mesh
     struct SimpleVertex

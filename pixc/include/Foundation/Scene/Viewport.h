@@ -62,10 +62,10 @@ public:
             auto& materialLibrary = Renderer::GetMaterialLibrary();
             if (!materialLibrary.Exists(name)) {
                 return path.empty() ?
-                    materialLibrary.Create<SimpleTextureMaterial>(name) :
-                    materialLibrary.Create<SimpleTextureMaterial>(name, path);
+                    materialLibrary.Create<UnlitMaterial>(name) :
+                    materialLibrary.Create<TextureMaterial>(name, path);
             }
-            return std::dynamic_pointer_cast<SimpleTextureMaterial>(materialLibrary.Get(name));
+            return std::dynamic_pointer_cast<TextureMaterial>(materialLibrary.Get(name));
         };
         m_Material = createOrGetMaterial(name, shaderPath);
     }
@@ -157,7 +157,7 @@ private:
     ///< Framebuffer to render into.
     std::shared_ptr<FrameBuffer> m_ScreenBuffer;
     ///< Material to be used to display the framebuffer.
-    std::shared_ptr<SimpleTextureMaterial> m_Material;
+    std::shared_ptr<TextureMaterial> m_Material;
     
     ///< Scale factor for the viewport plane (for subsampling or resizing)
     float m_Scale = 1.0f;

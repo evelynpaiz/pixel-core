@@ -54,8 +54,8 @@ void SHEnvironmentLight::SetupResources()
     // Spherical harmonics
     if (!materialLibrary.Exists("SphericalHarmonics"))
     {
-        materialLibrary.Create<SimpleTextureMaterial>("SphericalHarmonics",
-                                                      "pixc/shaders/environment/sh/SphericalHarmonics");
+        materialLibrary.Create<TextureMaterial>("SphericalHarmonics",
+                                                "pixc/shaders/environment/sh/SphericalHarmonics");
     }
 }
 
@@ -104,7 +104,7 @@ void SHEnvironmentLight::UpdateEnvironment()
     // Get the material library defined in the renderer
     auto& materialLibrary = Renderer::GetMaterialLibrary();
     // Update the current texture representing the environment map
-    auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(materialLibrary.Get("SphericalHarmonics"));
+    auto material = std::dynamic_pointer_cast<TextureMaterial>(materialLibrary.Get("SphericalHarmonics"));
     material->SetTextureMap(m_FrameBuffers.Get("Environment")->GetColorAttachment(0));
     
     // Create a plane geometry (to render to) using the material

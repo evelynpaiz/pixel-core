@@ -80,14 +80,14 @@ void EnvironmentLight::SetupResources()
     // Equirectangular mapping
     if (!materialLibrary.Exists("EquirectangularMap"))
     {
-        materialLibrary.Create<SimpleTextureMaterial>("EquirectangularMap",
-                                                      "pixc/shaders/environment/EquirectangularMap");
+        materialLibrary.Create<TextureMaterial>("EquirectangularMap",
+                                                "pixc/shaders/environment/EquirectangularMap");
     }
     // Cube mapping
     if (!materialLibrary.Exists("CubeMap"))
     {
-        materialLibrary.Create<SimpleTextureMaterial>("CubeMap",
-                                                      "pixc/shaders/environment/CubeMap");
+        materialLibrary.Create<TextureMaterial>("CubeMap",
+                                                "pixc/shaders/environment/CubeMap");
     }
     
     // Define 3D model of the light source
@@ -97,13 +97,13 @@ void EnvironmentLight::SetupResources()
     
     /*
     // Irradiance mapping
-    auto irradiance = m_Materials.Create<SimpleTextureMaterial>("Irradiance",
-                                                                "Resources/shaders/environment/IrradianceMap.glsl");
+    auto irradiance = m_Materials.Create<TextureMaterial>("Irradiance",
+                                                          "Resources/shaders/environment/IrradianceMap.glsl");
     irradiance->SetTextureMap(environment);
     
     // Pre-filtering mapping
-    auto preFilter = m_Materials.Create<SimpleTextureMaterial>("PreFilter",
-                                                               "Resources/shaders/environment/PreFilterMap.glsl");
+    auto preFilter = m_Materials.Create<TextureMaterial>("PreFilter",
+                                                         "Resources/shaders/environment/PreFilterMap.glsl");
     preFilter->SetTextureMap(environment);
      */
 }
@@ -172,7 +172,7 @@ void EnvironmentLight::DrawLight()
     RendererCommand::SetDepthFunction(DepthFunction::LEqual);
     
     auto environment = m_FrameBuffers.Get("Environment")->GetColorAttachment(0);
-    auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(Renderer::GetMaterialLibrary().Get("CubeMap"));
+    auto material = std::dynamic_pointer_cast<TextureMaterial>(Renderer::GetMaterialLibrary().Get("CubeMap"));
     material->SetTextureMap(environment);
     
     m_Model->SetMaterial(material);
@@ -195,7 +195,7 @@ void EnvironmentLight::UpdateEnvironment()
     // Get the material library defined in the renderer
     auto& materialLibrary = Renderer::GetMaterialLibrary();
     // Update the current texture representing the environment map
-    auto material = std::dynamic_pointer_cast<SimpleTextureMaterial>(materialLibrary.Get("EquirectangularMap"));
+    auto material = std::dynamic_pointer_cast<TextureMaterial>(materialLibrary.Get("EquirectangularMap"));
     material->SetTextureMap(m_EnvironmentMap);
     
     // Render the environment map into a cube map configuration

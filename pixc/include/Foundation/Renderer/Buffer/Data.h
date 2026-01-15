@@ -19,8 +19,8 @@ namespace pixc {
  */
 enum class DataType
 {
-    None,
-    Bool, Int, Float,
+    None, Bool,
+    Uint, Int, Float,
     Vec2, Vec3, Vec4,
     Mat2, Mat3, Mat4
 };
@@ -42,17 +42,18 @@ namespace utils { namespace data {
 template <typename T>
 inline constexpr DataType GetDataType()
 {
-    if constexpr (std::is_same_v<T, bool>)           { return DataType::Bool; }
-    else if constexpr (std::is_same_v<T, int>)       { return DataType::Int; }
-    else if constexpr (std::is_same_v<T, float>)     { return DataType::Float; }
+    if constexpr (std::is_same_v<T, bool>)                  { return DataType::Bool; }
+    else if constexpr (std::is_same_v<T, unsigned int>)     { return DataType::Uint; }
+    else if constexpr (std::is_same_v<T, int>)              { return DataType::Int; }
+    else if constexpr (std::is_same_v<T, float>)            { return DataType::Float; }
     
-    else if constexpr (std::is_same_v<T, glm::vec2>) { return DataType::Vec2; }
-    else if constexpr (std::is_same_v<T, glm::vec3>) { return DataType::Vec3; }
-    else if constexpr (std::is_same_v<T, glm::vec4>) { return DataType::Vec4; }
+    else if constexpr (std::is_same_v<T, glm::vec2>)        { return DataType::Vec2; }
+    else if constexpr (std::is_same_v<T, glm::vec3>)        { return DataType::Vec3; }
+    else if constexpr (std::is_same_v<T, glm::vec4>)        { return DataType::Vec4; }
     
-    else if constexpr (std::is_same_v<T, glm::mat2>) { return DataType::Mat2; }
-    else if constexpr (std::is_same_v<T, glm::mat3>) { return DataType::Mat3; }
-    else if constexpr (std::is_same_v<T, glm::mat4>) { return DataType::Mat4; }
+    else if constexpr (std::is_same_v<T, glm::mat2>)        { return DataType::Mat2; }
+    else if constexpr (std::is_same_v<T, glm::mat3>)        { return DataType::Mat3; }
+    else if constexpr (std::is_same_v<T, glm::mat4>)        { return DataType::Mat4; }
     else
     {
         PIXEL_CORE_ASSERT(false, "Unknown data type!");
@@ -73,6 +74,7 @@ inline uint32_t GetDataSize(DataType dataType)
     {
         case DataType::None:  return 0;
         case DataType::Bool:  return 1;
+        case DataType::Uint:  return 4;
         case DataType::Int:   return 4;
         case DataType::Float: return 4;
         case DataType::Vec2:  return 4 * 2;
@@ -101,6 +103,7 @@ inline uint32_t GetComponentCount(DataType dataType)
         case DataType::None:  return 0;
             
         case DataType::Bool:  return 1;
+        case DataType::Uint:  return 1;
         case DataType::Int:   return 1;
         case DataType::Float: return 1;
             

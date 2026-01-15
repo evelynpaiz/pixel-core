@@ -34,6 +34,7 @@ public:
     // Setter(s)
     // ----------------------------------------
     void SetBool(const std::string &name, bool value) override;
+    void SetUint(const std::string &name, unsigned int value) override;
     void SetInt(const std::string &name, int value) override;
     void SetFloat(const std::string &name, float value) override;
     

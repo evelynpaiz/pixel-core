@@ -26,7 +26,7 @@ void TexturedPrimitive::DefineMaterials()
     // Get the material library defined in the renderer
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
     // Define the new material(s)
-    materialLibrary.Create<pixc::SimpleMaterial>("Simple");
+    materialLibrary.Create<pixc::UnlitMaterial>("Unlit");
 }
 
 /**
@@ -54,19 +54,19 @@ void TexturedPrimitive::DefineRenderPasses()
     scenePassSpec.Target.ClearTargets = pixc::RenderTargetMask::Color | pixc::RenderTargetMask::Depth;
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Planet", "Simple",
+        { "Planet", "Unlit",
             [](const std::shared_ptr<pixc::Material>& material)
             {
-                auto simpleMaterial =  std::dynamic_pointer_cast<pixc::SimpleMaterial>(material);
+                auto unlitMaterial =  std::dynamic_pointer_cast<pixc::UnlitMaterial>(material);
                 
-                if (!simpleMaterial)
+                if (!unlitMaterial)
                     return;
 
                 static auto ground = pixc::Texture2D::CreateFromFile(
                     pixc::ResourcesManager::SpecificPath("models/sample/planet/planet_Quom1200.png"));
                 
-                simpleMaterial->SetColor(glm::vec4(1.0f));
-                simpleMaterial->SetTextureMap(ground);
+                unlitMaterial->SetColor(glm::vec4(1.0f));
+                unlitMaterial->SetTextureMap(ground);
             }
         }
     };

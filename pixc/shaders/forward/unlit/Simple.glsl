@@ -11,7 +11,7 @@
 #version 330 core
 
 // Include material properties
-#include "pixc/shaders/shared/structure/material/TextureMaterial.glsl"
+#include "pixc/shaders/shared/structure/material/UnlitMaterial.glsl"
 
 // Include fragment inputs
 #include "pixc/shaders/shared/chunk/fragment/Tex.fs.glsl"
@@ -21,6 +21,7 @@ void main()
 {
     // Sample the color from the texture using the provided texture coordinates
     vec4 textureColor = texture(u_Material.TextureMap, v_TextureCoord);
-    // Output the sampled texture color as the final fragment color
-    color = textureColor;
+
+    // Combine the sampled texture color with the material color
+    color = textureColor * u_Material.Color;
 }

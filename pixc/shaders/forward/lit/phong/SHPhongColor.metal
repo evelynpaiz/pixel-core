@@ -21,8 +21,8 @@ using namespace metal;
 #import "pixc/shaders/shared/utils/Attenuation.metal"
 #import "pixc/shaders/shared/utils/CubemapDir.metal"
 
-#import "pixc/shaders/phong/chunks/PhongSpecular.metal"
-#import "pixc/shaders/phong/chunks/Phong.metal"
+#import "pixc/shaders/forward/lit/phong/chunks/PhongSpecular.metal"
+#import "pixc/shaders/forward/lit/phong/chunks/Phong.metal"
 
 #import "pixc/shaders/environment/chunks/SHIrradiance.metal"
 #import "pixc/shaders/environment/chunks/SHAmbientIsotropic.metal"
