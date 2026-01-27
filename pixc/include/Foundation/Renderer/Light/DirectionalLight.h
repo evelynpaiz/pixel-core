@@ -36,7 +36,7 @@ public:
         auto camera = std::make_shared<OrthographicShadow>();
         m_Shadow.Camera = camera;
         
-        UpdateShadowCamera();
+        SyncShadowCameraFromLight();
     }
     /// @brief Destructor for the directional light.
     ~DirectionalLight() override = default;
@@ -48,14 +48,14 @@ public:
     void SetDirection(const glm::vec3& direction)
     {
         m_Vector = glm::vec4(direction, 0.0f);
-        UpdateShadowCamera();
+        SyncShadowCameraFromLight();
     }
     /// @brief Change the distance of the light.
     /// @param distance The light distance.
     void SetDistance(const float distance)
     {
         m_Distance = distance;
-        UpdateShadowCamera();
+        SyncShadowCameraFromLight();
     }
     
     // Getter(s)
@@ -68,11 +68,14 @@ public:
     float GetDistance() const { return m_Distance; }
     
 private:
-    // Update(s)
+    // Synchronization(s)
     // ----------------------------------------
     /// @brief Update the shadow camera based on the properties of the light source.
-    void UpdateShadowCamera()
+    void SyncShadowCameraFromLight()
     {
+        if (!m_Shadow.Camera)
+            return;
+        
         // Update the position of the camera
         glm::vec3 position = m_Shadow.Camera->GetTarget() - (glm::normalize(glm::vec3(m_Vector)) * m_Distance);
         m_Shadow.Camera->SetPosition(position);

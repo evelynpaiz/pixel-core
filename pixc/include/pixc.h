@@ -72,8 +72,10 @@
 #include "Foundation/Renderer/Light/Environment/IBLEnvironmentLight.h"
 
 #include "Foundation/Renderer/Material/Material.h"
-#include "Foundation/Renderer/Material/LightedMaterial.h"
-#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/TextureMaterial.h"
+#include "Foundation/Renderer/Material/DepthMaterial.h"
+#include "Foundation/Renderer/Material/UnlitMaterial.h"
+#include "Foundation/Renderer/Material/LitMaterial.h"
 #include "Foundation/Renderer/Material/PhongMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Drawable.h"

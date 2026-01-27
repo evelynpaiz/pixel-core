@@ -2,7 +2,7 @@
 
 #include "Foundation/Renderer/Light/Light.h"
 
-#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/UnlitMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
 #include "Foundation/Renderer/Drawable/Model/ModelUtils.h"

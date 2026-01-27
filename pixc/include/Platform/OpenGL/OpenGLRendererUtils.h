@@ -30,7 +30,6 @@ inline GLenum ToOpenGLType(DataType dataType)
     switch (dataType)
     {
         case DataType::None:  return 0;
-        case DataType::Bool:  return GL_BOOL;
         case DataType::Uint:  return GL_UNSIGNED_INT;
         case DataType::Int:   return GL_INT;
         case DataType::Float: return GL_FLOAT;
@@ -60,7 +59,6 @@ inline DataType ToDataType(GLenum glType)
 {
     switch (glType)
     {
-        case GL_BOOL:         return DataType::Bool;
         case GL_UNSIGNED_INT: return DataType::Uint;
         case GL_INT:          return DataType::Int;
         case GL_FLOAT:        return DataType::Float;

@@ -1,4 +1,4 @@
-#include "Examples/PhongPrimitive.h"
+#include "Examples/PhongSample.h"
 
 /**
  * @brief Create a rendering layer.
@@ -7,8 +7,8 @@
  * @param height Height of the window where the layer is presented.
  * @param name Name of the layer.
  */
-PhongPrimitive::PhongPrimitive(const uint32_t width, const uint32_t height,
-                               const std::string& name)
+PhongSample::PhongSample(const uint32_t width, const uint32_t height,
+                         const std::string& name)
     : RenderingLayer(width, height, name)
 {
     // Define the rendering camera
@@ -21,7 +21,7 @@ PhongPrimitive::PhongPrimitive(const uint32_t width, const uint32_t height,
 /**
  * @brief Define and register materials used for rendering.
  */
-void PhongPrimitive::DefineMaterials()
+void PhongSample::DefineMaterials()
 {
     // Get the material library defined in the renderer
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
@@ -34,7 +34,7 @@ void PhongPrimitive::DefineMaterials()
 /**
  * @brief Set up lighting parameters and light sources.
  */
-void PhongPrimitive::DefineLights()
+void PhongSample::DefineLights()
 {
     uint32_t width = m_Scene.GetCamera()->GetWidth();
     uint32_t height = m_Scene.GetCamera()->GetHeight();
@@ -68,7 +68,7 @@ void PhongPrimitive::DefineLights()
 /**
  * @brief Define the geometry used in the scene.
  */
-void PhongPrimitive::DefineGeometry()
+void PhongSample::DefineGeometry()
 {
     // Define the model(s)
     auto sphere = pixc::utils::geometry::ModelSphere<pixc::GeoVertexData<glm::vec4, glm::vec2, glm::vec3>>();
@@ -85,7 +85,7 @@ void PhongPrimitive::DefineGeometry()
 /**
  * @brief Defines the rendering passes.
  */
-void PhongPrimitive::DefineRenderPasses()
+void PhongSample::DefineRenderPasses()
 {
     auto& library = m_Scene.GetRenderPasses();
     
@@ -119,7 +119,7 @@ void PhongPrimitive::DefineRenderPasses()
     scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Cube", "PhongTexture",
+        { "Cube", "PhongTexture", nullptr,
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto phongMaterial = std::dynamic_pointer_cast<pixc::PhongTextureMaterial>(material);
@@ -137,7 +137,7 @@ void PhongPrimitive::DefineRenderPasses()
                 phongMaterial->SetShininess(200.0f);        // in a cube, the shininnes is discrete, using 100–300
             }
         },
-        { "Sphere", "PhongColor",
+        { "Sphere", "PhongColor", nullptr,
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto phongMaterial =  std::dynamic_pointer_cast<pixc::PhongColorMaterial>(material);
@@ -161,7 +161,7 @@ void PhongPrimitive::DefineRenderPasses()
  *
  * @param deltaTime Times passed since the last update.
  */
-void PhongPrimitive::OnUpdate(pixc::Timestep ts)
+void PhongSample::OnUpdate(pixc::Timestep ts)
 {
     // Reset per-frame rendering statistics (e.g., draw calls, triangles, vertices)
     pixc::Renderer::ResetStats();

@@ -106,7 +106,7 @@ void* MetalShader::GetFragmentFunction() const
  */
 void MetalShader::SetBool(const std::string& name, bool value)
 {
-    SET_UNIFORM(name, value, UpdateUniformBuffer(name));
+    SET_UNIFORM(name, (int)value, UpdateUniformBuffer(name));
 }
 
 /**

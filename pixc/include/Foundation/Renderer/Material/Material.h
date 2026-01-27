@@ -2,7 +2,7 @@
 
 #include "Foundation/Core/Library.h"
 
-#include "Foundation/Renderer/Material/MaterialProperty.h"
+#include "Foundation/Renderer/Material/Properties/MaterialProperty.h"
 #include "Foundation/Renderer/Shader/Shader.h"
 #include "Foundation/Renderer/Texture/Texture.h"
 

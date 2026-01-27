@@ -1,7 +1,7 @@
 #include "pixcpch.h"
 #include "Foundation/Renderer/Light/Environment/EnvironmentLight.h"
 
-#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/UnlitMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
 #include "Foundation/Renderer/Drawable/Model/ModelUtils.h"

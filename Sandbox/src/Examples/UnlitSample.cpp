@@ -1,4 +1,4 @@
-#include "Examples/TexturedPrimitive.h"
+#include "Examples/UnlitSample.h"
 
 /**
  * @brief Create a rendering layer.
@@ -7,21 +7,21 @@
  * @param height Height of the window where the layer is presented.
  * @param name Name of the layer.
  */
-TexturedPrimitive::TexturedPrimitive(const uint32_t width, const uint32_t height,
-                                     const std::string& name)
+UnlitSample::UnlitSample(const uint32_t width, const uint32_t height,
+                         const std::string& name)
     : RenderingLayer(width, height, name)
 {
     // Define the rendering camera
     auto camera = std::make_shared<pixc::OrthographicCamera>(width, height);
-    camera->SetPosition(glm::vec3(0.0f, 0.0f, 10.0f));
-    camera->SetZoomLevel(5.0f);
+    camera->SetPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+    camera->SetZoomLevel(3.0f);
     m_Scene.SetCamera(camera);
 }
 
 /**
  * @brief Define and register materials used for rendering.
  */
-void TexturedPrimitive::DefineMaterials()
+void UnlitSample::DefineMaterials()
 {
     // Get the material library defined in the renderer
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
@@ -32,7 +32,7 @@ void TexturedPrimitive::DefineMaterials()
 /**
  * @brief Define the geometry used in the scene.
  */
-void TexturedPrimitive::DefineGeometry()
+void UnlitSample::DefineGeometry()
 {
     // Define the model(s)
     auto planet = std::make_shared<pixc::AssimpModel>(pixc::ResourcesManager::SpecificPath("models/sample/planet/planet.obj"));
@@ -43,7 +43,7 @@ void TexturedPrimitive::DefineGeometry()
 /**
  * @brief Defines the rendering passes.
  */
-void TexturedPrimitive::DefineRenderPasses()
+void UnlitSample::DefineRenderPasses()
 {
     // Get the rendering passes library defined inside the scene
     auto& library = m_Scene.GetRenderPasses();
@@ -54,7 +54,7 @@ void TexturedPrimitive::DefineRenderPasses()
     scenePassSpec.Target.ClearTargets = pixc::RenderTargetMask::Color | pixc::RenderTargetMask::Depth;
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Planet", "Unlit",
+        { "Planet", "Unlit", nullptr,
             [](const std::shared_ptr<pixc::Material>& material)
             {
                 auto unlitMaterial =  std::dynamic_pointer_cast<pixc::UnlitMaterial>(material);
@@ -78,7 +78,7 @@ void TexturedPrimitive::DefineRenderPasses()
  *
  * @param deltaTime Times passed since the last update.
  */
-void TexturedPrimitive::OnUpdate(pixc::Timestep ts)
+void UnlitSample::OnUpdate(pixc::Timestep ts)
 {
     // Reset per-frame rendering statistics (e.g., draw calls, triangles, vertices)
     pixc::Renderer::ResetStats();

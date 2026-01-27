@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Renderer.h"
 
 #include "Foundation/Renderer/RendererCommand.h"
-#include "Foundation/Renderer/Material/LightedMaterial.h"
+#include "Foundation/Renderer/Material/LitMaterial.h"
 
 namespace pixc {
 
@@ -110,11 +110,11 @@ void Renderer::Draw(const std::shared_ptr<Drawable>& drawable, const std::shared
     if (material->HasProperty(MaterialProperty::NormalMatrix))
         material->GetShader()->SetMat4("u_Transform.Normal", glm::transpose(glm::inverse(transform)));
     
-    auto lightedMaterial = std::dynamic_pointer_cast<LightedMaterial>(material);
-    if (lightedMaterial)
+    auto litMaterial = std::dynamic_pointer_cast<LitMaterial>(material);
+    if (litMaterial)
     {
         // Check the flags for the lighted material
-        const auto& lightProperties = lightedMaterial->GetLightProperties();
+        const auto& lightProperties = litMaterial->GetLightProperties();
         if (Light::HasProperty(lightProperties, LightProperty::ShadowProperties))
             material->GetShader()->SetMat4("u_Transform.Texture", g_TextureMatrix);
     }

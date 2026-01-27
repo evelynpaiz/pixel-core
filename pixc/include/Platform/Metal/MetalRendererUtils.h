@@ -32,7 +32,6 @@ inline MTLVertexFormat ToMetalFormat(DataType dataType)
     {
         case DataType::None:  return MTLVertexFormatInvalid;
             
-        case DataType::Bool:  return MTLVertexFormatInt;
         case DataType::Uint:  return MTLVertexFormatUInt;
         case DataType::Int:   return MTLVertexFormatInt;
         case DataType::Float: return MTLVertexFormatFloat;
@@ -63,8 +62,8 @@ inline DataType ToDataType(MTLDataType mtlType)
 {
     switch (mtlType)
     {
-        case MTLDataTypeInt:        return DataType::Int;
         case MTLDataTypeUInt:       return DataType::Uint;
+        case MTLDataTypeInt:        return DataType::Int;
         case MTLDataTypeFloat:      return DataType::Float;
         case MTLDataTypeFloat2:     return DataType::Vec2;
         case MTLDataTypeFloat3:     return DataType::Vec3;

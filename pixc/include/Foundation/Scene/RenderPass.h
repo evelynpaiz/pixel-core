@@ -32,6 +32,9 @@ struct Renderable
     std::string ModelName;                      ///< Name of the model in the scene's model library.
     std::string MaterialName;                   ///< Name of the material to use for this model.
 
+    ///< Lambda to configure model before rendering it.
+    std::function<void(std::shared_ptr<BaseModel>&)> ModelSetupFunction;
+    
     ///< Lambda to configure material properties before rendering this model.
     std::function<void(const std::shared_ptr<Material>&)> MaterialSetupFunction;
 };

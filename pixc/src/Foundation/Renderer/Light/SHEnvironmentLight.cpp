@@ -2,7 +2,7 @@
 #include "Foundation/Renderer/Light/Environment/SHEnvironmentLight.h"
 
 #include "Foundation/Renderer/Texture/TextureCube.h"
-#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/UnlitMaterial.h"
 
 #include "Foundation/Renderer/Drawable/Mesh/MeshUtils.h"
 #include "Foundation/Renderer/Drawable/Model/ModelUtils.h"

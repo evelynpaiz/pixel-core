@@ -110,11 +110,19 @@ if (APPLE)
     )
 endif()
 
+# Add pre-processing flag
+# GLM configuration: use a right-handed coordinate system and
+# a [0,1] depth range to match Metal/D3D/Vulkan clip space
+target_compile_definitions(pixc
+    PUBLIC
+        GLM_FORCE_DEPTH_ZERO_TO_ONE
+        GLM_FORCE_RIGHT_HANDED
+)
+# STL configuration: remove depreated warnings
+target_compile_definitions(pixc PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
+
 # Define pre-compiled header
 target_precompile_headers(pixc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/pixcpch.h)
-
-# Add pre-processing flag
-target_compile_definitions(pixc PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
 
 # Define solution tree organization
 source_group(

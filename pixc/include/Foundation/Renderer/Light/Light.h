@@ -202,7 +202,8 @@ protected:
         auto& library = Renderer::GetMaterialLibrary();
         if (!library.Exists("Depth"))
         {
-            library.Create<Material>("Depth", ResourcesManager::GeneralPath("pixc/shaders/depth/DepthMap"));
+            library.Create<Material>("Depth",
+                                     ResourcesManager::GeneralPath("pixc/shaders/forward/depth/DepthOnly"));
         }
     }
     

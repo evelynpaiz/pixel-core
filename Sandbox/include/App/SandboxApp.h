@@ -27,8 +27,9 @@ private:
      */
     enum class SandboxLayerType
     {
-        Basic,      ///< Use BasicPrimitive layer
-        Textured,   ///< Use TexturedPrimitive layer
+        Basic,      ///< Use BasicSample layer
+        Unlit,      ///< Use UnlitSample layer
+        Depth,      ///< Use DepthSample layer
         Phong       ///< Use PhongPrimitive layer
     };
     std::shared_ptr<pixc::Layer> InitRenderingLayer(SandboxLayerType type,

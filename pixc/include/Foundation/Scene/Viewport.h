@@ -5,7 +5,7 @@
 #include "Foundation/Renderer/Drawable/Model/Model.h"
 #include "Foundation/Renderer/Drawable/Model/ModelUtils.h"
 
-#include "Foundation/Renderer/Material/SimpleMaterial.h"
+#include "Foundation/Renderer/Material/UnlitMaterial.h"
 
 #include "Foundation/Renderer/RendererCommand.h"
 
@@ -104,6 +104,10 @@ public:
         m_Scale = scale;
         Resize(width, height);
     }
+    
+    /// @brief Set the framebuffer with the rendered output.
+    /// @return Viewport framebuffer.
+    void SetScreenBuffer(const std::shared_ptr<FrameBuffer>& fb) { m_ScreenBuffer = fb; }
     
     // Render
     // ----------------------------------------

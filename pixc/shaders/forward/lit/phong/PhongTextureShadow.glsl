@@ -29,9 +29,9 @@
 #include "Resources/shaders/forward/lit/phong/chunks/PhongSpecular.glsl"
 #include "Resources/shaders/forward/lit/phong/chunks/Phong.glsl"
 
-#include "Resources/shaders/depth/chunks/PCF.glsl"
-#include "Resources/shaders/depth/chunks/BiasAngle.glsl"
-#include "Resources/shaders/depth/chunks/ShadowMap.glsl"
+#include "Resources/shaders/forward/depth/chunks/PCF.glsl"
+#include "Resources/shaders/forward/depth/chunks/BiasAngle.glsl"
+#include "Resources/shaders/forward/depth/chunks/ShadowMap.glsl"
 
 #include "Resources/shaders/environment/chunks/SHIrradiance.glsl"
 

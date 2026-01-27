@@ -19,7 +19,7 @@ namespace pixc {
  */
 enum class DataType
 {
-    None, Bool,
+    None,
     Uint, Int, Float,
     Vec2, Vec3, Vec4,
     Mat2, Mat3, Mat4
@@ -42,8 +42,7 @@ namespace utils { namespace data {
 template <typename T>
 inline constexpr DataType GetDataType()
 {
-    if constexpr (std::is_same_v<T, bool>)                  { return DataType::Bool; }
-    else if constexpr (std::is_same_v<T, unsigned int>)     { return DataType::Uint; }
+    if constexpr (std::is_same_v<T, unsigned int>)          { return DataType::Uint; }
     else if constexpr (std::is_same_v<T, int>)              { return DataType::Int; }
     else if constexpr (std::is_same_v<T, float>)            { return DataType::Float; }
     
@@ -73,7 +72,6 @@ inline uint32_t GetDataSize(DataType dataType)
     switch (dataType)
     {
         case DataType::None:  return 0;
-        case DataType::Bool:  return 1;
         case DataType::Uint:  return 4;
         case DataType::Int:   return 4;
         case DataType::Float: return 4;
@@ -102,7 +100,6 @@ inline uint32_t GetComponentCount(DataType dataType)
     {
         case DataType::None:  return 0;
             
-        case DataType::Bool:  return 1;
         case DataType::Uint:  return 1;
         case DataType::Int:   return 1;
         case DataType::Float: return 1;

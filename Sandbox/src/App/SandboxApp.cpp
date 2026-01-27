@@ -1,8 +1,9 @@
 #include "App/SandboxApp.h"
 
-#include "Examples/BasicPrimitive.h"
-#include "Examples/TexturedPrimitive.h"
-#include "Examples/PhongPrimitive.h"
+#include "Examples/BasicSample.h"
+#include "Examples/UnlitSample.h"
+#include "Examples/DepthSample.h"
+#include "Examples/PhongSample.h"
 
 /**
  * @brief Generate a (sandbox) rendering application.
@@ -40,11 +41,13 @@ std::shared_ptr<pixc::Layer> SandboxApp::InitRenderingLayer(SandboxLayerType typ
     switch (type)
     {
         case SandboxLayerType::Basic:
-            return std::make_shared<BasicPrimitive>(width, height);
-        case SandboxLayerType::Textured:
-            return std::make_shared<TexturedPrimitive>(width, height);
+            return std::make_shared<BasicSample>(width, height);
+        case SandboxLayerType::Unlit:
+            return std::make_shared<UnlitSample>(width, height);
+        case SandboxLayerType::Depth:
+            return std::make_shared<DepthSample>(width, height);
         case SandboxLayerType::Phong:
-            return std::make_shared<PhongPrimitive>(width, height);
+            return std::make_shared<PhongSample>(width, height);
     }
     
     return nullptr;

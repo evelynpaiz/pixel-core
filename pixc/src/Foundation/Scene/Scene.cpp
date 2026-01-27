@@ -113,6 +113,9 @@ void Scene::DrawModels(const std::vector<Renderable>& models)
         auto& model = m_Models.Get(renderable.ModelName);
         if (!model)
             continue;
+        
+        if (renderable.ModelSetupFunction)
+            renderable.ModelSetupFunction(model);
 
         // Assign material if specified
         if (!renderable.MaterialName.empty())
@@ -162,7 +165,7 @@ void Scene::ApplyTargetSettings(const TargetSettings& target)
  void Scene::DefineShadowProperties(const std::shared_ptr<Material>& baseMaterial)
  {
      // Attempt to cast the base material to a LightedMaterial
-     auto material = std::dynamic_pointer_cast<LightedMaterial>(baseMaterial);
+     auto material = std::dynamic_pointer_cast<LitMaterial>(baseMaterial);
      if (!material)
          return; // Base material is not a LightedMaterial, so return early
      

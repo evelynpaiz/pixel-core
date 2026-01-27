@@ -2,7 +2,7 @@
 
 #include "Foundation/Core/Resources.h"
 
-#include "Foundation/Renderer/Material/LightedMaterial.h"
+#include "Foundation/Renderer/Material/LitMaterial.h"
 
 /**
  * @namespace pixc
@@ -233,7 +233,7 @@ protected:
  * Copying or moving `PhongColorMaterial` objects is disabled to ensure single ownership
  * and prevent unintended duplication of material resources.
  */
-class PhongColorMaterial : public LightedMaterial, public PhongColor
+class PhongColorMaterial : public LitMaterial, public PhongColor
 {
 public:
     // Constructor(s)/Destructor
@@ -243,7 +243,7 @@ public:
     /// @param filePath The file path to the shader used by the material.
     PhongColorMaterial(const std::filesystem::path& filePath =
                        ResourcesManager::GeneralPath("pixc/shaders/forward/lit/phong/PhongColor"))
-    : LightedMaterial(filePath), PhongColor()
+    : LitMaterial(filePath), PhongColor()
     {
         // Update material properties
         m_Properties = MaterialProperty::ViewDirection | MaterialProperty::NormalMatrix;
@@ -257,7 +257,7 @@ protected:
     /// @brief Set the material properties into the uniforms of the shader program.
     void SetMaterialProperties() override
     {
-        LightedMaterial::SetMaterialProperties();
+        LitMaterial::SetMaterialProperties();
         PhongColor::SetProperties(m_Shader);
     }
     
@@ -277,7 +277,7 @@ public:
  * Copying or moving `PhongTextureMaterial` objects is disabled to ensure single ownership
  * and prevent unintended duplication of material resources.
  */
-class PhongTextureMaterial : public LightedMaterial, public PhongTexture
+class PhongTextureMaterial : public LitMaterial, public PhongTexture
 {
 public:
     // Constructor(s)/Destructor
@@ -287,7 +287,7 @@ public:
     /// @param filePath The file path to the shader used by the material.
     PhongTextureMaterial(const std::filesystem::path& filePath =
                          ResourcesManager::GeneralPath("pixc/shaders/forward/lit/phong/PhongTexture"))
-    : LightedMaterial(filePath), PhongTexture()
+    : LitMaterial(filePath), PhongTexture()
     {
         // Update material properties
         m_Properties = MaterialProperty::ViewDirection | MaterialProperty::NormalMatrix;
@@ -301,7 +301,7 @@ protected:
     /// @brief Set the material properties into the uniforms of the shader program.
     void SetMaterialProperties() override
     {
-        LightedMaterial::SetMaterialProperties();
+        LitMaterial::SetMaterialProperties();
         PhongTexture::SetProperties(m_Shader);
     }
     

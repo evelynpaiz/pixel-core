@@ -41,8 +41,9 @@ public:
     /// @param height Height of the window where the layer is presented.
     /// @param name Name of the layer.
     RenderingLayer(const uint32_t width, const uint32_t height,
-                   const std::string& name = "Rendering Layer")
-        : Layer(name), m_Scene(width, height) {}
+                   const std::string& name = "Rendering Layer",
+                   const std::filesystem::path& viewportShader = "")
+        : Layer(name), m_Scene(width, height, viewportShader) {}
     /// @brief Delete the rendering layer.
     virtual ~RenderingLayer() = default;
     

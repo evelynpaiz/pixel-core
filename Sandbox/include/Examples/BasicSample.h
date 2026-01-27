@@ -3,17 +3,15 @@
 #include <pixc.h>
 
 /**
- * @brief Example implementation of a basic primitive rendering layer.
+ * @brief Unlit rendering sample.
  *
- * The `BasicPrimitive` class derives from `pixc::Layer` and provides a simple example
- * of rendering a geometric primitive in the Pixel Core engine. It manages its own viewport
- * size, material, and model, and overrides the key lifecycle methods to handle attachment,
- * updating per frame, and responding to window resize events.
+ * The `BasicSample` class derives from `pixc::Layer` and demonstrates the most
+ * minimal setup required to render a simple geometric primitive in the Pixel Core engine.
  *
- * Copying or moving `BasicPrimitive` objects is disabled to ensure single ownership
+ * Copying or moving `BasicSample` objects is disabled to ensure single ownership
  * of the internal resources and prevent unintended duplication.
  */
-class BasicPrimitive : public pixc::Layer
+class BasicSample : public pixc::Layer
 {
 public:
     // Constructor(s)/Destructor
@@ -22,11 +20,11 @@ public:
     /// @param width Width of the window where the layer is presented.
     /// @param height Height of the window where the layer is presented.
     /// @param name Name of the layer.
-    BasicPrimitive(const uint32_t width, const uint32_t height,
-                   const std::string& name = "Basic Primitive Layer")
+    BasicSample(const uint32_t width, const uint32_t height,
+                const std::string& name = "Basic Sample Layer")
         : Layer(name), m_Width(width), m_Height(height) {}
     /// @brief Delete the rendering layer.
-    virtual ~BasicPrimitive() = default;
+    virtual ~BasicSample() = default;
     
     // Layer handlers
     // ----------------------------------------
@@ -50,5 +48,5 @@ private:
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(BasicPrimitive);
+    DISABLE_COPY_AND_MOVE(BasicSample);
 };

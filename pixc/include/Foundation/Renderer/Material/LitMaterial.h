@@ -14,16 +14,16 @@ namespace pixc {
 /**
  * @brief A base class for materials that are affected by lighting.
  *
- * The `LightedMaterial` class extends the base `Material` class to provide additional
+ * The `LitMaterial` class extends the base `Material` class to provide additional
  * functionality for handling lighting and shadow properties. It allows setting a light
  * source and a framebuffer for shadow mapping, as well as defining shadow properties
  * in the shader program. Derived classes must implement the `SetMaterialProperties()`
  * method to specify the material's specific properties.
  *
- * Copying or moving `LightedMaterial` objects is disabled to ensure single ownership and
+ * Copying or moving `LitMaterial` objects is disabled to ensure single ownership and
  * prevent unintended duplication of material resources.
  */
-class LightedMaterial : public Material
+class LitMaterial : public Material
 {
 public:
     // Constructor(s)/ Destructor
@@ -31,7 +31,7 @@ public:
     /// @brief Generate a (lighted) material with the specified shader file path.
     /// @param light The light source to be used for shading.
     /// @param filePath The file path to the shader used by the material.
-    LightedMaterial(const std::filesystem::path& filePath)
+    LitMaterial(const std::filesystem::path& filePath)
         : Material(filePath)
     {
         // Get the file name from the path
@@ -44,7 +44,7 @@ public:
     }
     
     /// @brief Destructor for the (lighted) material.
-    virtual ~LightedMaterial() = default;
+    virtual ~LitMaterial() = default;
     
     // Getter(s)
     // ----------------------------------------
@@ -85,7 +85,7 @@ protected:
     // Disable the copying or moving of this resource
     // ----------------------------------------
 public:
-    DISABLE_COPY_AND_MOVE(LightedMaterial);
+    DISABLE_COPY_AND_MOVE(LitMaterial);
 };
 
 } // namespace pixc
