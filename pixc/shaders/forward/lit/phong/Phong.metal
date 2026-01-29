@@ -12,7 +12,7 @@ using namespace metal;
 #import "pixc/shaders/shared/chunk/vertex/PosTexNorm.vs.metal"
 
 // Include material properties
-#import "pixc/shaders/shared/structure/material/PhongTextureMaterial.metal"
+#import "pixc/shaders/shared/structure/material/PhongMaterial.metal"
 #import "pixc/shaders/shared/structure/view/SimpleView.metal"
 #import "pixc/shaders/shared/structure/light/SimpleLight.metal"
 #import "pixc/shaders/shared/structure/environment/Environment.metal"
@@ -33,10 +33,13 @@ fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
                               texture2d<float> u_Material_SpecularMap [[ texture(TextureIndex::SpecularMap) ]],
                               sampler s_Material_SpecularMap [[ sampler(TextureIndex::SpecularMap) ]])
 {
-    // Get the diffuse color (kd) from the DiffuseMap texture
-    float3 kd = u_Material_DiffuseMap.sample(s_Material_DiffuseMap, in.v_TextureCoord).rgb;
-    // Get the specular color (ks) from the SpecularMap texture
-    float3 ks = u_Material_SpecularMap.sample(s_Material_SpecularMap, in.v_TextureCoord).rgb;
+    // Sample texture(s)
+    float3 texDiffuse = u_Material_DiffuseMap.sample(s_Material_DiffuseMap, in.v_TextureCoord).rgb;
+    float3 texSpecular = u_Material_SpecularMap.sample(s_Material_SpecularMap, in.v_TextureCoord).rgb;
+    
+    // Combine material colors with texture maps
+    float3 kd = u_Material.Kd * texDiffuse;
+    float3 ks = u_Material.Ks * texSpecular;
     
     // Define the initial reflectance
     float3 reflectance = float3(0.0f);
@@ -51,7 +54,7 @@ fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
     }
     
     // Calculate the ambient light
-    float3 ambient = u_Environment.La * kd;
+    float3 ambient = u_Environment.La * u_Material.Ka * texDiffuse;
     
     // Set the fragment color with the calculated result and material's alpha
     float3 result = reflectance + ambient;

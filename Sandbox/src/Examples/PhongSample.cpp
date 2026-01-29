@@ -27,8 +27,8 @@ void PhongSample::DefineMaterials()
     auto& materialLibrary = pixc::Renderer::GetMaterialLibrary();
     
     // Define the new material(s)
-    materialLibrary.Create<pixc::PhongColorMaterial>("PhongColor");
-    materialLibrary.Create<pixc::PhongTextureMaterial>("PhongTexture");
+    materialLibrary.Create<pixc::PhongMaterial>("PhongCube");
+    materialLibrary.Create<pixc::PhongMaterial>("PhongSphere");
 }
 
 /**
@@ -119,10 +119,10 @@ void PhongSample::DefineRenderPasses()
     scenePassSpec.Target.ClearColor = glm::vec4(0.33f, 0.33f, 0.33f, 1.0f);
     scenePassSpec.Render.Camera = m_Scene.GetCamera();
     scenePassSpec.Render.Models = {
-        { "Cube", "PhongTexture", nullptr,
+        { "Cube", "PhongCube", nullptr,
             [](const std::shared_ptr<pixc::Material>& material)
             {
-                auto phongMaterial = std::dynamic_pointer_cast<pixc::PhongTextureMaterial>(material);
+                auto phongMaterial = std::dynamic_pointer_cast<pixc::PhongMaterial>(material);
                 
                 if (!phongMaterial)
                     return;
@@ -137,10 +137,10 @@ void PhongSample::DefineRenderPasses()
                 phongMaterial->SetShininess(200.0f);        // in a cube, the shininnes is discrete, using 100–300
             }
         },
-        { "Sphere", "PhongColor", nullptr,
+        { "Sphere", "PhongSphere", nullptr,
             [](const std::shared_ptr<pixc::Material>& material)
             {
-                auto phongMaterial =  std::dynamic_pointer_cast<pixc::PhongColorMaterial>(material);
+                auto phongMaterial =  std::dynamic_pointer_cast<pixc::PhongMaterial>(material);
                 
                 if (!phongMaterial)
                     return;

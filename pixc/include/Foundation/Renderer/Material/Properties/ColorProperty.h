@@ -41,7 +41,7 @@ protected:
     ColorProperty() = default;
     
 protected:
-    // Properties
+    // Setter(s)
     // ----------------------------------------
     /// @brief Set the material properties into the uniforms of the shader program.
     /// @param shader The shader program to set the properties for.
@@ -52,7 +52,7 @@ protected:
         shader->SetVec4(name, m_Color);
     }
     
-    // Flat color variables
+    // Color properties
     // ----------------------------------------
 protected:
     ///< Albedo color.

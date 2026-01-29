@@ -44,7 +44,7 @@ protected:
     TextureProperty() = default;
     
 protected:
-    // Properties
+    // Setter(s)
     // ----------------------------------------
     /// @brief Set the material properties into the uniforms of the shader program.
     /// @param shader The shader program to set the properties for.
@@ -55,7 +55,7 @@ protected:
         shader->SetTexture(name, m_Texture, slot);
     }
     
-    // Flat texture variables
+    // Texture properties
     // ----------------------------------------
 protected:
     ///< Texture map.
