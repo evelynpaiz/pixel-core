@@ -3,12 +3,28 @@
 #include "Foundation/Core/Resources.h"
 
 #include "Foundation/Renderer/Material/LitMaterial.h"
+#include "Foundation/Renderer/Utils/BitMaskUtils.h"
 
 /**
  * @namespace pixc
  * @brief Main namespace of the Pixel Core rendering engine.
  */
 namespace pixc {
+
+/**
+ * @brief Flags controlling Phong shading variants.
+ *
+ * These flags can be combined using bitwise operators to specify multiple properties simultaneously.
+ */
+enum class PhongFlags : uint32_t
+{
+    None        = 0,        ///< No flags.
+    HalfLambert = 1u << 0,  ///< Use half-Lambert diffuse.
+    BlinnPhong  = 1u << 1   ///< Use Blinn–Phong specular instead of classic Phong.
+};
+
+// Enable bitwise operators for `PhongFlags`.
+ENABLE_ENUM_BITMASK(PhongFlags);
 
 /**
  * @brief A base class for implementing Phong shading properties.
@@ -30,12 +46,30 @@ public:
     
     // Setter(s)
     // ----------------------------------------
+    /// @brief Enable a specific Phong flag.
+    /// @param flag The flag to enable.
+    void EnableFlag(PhongFlags flag) { m_Flags |= flag; }
+    /// @brief Disable a specific Phong flag.
+    /// @param flag The flag to disable.
+    void DisableFlag(PhongFlags flag) { m_Flags &= ~flag; }
+    
     /// @brief Set the shininess (exponent value).
     /// @param shininess The shininess value.
     void SetShininess(float shininess) { m_Shininess = shininess; }
     
     // Getter(s)
     // ----------------------------------------
+    /// @brief Get the shading flags.
+    /// @return The bitmask of the Phong flags.
+    PhongFlags GetFlags() const { return m_Flags; }
+    /// @brief Check if a specific Phong flag is enabled.
+    /// @param flag The flag to check.
+    /// @return True if enabled, false otherwise.
+    bool HasFlag(PhongFlags flag) const
+    {
+        return (m_Flags & flag) != PhongFlags::None;
+    }
+    
     /// @brief Get the shininess (exponent value).
     /// @return The shininess value.
     float GetShininess() const { return m_Shininess; }
@@ -53,12 +87,16 @@ protected:
     /// @param shader The shader program to set the properties for.
     void SetProperties(const std::shared_ptr<Shader>& shader)
     {
+        shader->SetUint("u_Material.Flags", static_cast<uint32_t>(m_Flags));
         shader->SetFloat("u_Material.Shininess", m_Shininess);
     }
     
     // Phong properties
     // ----------------------------------------
 protected:
+    ///< Shading flags.
+    PhongFlags m_Flags = PhongFlags::HalfLambert | PhongFlags::BlinnPhong;
+    
     ///< Material shininess.
     float m_Shininess = 32.0f;
 };

@@ -3,8 +3,9 @@
  */
 struct Material
 {
+    uint  Flags;                  ///< Shading flags.
     float Shininess;              ///< Shininess/exponent of the material for specular highlights.
-    float _pad0[3];               ///< Padding to align Ka to 16 bytes
+    float _pad0[2];               ///< Padding to align Ka to 16 bytes
 
     packed_float3 Ka;             ///< Ambient reflectance/color of the material.
     float _pad1;                  ///< Padding

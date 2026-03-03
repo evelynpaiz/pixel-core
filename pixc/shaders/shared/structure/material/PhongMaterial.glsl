@@ -3,6 +3,7 @@
  */
 struct Material
 {
+    uint Flags;                 ///< Shading flags.
     float Shininess;            ///< Shininess/exponent of the material for specular highlights.
     
     vec3 Ka;                    ///< Ambient reflectance/color of the material.

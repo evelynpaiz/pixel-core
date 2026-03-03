@@ -37,20 +37,36 @@ fragment float4 fragment_main(const VertexOut in [[ stage_in ]],
     float3 texDiffuse = u_Material_DiffuseMap.sample(s_Material_DiffuseMap, in.v_TextureCoord).rgb;
     float3 texSpecular = u_Material_SpecularMap.sample(s_Material_SpecularMap, in.v_TextureCoord).rgb;
     
-    // Combine material colors with texture maps
-    float3 kd = u_Material.Kd * texDiffuse;
-    float3 ks = u_Material.Ks * texSpecular;
+    // Combine material colors with textures
+    ShadingMaterial material = {
+        .Kd = u_Material.Kd * texDiffuse,
+        .Ks = u_Material.Ks * texSpecular,
+        .Shininess = u_Material.Shininess,
+        .Flags = u_Material.Flags
+    };
     
     // Define the initial reflectance
     float3 reflectance = float3(0.0f);
     // Shade based on each light source in the scene
     for(int i = 0; i < u_Environment.LightCount; i++)
     {
+        // Scale material by light intensity
+        material.Kd *= u_Environment.Lights[i].Ld;
+        material.Ks *= u_Environment.Lights[i].Ls;
+        
+        // Construct light for shading
+        ShadingLight light = {
+            .Vector = u_Environment.Lights[i].Vector,
+            .Color = u_Environment.Lights[i].Color,
+            .Linear = 0.045f,
+            .Quadratic = 0.0075f,
+            .DirectionalAttenuation = 0.7f,
+            .ShadowFactor = 0.0f
+        };
+        
         // Define the initial reflectance
         reflectance += calculateColor(in.v_Position, in.v_Normal, u_View.Position,
-                                      u_Environment.Lights[i].Vector, u_Environment.Lights[i].Color,
-                                      kd * u_Environment.Lights[i].Ld, ks * u_Environment.Lights[i].Ls,
-                                      u_Material.Shininess, 0.0f, 0.045f, 0.0075f, 0.7f);
+                                      material, light);
     }
     
     // Calculate the ambient light

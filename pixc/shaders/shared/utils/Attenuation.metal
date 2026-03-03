@@ -4,12 +4,16 @@
  * @param position The position of the object or surface receiving light.
  * @param lightVector The vector from the object to the light source, including
  *                   the direction and distance information.
+ * @param linear Linear attenuation factor, controlling intensity drop linearly with distance.
+ * @param quadratic Quadratic attenuation factor, controlling intensity drop with distance squared.
+ * @param maxValue Constant/fallback attenuation used for directional lights.
  *
  * @return The attenuation factor, which represents how much the light intensity diminishes with distance.
  *         A value of 1.0f means no attenuation, and smaller values mean greater attenuation.
  */
 inline float calculateAttenuation(float3 position, float4 lightVector,
-                                  float linear, float quadratic, float maxValue)
+                                  float linear, float quadratic,
+                                  float maxValue)
 {
     // For directional lights, no distance attenuation is applied,
     // so we return a fixed attenuation factor of 0.8f

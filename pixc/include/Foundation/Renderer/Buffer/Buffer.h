@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/Renderer/Buffer/Data.h"
+#include "Foundation/Renderer/Utils/BitMaskUtils.h"
 
 /**
  * @namespace pixc
@@ -71,25 +72,8 @@ enum class RenderTargetMask : uint8_t
     Stencil = 1 << 2      ///< Clear the stencil buffer.
 };
 
-/**
- * @brief Bitwise OR operator for combining buffer flags.
- */
-inline RenderTargetMask operator|(RenderTargetMask a, RenderTargetMask b)
-{
-    return static_cast<RenderTargetMask>(
-        static_cast<uint8_t>(a) | static_cast<uint8_t>(b)
-    );
-}
-
-/**
- * @brief Bitwise AND operator for checking overlapping buffer flags.
- */
-inline RenderTargetMask operator&(RenderTargetMask a, RenderTargetMask b)
-{
-    return static_cast<RenderTargetMask>(
-        static_cast<uint8_t>(a) & static_cast<uint8_t>(b)
-    );
-}
+// Enable bitwise operators for `RenderTargetMask`.
+ENABLE_ENUM_BITMASK(RenderTargetMask);
 
 /**
  * @namespace utils::graphics::gl
@@ -106,7 +90,7 @@ namespace utils { namespace graphics {
  */
 inline bool IsBufferActive(RenderTargetMask mask, RenderTargetMask target)
 {
-    return (static_cast<uint8_t>(mask) & static_cast<uint8_t>(target)) != 0;
+    return (mask & target) != RenderTargetMask::None;
 }
 
 } // namespace graphics

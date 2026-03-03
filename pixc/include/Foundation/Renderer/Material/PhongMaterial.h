@@ -23,7 +23,7 @@ public:
     /// @param light The light source to be used for shading.
     /// @param filePath The file path to the shader used by the material.
     PhongMaterial(const std::filesystem::path& filePath =
-                  ResourcesManager::GeneralPath("pixc/shaders/forward/lit/phong/Phong"))
+                  ResourcesManager::GeneralPath("pixc/shaders/forward/lit/phong/LitPhong"))
     : LitMaterial(filePath), PhongProperty(), PhongColorProperty(), PhongTextureProperty()
     {
         // Update general material properties
